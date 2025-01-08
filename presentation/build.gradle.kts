@@ -30,9 +30,6 @@ android {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
 
-    kapt {
-        correctErrorTypes = true
-    }
     hilt{
         enableAggregatingTask = false
     }
@@ -40,6 +37,7 @@ android {
 
 dependencies {
     implementation(project(":data"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
