@@ -65,6 +65,15 @@ private fun NavigationGraph(
         startDestination = NavItem.Splash.route,
         modifier = modifier
     ) {
-
+        composable(NavItem.Splash.route) {
+            SplashScreen(
+                onTimeout = {
+                    navHostController.navigate(NavItem.Login.route) {
+                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
     }
 }
