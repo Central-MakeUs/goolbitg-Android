@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
-    id(libs.plugins.jetbrains.kotlin.kapt.get().pluginId)
+    alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -14,6 +15,16 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -29,9 +40,8 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-
-    hilt{
-        enableAggregatingTask = false
+    kapt {
+        keepJavacAnnotationProcessors = true
     }
 }
 
@@ -60,6 +70,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    annotationProcessor(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // Glide
@@ -74,4 +85,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.identity.googleid)
+
+    // Permission
+    implementation(libs.accompanist.permissions)
 }

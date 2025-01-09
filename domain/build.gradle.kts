@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
@@ -32,6 +32,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    kapt {
+        keepJavacAnnotationProcessors = true
+    }
+    hilt{
+        enableAggregatingTask = false
     }
 }
 
