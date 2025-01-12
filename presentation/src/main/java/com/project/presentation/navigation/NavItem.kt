@@ -14,4 +14,20 @@ sealed class NavItem(
     data object Login: NavItem(
         route = "login"
     )
+
+    data object FirstOnboarding: NavItem(
+        route = "first_onboarding"
+    )
+
+    data object SecondOnboarding: NavItem(
+        route = "Second_onboarding"
+    )
+
+    data object ThirdOnboarding: NavItem(
+        route = "third_onboarding"
+    )
+
+    data object FourthOnboarding: NavItem(
+        route = "fourth_onboarding"
+    )
 }

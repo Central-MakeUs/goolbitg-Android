@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_title">시작하기 전에</string>
+    <string name="permission_sub_title">여러분의 더 나은 서비스 이용을 위해\n몇가지 동의가 필요한 내용을 확인해주세요</string>
+    <string name="permission_alarm_title">알림 동의</string>
+    <string name="permission_alarm_sub_title">습관화를 위한 중요 알림을 받을 수 있어요</string>
+    <string name="permission_camera_title">카메라 활용 동의</string>
+    <string name="permission_camera_sub_title">\'살까말까\' 이미지 촬영 시 필요해요</string>
+    <string name="permission_album_title">앨범 접근 허용 동의</string>
+    <string name="permission_album_sub_title">\‘살까말까\’ 이미지 업로드 시 필요해요</string>
+
+    <string name="onboarding_first_title">저희 굴비잇기를 위해\n이용할 정보를 작성해주세요</string>
+    <string name="onboarding_first_sub_title">맞춤형 소비습관 형성 패턴을\n분석할 때 활용하고 있어요</string>
+    <string name="onboarding_first_nickname_title">닉네임</string>
+    <string name="onboarding_first_nickname_placeholder">6자 이내로 작성해 주세요</string>
+    <string name="onboarding_first_nickname_check">중복검사</string>
+    <string name="onboarding_first_birth_title">생년월일</string>
+    <string name="onboarding_first_birth_year_placeholder">YY</string>
+    <string name="onboarding_first_birth_month_placeholder">MM</string>
+    <string name="onboarding_first_birth_day_placeholder">DD</string>
+    <string name="onboarding_first_gender_title">성별</string>
+    <string name="onboarding_first_gender_male">남성</string>
+    <string name="onboarding_first_gender_female">여성</string>
+
+    <string name="onboarding_second_title">#VALUE#님의\n소비유형검사가 있어요</string>
+    <string name="onboarding_second_sub_title">습관형성을 위한\n소비 유형 검사부터 시작해볼까요?</string>
+
+    <string name="onboarding_third_title">소비중독 체크리스트</string>
+    <string name="onboarding_third_sub_title">본인이 생각하는 소비습관을\n모두 선택해 주세요</string>
+    <string name="onboarding_third_sub_title_highlight">모두</string>
+
+    <string name="common_start">시작하기</string>
+</resources>
