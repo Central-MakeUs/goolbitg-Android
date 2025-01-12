@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,6 +7,9 @@ plugins {
 //    alias(libs.plugins.google.gms)
     alias(libs.plugins.jetbrains.kotlin.kapt)
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.project.goolbitg"
@@ -24,6 +29,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            manifestPlaceholders["KAKAO_CLIENT_KEY"] = properties["KAKAO_CLIENT_KEY"] as String
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -87,4 +96,6 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
+
+    implementation(libs.kakao.all)
 }

@@ -30,6 +30,7 @@ googleId = "1.1.1"
 gms = "21.2.0"
 accompanist = "0.36.0"
 datastore = "1.0.0"
+kakao = "2.20.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -85,6 +86,9 @@ accompanist-pager-indicators = { group = "com.google.accompanist", name = "accom
 accompanist-permissions = {group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist"}
 
 androidx-datastore-preferences = { group = "androidx.datastore", name="datastore-preferences", version.ref = "datastore"}
+
+kakao-all = { group = "com.kakao.sdk", name = "v2-all", version.ref = "kakao"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

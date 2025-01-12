@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,6 +7,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.project.presentation"
@@ -15,7 +20,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "KAKAO_CLIENT_KEY", "\"${properties.getProperty("KAKAO_CLIENT_KEY")}\"")
     }
+
 
     buildTypes {
         release {
@@ -70,7 +78,6 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-    annotationProcessor(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // Glide
@@ -88,4 +95,6 @@ dependencies {
 
     // Permission
     implementation(libs.accompanist.permissions)
+
+    implementation(libs.kakao.all)
 }

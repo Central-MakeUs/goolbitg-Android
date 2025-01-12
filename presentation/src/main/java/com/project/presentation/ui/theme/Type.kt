@@ -16,7 +16,7 @@ private val PretendFontFamily = FontFamily(
     Font(R.font.pretendard_regular, weight = FontWeight.Normal),
 )
 
-val raceOnTypography = GoolbitgTypography(
+val goolbitgTypography = GoolbitgTypography(
     h1 = TextStyle(
         fontFamily = PretendFontFamily,
         fontWeight = FontWeight.Bold,
