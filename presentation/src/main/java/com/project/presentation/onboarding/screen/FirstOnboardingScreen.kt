@@ -1,5 +1,7 @@
 package com.project.presentation.onboarding.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,14 +14,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
 import com.project.presentation.base.BaseOutlinedTextFiled
 import com.project.presentation.common.GenderEnum
+import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingEvent
 import com.project.presentation.onboarding.OnboardingState
 import com.project.presentation.onboarding.OnboardingViewModel
@@ -39,38 +50,84 @@ import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray300
-import com.project.presentation.ui.theme.spacingXxl
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
 import com.project.presentation.ui.theme.error
 import com.project.presentation.ui.theme.gray200
 import com.project.presentation.ui.theme.gray500
+import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.roundLg
 import com.project.presentation.ui.theme.spacingLg
+import com.project.presentation.ui.theme.spacingMd
+import com.project.presentation.ui.theme.spacingXxl
 
 @Composable
-@Preview
+@Preview(widthDp = 700)
 fun FirstOnboardingScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+    var nextBtnState by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state) {
+        nextBtnState = state.isFirstOnboardingCompleted()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(bg1)
     ) {
-        val state = viewModel.state.collectAsStateWithLifecycle().value
         Scaffold(containerColor = transparent) { innerPadding ->
-            FirstOnboardingBody(
-                modifier = Modifier.padding(innerPadding),
-                state = state,
-                onNicknameChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeNickname(it)) },
-                onYearChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeYear(it)) },
-                onMonthChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeMonth(it)) },
-                onDayChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeDay(it)) },
-                onMaleClick = { viewModel.onEvent(event = OnboardingEvent.ClickMale) },
-                onFemaleClick =  { viewModel.onEvent(event = OnboardingEvent.ClickFemale) }
-            )
+            Box(modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()) {
+                FirstOnboardingBody(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state,
+                    onNicknameChanged = {
+                        viewModel.onEvent(
+                            event = OnboardingEvent.ChangeNickname(
+                                it
+                            )
+                        )
+                    },
+                    onYearChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeYear(it)) },
+                    onMonthChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeMonth(it)) },
+                    onDayChanged = { viewModel.onEvent(event = OnboardingEvent.ChangeDay(it)) },
+                    onMaleClick = { viewModel.onEvent(event = OnboardingEvent.ClickMale) },
+                    onFemaleClick = { viewModel.onEvent(event = OnboardingEvent.ClickFemale) }
+                )
+
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .align(Alignment.BottomCenter),
+                    visible = nextBtnState,
+                    enter = fadeIn()
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = spacingMd)
+                            .clip(CircleShape)
+                            .background(
+                                brush = Brush.horizontalGradient(listOf(main100, Color(0xFF67BF4E)))
+                            )
+                            .clickable {
+                                navHostController.navigate(NavItem.SecondOnboarding.route)
+                            }
+                            .padding(vertical = 16.dp),
+                        text = stringResource(R.string.common_start),
+                        textAlign = TextAlign.Center,
+                        style = goolbitgTypography.btn1,
+                        color = white
+                    )
+                }
+            }
         }
     }
 
@@ -101,11 +158,13 @@ fun FirstOnboardingBody(
         )
         Spacer(modifier = Modifier.height(spacingXxl))
         InputNicknameContent(
+            modifier = Modifier.widthIn(max = 400.dp),
             nickname = state.nickname,
             onNicknameChanged = onNicknameChanged
         )
         Spacer(modifier = Modifier.height(spacingLg))
         InputBirthContent(
+            modifier = Modifier.widthIn(max = 400.dp),
             year = state.year,
             month = state.month,
             day = state.day,
@@ -115,6 +174,7 @@ fun FirstOnboardingBody(
         )
         Spacer(modifier = Modifier.height(spacingLg))
         SelectGenderContent(
+            modifier = Modifier.widthIn(max = 400.dp),
             gender = state.gender,
             onMaleClick = onMaleClick,
             onFemaleClick = onFemaleClick
@@ -199,11 +259,7 @@ fun InputBirthContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 400.dp)
-        ) {
+        Row {
             BaseOutlinedTextFiled(
                 modifier = Modifier
                     .weight(1f),
@@ -283,8 +339,6 @@ fun SelectGenderContent(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 400.dp)
         ) {
             GenderButton(
                 isSelected = gender == GenderEnum.Male,

@@ -7,4 +7,5 @@ sealed class OnboardingEvent {
     data class ChangeDay(val newValue: String): OnboardingEvent()
     data object ClickMale: OnboardingEvent()
     data object ClickFemale: OnboardingEvent()
+    data class ClickCheckListItem(val idx: Int): OnboardingEvent()
 }
