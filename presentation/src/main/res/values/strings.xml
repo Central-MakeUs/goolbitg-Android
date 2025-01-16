@@ -29,6 +29,29 @@
     <string name="onboarding_third_sub_title">본인이 생각하는 소비습관을\n모두 선택해 주세요</string>
     <string name="onboarding_third_sub_title_highlight">모두</string>
 
+    <string name="onboarding_fourth_title">소비 습관 점수</string>
+    <string name="onboarding_fourth_subtitle">본인의 평균 수입과 저축으로\n과소비 지수를 측정해드려요!</string>
+    <string name="onboarding_fourth_month_avg_income">월 평균 수입</string>
+    <string name="onboarding_fourth_month_avg_income_placeholder">₩ 월 평균 수입 금액을 작성해 주세요</string>
+    <string name="onboarding_fourth_month_avg_saving">월 평균 저축</string>
+    <string name="onboarding_fourth_month_avg_saving_placeholder">₩ 월 평균 저축 금액을 작성해 주세요</string>
+    <string name="onboarding_fourth_tooltip_description">평균 수입에 대한 평균 저축률을 기반으로\n소비 점수를 계산해주고 있어요</string>
+
+    <string name="onboarding_fifth_title">지출 요일/시간 입력</string>
+    <string name="onboarding_fifth_sub_title">본인이 무슨 시간 무슨 요일에\n지출이 많은지 작성해보세요</string>
+    <string name="onboarding_fifth_major_expenditure_day">주 지출 요일</string>
+    <string name="onboarding_fifth_major_expenditure_day_placeholder">주로 소비하는 요일을 선택해 주세요</string>
+    <string name="onboarding_fifth_major_expenditure_time">주 지출 시간</string>
+
+
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>
+    <string name="common_skip">건너뛰기</string>
+    <string name="common_sunday">일요일</string>
+    <string name="common_monday">월요일</string>
+    <string name="common_tuesday">화요일</string>
+    <string name="common_wednesday">수요일</string>
+    <string name="common_thursday">목요일</string>
+    <string name="common_friday">금요일</string>
+    <string name="common_saturday">토요일</string>
 </resources>
