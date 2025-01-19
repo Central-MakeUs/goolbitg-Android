@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.project.domain"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -32,9 +32,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-    kapt {
-        keepJavacAnnotationProcessors = true
     }
     hilt{
         enableAggregatingTask = false

@@ -13,7 +13,7 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.project.presentation"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -48,9 +48,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-    kapt {
-        keepJavacAnnotationProcessors = true
-    }
 }
 
 dependencies {
@@ -69,6 +66,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.material)
+    implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -82,6 +80,10 @@ dependencies {
 
     // Glide
     implementation(libs.glide.compose)
+
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

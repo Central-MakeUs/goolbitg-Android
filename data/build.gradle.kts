@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.project.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -36,9 +36,6 @@ android {
 
     buildFeatures{
         buildConfig = true
-    }
-    kapt {
-        keepJavacAnnotationProcessors = true
     }
 }
 
