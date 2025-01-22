@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.dagger.hilt.android) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.google.gms) apply false
 }

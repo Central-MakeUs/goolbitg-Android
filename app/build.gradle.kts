@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
-//    alias(libs.plugins.google.gms)
+    alias(libs.plugins.google.gms)
     alias(libs.plugins.jetbrains.kotlin.kapt)
 }
 
@@ -86,9 +86,9 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
-//    implementation(libs.firebase.messaging.ktx)
-//    implementation(platform(libs.firebase.bom))
-//    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.pager)
