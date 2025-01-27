@@ -43,10 +43,16 @@
     <string name="onboarding_fifth_major_expenditure_day_placeholder">주로 소비하는 요일을 선택해 주세요</string>
     <string name="onboarding_fifth_major_expenditure_time">주 지출 시간</string>
 
+    <string name="challenge_addition_header_title">챌린지 추가</string>
+    <string name="challenge_addition_title">#VALUE#님,\n어떤 습관을 만들어 볼까요?</string>
+    <string name="challenge_addition_sub_title">만들고 싶은 습관 1개를 선택해주세요</string>
+    <string name="challenge_addition_same_consume_type_challenge">같은 소비유형 인기 챌린지</string>
+    <string name="challenge_addition_etc_challenge">그 외 이런습관은 어때요?</string>
 
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>
     <string name="common_skip">건너뛰기</string>
+    <string name="common_challenge">도전하기</string>
     <string name="common_sunday">일요일</string>
     <string name="common_monday">월요일</string>
     <string name="common_tuesday">화요일</string>
