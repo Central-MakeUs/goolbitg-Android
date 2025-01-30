@@ -58,12 +58,37 @@
     <string name="challenge_detail_stop_title">챌린지 멈추기</string>
     <string name="challenge_detail_stop_sub_title">지금 멈추면 앞으로 기록을 못해요\n정말 멈추겠습니까?</string>
 
+    <string name="mypage_header_title">마이페이지</string>
+    <string name="mypage_card_nickname">#VALUE#님</string>
+    <string name="mypage_card_consume_score">내 소비 점수</string>
+    <string name="mypage_card_consume_score_value">#VALUE#점</string>
+    <string name="mypage_card_total_challenge_count">총 챌린지 수</string>
+    <string name="mypage_card_posting_count">작성한 글</string>
+    <string name="mypage_card_level_title">다음 굴비까지 #VALUE#원 남았어요</string>
+    <string name="mypage_consume_habit">나의 소비 습관</string>
+    <string name="mypage_consume_habit_pattern_analysis">소비습관형성 패턴 분석</string>
+    <string name="mypage_account_management">계정 관리</string>
+    <string name="mypage_account_management_id">아이디</string>
+    <string name="mypage_usage_guide">이용 안내</string>
+    <string name="mypage_usage_guide_app_version">앱 버전</string>
+    <string name="mypage_usage_guide_cs">문의하기</string>
+    <string name="mypage_usage_guide_notice">공지사항</string>
+    <string name="mypage_usage_guide_qna">자주 묻는 질문</string>
+    <string name="mypage_usage_guide_terms_and_services">서비스 이용약관</string>
+    <string name="mypage_usage_guide_privacy_and_policy">개인정보 보호정책</string>
+    <string name="mypage_usage_guide_advertisement">맞춤형 광고 및 개인정보 제공 동의</string>
+    <string name="mypage_usage_guide_teenager">청소년 보호 정책</string>
+    <string name="mypage_usage_guide_opensource_license">오픈소스 라이선스</string>
+    <string name="mypage_usage_logout">로그아웃</string>
+    <string name="mypage_usage_withdraw">서비스 탈퇴</string>
+
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>
     <string name="common_skip">건너뛰기</string>
     <string name="common_challenge">도전하기</string>
     <string name="common_stop">멈추기</string>
     <string name="common_cancel">취소</string>
+    <string name="common_share">공유하기</string>
     <string name="common_sunday">일요일</string>
     <string name="common_monday">월요일</string>
     <string name="common_tuesday">화요일</string>
