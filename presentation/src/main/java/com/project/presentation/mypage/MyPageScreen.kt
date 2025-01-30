@@ -26,7 +26,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,9 +59,12 @@ import com.project.presentation.item.MyPageUsageGuideEnum
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
+import com.project.presentation.ui.theme.gray100
 import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray400
+import com.project.presentation.ui.theme.gray500
 import com.project.presentation.ui.theme.main100
+import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
@@ -66,6 +72,7 @@ import com.project.presentation.ui.theme.white
 @Composable
 @Preview
 fun MyPageScreen(navHostController: NavHostController = rememberNavController()) {
+    var isLogout by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,10 +93,30 @@ fun MyPageScreen(navHostController: NavHostController = rememberNavController())
                     }
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                MyPageContent()
+                MyPageContent(
+                    onUsageGuideClick = { item ->
+
+                    },
+                    onLogout = {
+                        isLogout = true
+                    },
+                    onWithdraw = {
+
+                    }
+                )
             }
         }
 
+        if (isLogout) {
+            MyPageLogoutPopup(
+                onConfirm = {
+                    isLogout = false
+                },
+                onDismiss = {
+                    isLogout = false
+                }
+            )
+        }
     }
 }
 
@@ -142,7 +169,12 @@ fun MyPageHeader(
 }
 
 @Composable
-fun MyPageContent(modifier: Modifier = Modifier) {
+fun MyPageContent(
+    modifier: Modifier = Modifier,
+    onUsageGuideClick: (MyPageUsageGuideEnum) -> Unit,
+    onLogout: () -> Unit,
+    onWithdraw: () -> Unit
+) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -169,15 +201,13 @@ fun MyPageContent(modifier: Modifier = Modifier) {
         item {
             MyPageUsageGuide(
                 appVersion = "1.0.0(2025.01.30)",
-                onUsageGuideClick = { item ->
-
-                }
+                onUsageGuideClick = onUsageGuideClick
             )
         }
         item {
             MyPageLogoutAndWithdraw(
-                onLogout = {},
-                onWithdraw = {}
+                onLogout = onLogout,
+                onWithdraw = onWithdraw
             )
             Spacer(modifier = Modifier.height(19.dp))
         }
@@ -542,8 +572,100 @@ fun MyPageLogoutAndWithdraw(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(modifier = Modifier.clickable { onLogout() }, text = stringResource(R.string.mypage_usage_logout), color = gray300, style = goolbitgTypography.btn3)
+        Text(
+            modifier = Modifier.clickable { onLogout() },
+            text = stringResource(R.string.mypage_usage_logout),
+            color = gray300,
+            style = goolbitgTypography.btn3
+        )
         Text(text = "・", color = gray300, style = goolbitgTypography.btn3)
-        Text(modifier = Modifier.clickable { onWithdraw() }, text = stringResource(R.string.mypage_usage_withdraw), color = gray300, style = goolbitgTypography.btn3)
+        Text(
+            modifier = Modifier.clickable { onWithdraw() },
+            text = stringResource(R.string.mypage_usage_withdraw),
+            color = gray300,
+            style = goolbitgTypography.btn3
+        )
+    }
+}
+
+@Composable
+fun MyPageLogoutPopup(
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(black.copy(alpha = 0.3f))
+    ) {
+        Column(
+            modifier = Modifier
+                .width(300.dp)
+                .clip(RoundedCornerShape(roundMd))
+                .border(
+                    width = 1.dp,
+                    color = gray400,
+                    shape = RoundedCornerShape(roundMd)
+                )
+                .background(gray500)
+                .padding(16.dp)
+                .align(Alignment.Center),
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.mypage_usage_logout_popup_title),
+                color = white,
+                textAlign = TextAlign.Center,
+                style = goolbitgTypography.h3
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.mypage_usage_logout_popup_sub_title),
+                color = Color(0xFF9CA3AF),
+                textAlign = TextAlign.Center,
+                style = goolbitgTypography.caption2
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(CircleShape)
+                        .background(gray400)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onDismiss()
+                        }
+                        .padding(10.5.dp),
+                    text = stringResource(R.string.common_cancel),
+                    color = gray100,
+                    style = goolbitgTypography.btn2,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(CircleShape)
+                        .background(com.project.presentation.ui.theme.error)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onConfirm()
+                        }
+                        .padding(10.5.dp),
+                    text = stringResource(R.string.mypage_usage_logout),
+                    color = white,
+                    style = goolbitgTypography.btn2,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }

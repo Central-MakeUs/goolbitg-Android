@@ -81,6 +81,8 @@
     <string name="mypage_usage_guide_opensource_license">오픈소스 라이선스</string>
     <string name="mypage_usage_logout">로그아웃</string>
     <string name="mypage_usage_withdraw">서비스 탈퇴</string>
+    <string name="mypage_usage_logout_popup_title">로그아웃</string>
+    <string name="mypage_usage_logout_popup_sub_title">정말 로그아웃하시겠어요?</string>
 
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>
