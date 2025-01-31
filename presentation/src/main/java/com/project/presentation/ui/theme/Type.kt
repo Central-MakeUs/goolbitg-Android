@@ -83,6 +83,12 @@ val goolbitgTypography = GoolbitgTypography(
         fontSize = 16.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = true)
     ),
+    caption3 = TextStyle(
+        fontFamily = PretendFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 8.sp,
+        platformStyle = PlatformTextStyle(includeFontPadding = true)
+    ),
     btn1 = TextStyle(
         fontFamily = PretendFontFamily,
         fontWeight = FontWeight.Bold,
@@ -91,16 +97,22 @@ val goolbitgTypography = GoolbitgTypography(
     ),
     btn2 = TextStyle(
         fontFamily = PretendFontFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = true)
     ),
     btn3 = TextStyle(
         fontFamily = PretendFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        platformStyle = PlatformTextStyle(includeFontPadding = true)
+    ),
+    btn4 = TextStyle(
+        fontFamily = PretendFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = true)
-    )
+    ),
 )
 
 @Immutable
@@ -116,7 +128,9 @@ data class GoolbitgTypography(
     val body5: TextStyle,
     val caption1: TextStyle,
     val caption2: TextStyle,
+    val caption3: TextStyle,
     val btn1: TextStyle,
     val btn2: TextStyle,
     val btn3: TextStyle,
+    val btn4: TextStyle,
 )

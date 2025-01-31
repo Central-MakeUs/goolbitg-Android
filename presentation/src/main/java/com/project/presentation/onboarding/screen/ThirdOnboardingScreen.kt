@@ -3,6 +3,7 @@ package com.project.presentation.onboarding.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -227,7 +228,10 @@ fun OnboardingCheckListItem(
             .clip(CircleShape)
             .border(width = 1.dp, shape = CircleShape, color = borderColor)
             .background(bgColor)
-            .clickable { onItemClick() }
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            )  { onItemClick() }
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         BaseIcon(iconId = if (isSelected) R.drawable.ic_checkbox_green else R.drawable.ic_checkbox_gray)
