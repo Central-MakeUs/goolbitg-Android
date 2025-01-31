@@ -2,6 +2,7 @@ package com.project.goolbitg
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,11 +16,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.messaging.FirebaseMessaging
+import com.project.presentation.challenge.ChallengeScreen
 import com.project.presentation.login.LoginScreen
 import com.project.presentation.navigation.NavItem
+import com.project.presentation.onboarding.screen.AnalysisConsumeTypeScreen
+import com.project.presentation.onboarding.screen.FifthOnboardingScreen
 import com.project.presentation.onboarding.screen.FirstOnboardingScreen
 import com.project.presentation.onboarding.screen.FourthOnboardingScreen
 import com.project.presentation.onboarding.screen.SecondOnboardingScreen
+import com.project.presentation.onboarding.screen.ShowConsumeTypeScreen
 import com.project.presentation.onboarding.screen.ThirdOnboardingScreenScreen
 import com.project.presentation.permission.IntroPermissionScreen
 import com.project.presentation.splash.SplashScreen
@@ -38,12 +44,22 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
             controller.isAppearanceLightStatusBars = false // 상태바 아이콘 색상 설정
         }
-
+        initFcmToken()
         enableEdgeToEdge()
         setContent {
             val navHostController = rememberNavController()
             NavigationGraph(navHostController = navHostController)
         }
+    }
+}
+
+private fun initFcmToken() {
+    // 로그인 하지 않은 경우 제외
+    // 로그인 상태인데 유효한 토큰이 설정된 적이 없는 경우 Firebase 에서 등록된 FcmToken 을 가져오고 서버로 전송한다.
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+        if (!task.isSuccessful) return@addOnCompleteListener
+        val fcmToken = task.result
+        Log.d("TAG", "initFcmToken: ${fcmToken}")
     }
 }
 
@@ -81,7 +97,7 @@ private fun NavigationGraph(
             LoginScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.IntroPermission.route){
+        composable(NavItem.IntroPermission.route) {
             IntroPermissionScreen(navHostController = navHostController)
         }
 
@@ -101,6 +117,21 @@ private fun NavigationGraph(
             FourthOnboardingScreen(navHostController = navHostController)
         }
 
+        composable(NavItem.FifthOnboarding.route) {
+            FifthOnboardingScreen(navHostController = navHostController)
+        }
+
+        composable(NavItem.AnalysisConsumeType.route) {
+            AnalysisConsumeTypeScreen(navHostController = navHostController)
+        }
+
+        composable(NavItem.ShowConsumeType.route) {
+            ShowConsumeTypeScreen(navHostController = navHostController)
+        }
+
+        composable(NavItem.Challenge.route) {
+            ChallengeScreen(navHostController = navHostController)
+        }
     }
 }
 

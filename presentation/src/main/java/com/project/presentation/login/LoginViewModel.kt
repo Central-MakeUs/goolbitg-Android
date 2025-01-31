@@ -9,14 +9,20 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(): ViewModel() {
+    private val _state = MutableStateFlow(LoginState.create())
+    val state get() = _state.asStateFlow()
+
     private val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Log.e(TAG, "카카오계정으로 로그인 실패", error)
         } else if (token != null) {
+            Log.i(TAG, "카카오계정으로 로그인 성공 ${token.idToken}")
             Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
 
         }
@@ -41,6 +47,7 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                         callback = callback
                     )
                 } else if (token != null) {
+                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.idToken}")
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                 }
             }

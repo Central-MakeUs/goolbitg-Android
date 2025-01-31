@@ -1,6 +1,8 @@
 package com.project.presentation.onboarding
 
+import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import com.project.presentation.common.GenderEnum
 import com.project.presentation.common.NicknameState
@@ -15,6 +17,10 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow(OnboardingState.create())
     val state get() = _state.asStateFlow()
+
+    init {
+
+    }
 
     fun onEvent(event: OnboardingEvent) {
         when (event) {
@@ -61,6 +67,46 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
                     checkList = state.value.checkList.map { it.copy() }.apply{
                         this[event.idx].isChecked = !this[event.idx].isChecked
                     }
+                )
+            }
+
+            is OnboardingEvent.ChangeMonthAvgIncome -> {
+                if(event.newValue.isDigitsOnly()){
+                    _state.value = _state.value.copy(
+                        monthAvgIncome = event.newValue
+                    )
+                }
+            }
+
+            is OnboardingEvent.ChangeMonthAvgSaving -> {
+                if(event.newValue.isDigitsOnly()) {
+                    _state.value = _state.value.copy(
+                        monthAvgSaving = event.newValue
+                    )
+                }
+            }
+
+            is OnboardingEvent.SelectMajorExpenditureDayOfWeek -> {
+                _state.value = _state.value.copy(
+                    majorExpenditureDayOfWeek = event.dayOfWeek
+                )
+            }
+
+            is OnboardingEvent.ChangeMajorExpenditureHour -> {
+                _state.value = _state.value.copy(
+                    majorExpenditureHours = event.newValue
+                )
+            }
+
+            is OnboardingEvent.ChangeMajorExpenditureMinute -> {
+                _state.value = _state.value.copy(
+                    majorExpenditureMinutes = event.newValue
+                )
+            }
+
+            is OnboardingEvent.ChangeMajorExpenditureAmpm -> {
+                _state.value = _state.value.copy(
+                    majorExpenditureAmpm = event.newValue
                 )
             }
         }

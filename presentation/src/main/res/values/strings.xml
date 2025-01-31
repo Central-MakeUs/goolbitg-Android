@@ -30,11 +30,11 @@
     <string name="onboarding_third_sub_title_highlight">모두</string>
 
     <string name="onboarding_fourth_title">소비 습관 점수</string>
-    <string name="onboarding_fourth_subtitle">본인의 평균 수입과 저축으로\n과소비 지수를 측정해드려요!</string>
+    <string name="onboarding_fourth_sub_title">본인의 평균 수입과 저축으로\n과소비 지수를 측정해드려요!</string>
     <string name="onboarding_fourth_month_avg_income">월 평균 수입</string>
-    <string name="onboarding_fourth_month_avg_income_placeholder">₩ 월 평균 수입 금액을 작성해 주세요</string>
+    <string name="onboarding_fourth_month_avg_income_placeholder">월 평균 수입 금액을 작성해 주세요</string>
     <string name="onboarding_fourth_month_avg_saving">월 평균 저축</string>
-    <string name="onboarding_fourth_month_avg_saving_placeholder">₩ 월 평균 저축 금액을 작성해 주세요</string>
+    <string name="onboarding_fourth_month_avg_saving_placeholder">월 평균 저축 금액을 작성해 주세요</string>
     <string name="onboarding_fourth_tooltip_description">평균 수입에 대한 평균 저축률을 기반으로\n소비 점수를 계산해주고 있어요</string>
 
     <string name="onboarding_fifth_title">지출 요일/시간 입력</string>
@@ -43,6 +43,18 @@
     <string name="onboarding_fifth_major_expenditure_day_placeholder">주로 소비하는 요일을 선택해 주세요</string>
     <string name="onboarding_fifth_major_expenditure_time">주 지출 시간</string>
 
+    <string name="analysis_consume_type_title">소비유형을\n분석하고 있어요!</string>
+    <string name="analysis_consume_type_sub_title">조금만 기다리면,\n나의 소비 유형을 받아볼 수 있어요!</string>
+
+    <string name="show_consume_type_title">#NICKNAME#님은\n#TYPE# 유형입니다</string>
+    <string name="show_consume_type_sub_title">나만의 맞춤형 소비습관을 추천받거나\n주변에 내 소비 유형을 공유해보세요</string>
+    <string name="show_consume_type_share">나의 소비습관 공유하기</string>
+    <string name="show_consume_type_btn_text">나에게 맞는 소비습관 형성하기</string>
+    <string name="show_consume_type_my_consume_score">나의 소비 점수</string>
+    <string name="show_consume_type_same_type">같은 유형 굴비</string>
+    
+    <string name="challenge_individual">개인</string>
+    <string name="challenge_group">그룹</string>
 
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>
@@ -54,4 +66,13 @@
     <string name="common_thursday">목요일</string>
     <string name="common_friday">금요일</string>
     <string name="common_saturday">토요일</string>
+    <string name="common_sunday_2">일</string>
+    <string name="common_monday_2">월</string>
+    <string name="common_tuesday_2">화</string>
+    <string name="common_wednesday_2">수</string>
+    <string name="common_thursday_2">목</string>
+    <string name="common_friday_2">금</string>
+    <string name="common_saturday_2">토</string>
+    <string name="common_score_value">#VALUE#점</string>
+    <string name="common_person_count_value">#VALUE#명</string>
 </resources>

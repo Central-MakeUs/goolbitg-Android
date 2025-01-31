@@ -30,4 +30,20 @@ sealed class NavItem(
     data object FourthOnboarding: NavItem(
         route = "fourth_onboarding"
     )
+
+    data object FifthOnboarding: NavItem(
+        route = "fifth_onboarding"
+    )
+
+    data object AnalysisConsumeType: NavItem(
+        route = "analysis_consume_type"
+    )
+
+    data object ShowConsumeType: NavItem(
+        route = "show_consume_type"
+    )
+
+    data object Challenge: NavItem(
+        route = "challenge"
+    )
 }

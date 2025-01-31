@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,9 +23,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieClipSpec
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
-import com.project.presentation.base.BaseIcon
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingViewModel
 import com.project.presentation.ui.theme.black
@@ -47,14 +54,11 @@ fun SecondOnboardingScreen(
             .background(gray700)
     ) {
         Scaffold(containerColor = transparent) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-                BaseIcon(
-                    modifier = Modifier.fillMaxSize(),
-                    iconId = R.drawable.img_onboarding2_bg,
-                    contentScale = ContentScale.FillHeight
-                )
-
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)) {
                 SecondOnboardingContent(
+                    modifier = Modifier.fillMaxSize(),
                     nickname = state.nickname
                 )
 
@@ -80,18 +84,37 @@ fun SecondOnboardingContent(
     nickname: String,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
-        Spacer(modifier = Modifier.height(36.dp))
-        Text(
-            text = stringResource(R.string.onboarding_second_title).replace("#VALUE#", nickname),
-            style = goolbitgTypography.h1,
-            color = white
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.illu_onboarding2_card)
+    )
+    val lottieAnimatable = rememberLottieAnimatable()
+    LaunchedEffect(composition) {
+        lottieAnimatable.animate(
+            composition = composition,
+            clipSpec = LottieClipSpec.Frame(0, 1200),
+            initialProgress = 0f
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.onboarding_second_sub_title),
-            style = goolbitgTypography.body1,
-            color = gray300
-        )
+    }
+    Column(modifier = modifier) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)) {
+            Spacer(modifier = Modifier.height(36.dp))
+            Text(
+                text = stringResource(R.string.onboarding_second_title).replace(
+                    "#VALUE#",
+                    nickname
+                ),
+                style = goolbitgTypography.h1,
+                color = white
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.onboarding_second_sub_title),
+                style = goolbitgTypography.body1,
+                color = gray300
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }

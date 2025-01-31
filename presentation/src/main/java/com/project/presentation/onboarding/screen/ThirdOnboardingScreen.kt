@@ -1,6 +1,5 @@
 package com.project.presentation.onboarding.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,20 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -50,7 +44,6 @@ import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.CheckListData
 import com.project.presentation.onboarding.OnboardingEvent
-import com.project.presentation.onboarding.OnboardingState
 import com.project.presentation.onboarding.OnboardingViewModel
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -72,7 +65,7 @@ fun ThirdOnboardingScreenScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val isNextBtnVisible by remember(state.value) {
         derivedStateOf {
-            state.value.isAnyChecklistItemChecked()
+            state.value.isThirdOnboardingCompleted()
         }
     }
     Box(

@@ -98,5 +98,9 @@ dependencies {
     // Permission
     implementation(libs.accompanist.permissions)
 
+    // Kakao
     implementation(libs.kakao.all)
+
+    // Lottie
+    implementation(libs.lottie)
 }

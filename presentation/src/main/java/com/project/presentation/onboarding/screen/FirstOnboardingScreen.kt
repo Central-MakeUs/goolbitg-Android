@@ -1,5 +1,7 @@
 package com.project.presentation.onboarding.screen
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
+import com.project.presentation.base.BaseDatePicker
 import com.project.presentation.base.BaseOutlinedTextFiled
 import com.project.presentation.common.GenderEnum
 import com.project.presentation.navigation.NavItem
@@ -82,9 +83,11 @@ fun FirstOnboardingScreen(
             .background(bg1)
     ) {
         Scaffold(containerColor = transparent) { innerPadding ->
-            Box(modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ) {
                 FirstOnboardingBody(
                     modifier = Modifier.fillMaxWidth(),
                     state = state,
@@ -260,60 +263,13 @@ fun InputBirthContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-            BaseOutlinedTextFiled(
-                modifier = Modifier
-                    .weight(1f),
-                value = year,
-                textStyle = goolbitgTypography.caption2,
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.onboarding_first_birth_year_placeholder),
-                        style = goolbitgTypography.caption2,
-                        color = gray500
-                    )
-                },
-                shape = RoundedCornerShape(6.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = onYearChanged
-            )
+//            BaseDatePicker(
+//                yearList = (1900..2025).map { it.toString() },
+//                onYearChanged = onYearChanged,
+//                onMonthChanged = onMonthChanged,
+//                onDayChanged = onDayChanged,
+//            )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            BaseOutlinedTextFiled(
-                modifier = Modifier
-                    .weight(1f),
-                value = month,
-                textStyle = goolbitgTypography.caption2,
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.onboarding_first_birth_month_placeholder),
-                        style = goolbitgTypography.caption2,
-                        color = gray500
-                    )
-                },
-                shape = RoundedCornerShape(6.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = onMonthChanged
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            BaseOutlinedTextFiled(
-                modifier = Modifier
-                    .weight(1f),
-                value = day,
-                textStyle = goolbitgTypography.caption2,
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.onboarding_first_birth_day_placeholder),
-                        style = goolbitgTypography.caption2,
-                        color = gray500
-                    )
-                },
-                shape = RoundedCornerShape(6.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = onDayChanged
-            )
         }
     }
 }
