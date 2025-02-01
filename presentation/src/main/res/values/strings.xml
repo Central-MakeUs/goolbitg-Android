@@ -55,6 +55,19 @@
 
     <string name="challenge_individual">개인</string>
     <string name="challenge_group">그룹</string>
+    <string name="home_title">#VALUE#님,\n이번주 얼마나 아끼셨나요?</string>
+    <string name="home_sub_title">원 아꼈어요!</string>
+    <string name="home_achieved_day">#VALUE#일째 달성중</string>
+    <string name="home_today_list_title">오늘 실천해야해요</string>
+    <string name="home_today_list_subtitle">총 #VALUE#원 절약 가능</string>
+    <string name="home_price_phrase_1">기본 택시비만큼 아꼈어요</string>
+    <string name="home_price_phrase_2">영화 티켓 1장만큼 아꼈어요</string>
+    <string name="home_price_phrase_3">치킨 1마리만큼 아꼈어요</string>
+    <string name="home_price_phrase_4">홀케이크 1개만큼 아꼈어요</string>
+    <string name="home_price_phrase_5">스탠리 텀블러 1개만큼 아꼈어요</string>
+    <string name="home_price_phrase_6">한우세트만큼 아꼈어요</string>
+    <string name="home_price_phrase_7">신세계 상품권 1장만큼 아꼈어요</string>
+
     <string name="challenge_addition_header_title">챌린지 추가</string>
     <string name="challenge_addition_title">#VALUE#님,\n어떤 습관을 만들어 볼까요?</string>
     <string name="challenge_addition_sub_title">만들고 싶은 습관 1개를 선택해주세요</string>
@@ -95,6 +108,11 @@
     <string name="mypage_usage_withdraw">서비스 탈퇴</string>
     <string name="mypage_usage_logout_popup_title">로그아웃</string>
     <string name="mypage_usage_logout_popup_sub_title">정말 로그아웃하시겠어요?</string>
+
+    <string name="nav_item_home">홈</string>
+    <string name="nav_item_challenge">챌린지</string>
+    <string name="nav_item_buy_or_not">살까말가</string>
+    <string name="nav_item_my_page">마이페이지</string>
 
     <string name="common_start">시작하기</string>
     <string name="common_next">다음으로</string>

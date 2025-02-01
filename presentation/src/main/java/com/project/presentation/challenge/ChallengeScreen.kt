@@ -43,7 +43,8 @@ import com.project.presentation.base.BaseTab
 import com.project.presentation.base.BaseBar
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.common.DayOfWeekEnum
-import com.project.presentation.common.item.ChallengeInfoItem
+import com.project.presentation.item.ChallengeInfo
+import com.project.presentation.navigation.BaseBottomNavBar
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray200
 import com.project.presentation.ui.theme.gray400
@@ -59,7 +60,11 @@ fun ChallengeScreen(
     navHostController: NavHostController = rememberNavController()
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(containerColor = transparent) { innerPadding ->
+        Scaffold(containerColor = transparent,
+            bottomBar = {
+                BaseBottomNavBar(navController = navHostController)
+            }
+        ) { innerPadding ->
             ChallengeContent(modifier = Modifier.padding(innerPadding))
         }
     }
@@ -80,11 +85,11 @@ fun ChallengeContent(modifier: Modifier = Modifier) {
         var selectedTabIdx by remember { mutableStateOf(0) }
         BaseTab(
             modifier = Modifier.height(41.dp),
-            items = listOf("ffff","zdfsdg"),
+            items = listOf("ffff", "zdfsdg"),
             selectedItemIndex = selectedTabIdx,
-            onSelectedTab = {selectedTabIdx = it}
+            onSelectedTab = { selectedTabIdx = it }
         )
-        val list = List(10) { ChallengeInfoItem(title = "ff", subTitle = "fsg", imgUrl = "") }
+        val list = List(10) { ChallengeInfo(id = 1, title = "ff", subTitle = "fsg", imgUrl = "", savedPrice = 7000) }
         ChallengeListContent(modifier = Modifier.weight(1f), challengeList = list)
     }
 }
@@ -247,7 +252,7 @@ fun CalendarItem(
 
 @Composable
 fun ChallengeListContent(
-    challengeList: List<ChallengeInfoItem>,
+    challengeList: List<ChallengeInfo>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -261,7 +266,7 @@ fun ChallengeListContent(
 @Composable
 fun ChallengeListItem(
     modifier: Modifier = Modifier,
-    item: ChallengeInfoItem
+    item: ChallengeInfo
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         Row(

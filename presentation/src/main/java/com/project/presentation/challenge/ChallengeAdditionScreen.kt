@@ -256,9 +256,9 @@ fun ChallengeAdditionContent(
         }
 
         val popularList = listOf(
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능"),
-            ChallengeInfo(id = 1, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능"),
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능"),
+            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능", imgUrl = "", savedPrice = 15000),
+            ChallengeInfo(id = 1, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능", imgUrl = "", savedPrice = 7000),
+            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
         )
         item {
             Column(
@@ -297,12 +297,12 @@ fun ChallengeAdditionContent(
         }
 
         val etcList = listOf(
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능"),
-            ChallengeInfo(id = 2, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능"),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능"),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능"),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능"),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능"),
+            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능", imgUrl = "", savedPrice = 15000),
+            ChallengeInfo(id = 2, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능", imgUrl = "", savedPrice = 7000),
+            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
+            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
+            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
+            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
         )
         item {
             Spacer(modifier = Modifier.height(16.dp))

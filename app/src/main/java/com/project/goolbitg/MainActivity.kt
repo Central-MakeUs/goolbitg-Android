@@ -18,7 +18,11 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.project.presentation.challenge.ChallengeScreen
+import com.project.presentation.challenge.ChallengeAdditionScreen
+import com.project.presentation.challenge.ChallengeDetailScreen
+import com.project.presentation.home.HomeScreen
 import com.project.presentation.login.LoginScreen
+import com.project.presentation.mypage.MyPageScreen
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.screen.AnalysisConsumeTypeScreen
 import com.project.presentation.onboarding.screen.FifthOnboardingScreen
@@ -79,7 +83,7 @@ private fun NavigationGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = NavItem.Splash.route,
+        startDestination = NavItem.Home.route,
         modifier = modifier
     ) {
         composable(NavItem.Splash.route) {
@@ -131,6 +135,23 @@ private fun NavigationGraph(
 
         composable(NavItem.Challenge.route) {
             ChallengeScreen(navHostController = navHostController)
+        }
+        composable(NavItem.Home.route) {
+            HomeScreen(
+                navHostController = navHostController,
+            )
+        }
+
+        composable(NavItem.MyPage.route) {
+            MyPageScreen(navHostController = navHostController)
+        }
+
+        composable(NavItem.ChallengeAddition.route) {
+            ChallengeAdditionScreen(navHostController = navHostController)
+        }
+
+        composable(NavItem.ChallengeDetail.route) {
+            ChallengeDetailScreen(navHostController = navHostController)
         }
     }
 }

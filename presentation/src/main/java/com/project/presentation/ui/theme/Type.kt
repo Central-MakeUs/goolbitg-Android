@@ -17,6 +17,12 @@ private val PretendFontFamily = FontFamily(
 )
 
 val goolbitgTypography = GoolbitgTypography(
+    display = TextStyle(
+        fontFamily = PretendFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+        platformStyle = PlatformTextStyle(includeFontPadding = false)
+    ),
     h1 = TextStyle(
         fontFamily = PretendFontFamily,
         fontWeight = FontWeight.Bold,
@@ -117,6 +123,7 @@ val goolbitgTypography = GoolbitgTypography(
 
 @Immutable
 data class GoolbitgTypography(
+    val display: TextStyle,
     val h1: TextStyle,
     val h2: TextStyle,
     val h3: TextStyle,

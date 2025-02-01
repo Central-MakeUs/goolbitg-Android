@@ -56,6 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.item.MyPageUsageGuideEnum
+import com.project.presentation.navigation.BaseBottomNavBar
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -84,7 +85,10 @@ fun MyPageScreen(navHostController: NavHostController = rememberNavController())
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )
-        Scaffold(containerColor = transparent) { innerPadding ->
+        Scaffold(containerColor = transparent,
+            bottomBar = {
+                BaseBottomNavBar(navController = navHostController)
+            }) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 MyPageHeader(
                     newAlarmCount = 1,
@@ -129,7 +133,8 @@ fun MyPageHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 13.dp),
+            .height(64.dp)
+            .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
