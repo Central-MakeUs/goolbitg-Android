@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,12 +38,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.project.domain.model.user.RegisterStatus
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.login.LoginViewModel
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -61,7 +66,61 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @Preview(showBackground = true)
-fun IntroPermissionScreen(navHostController: NavHostController = rememberNavController()) {
+fun IntroPermissionScreen(
+    navHostController: NavHostController = rememberNavController(),
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.value.registerStatus) {
+        if (state.value.registerStatus == null) return@LaunchedEffect
+        when (state.value.registerStatus) {
+            RegisterStatus.FirstOnboarding -> {
+                navHostController.navigate(NavItem.FirstOnboarding.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.TermsOfServices -> {
+                navHostController.navigate(NavItem.FirstOnboarding.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.UserInfo -> {
+                navHostController.navigate(NavItem.SecondOnboarding.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.CheckList -> {
+                navHostController.navigate(NavItem.FourthOnboarding.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.ConsumeHabit -> {
+                navHostController.navigate(NavItem.FifthOnboarding.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.ConsumePattern -> {
+                navHostController.navigate(NavItem.ChallengeAddition.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            RegisterStatus.AddChallenge -> {
+                navHostController.navigate(NavItem.Home.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            else -> {}
+        }
+    }
+
     val multiplePermissionState = rememberMultiplePermissionsState(
         permissions = mutableListOf(CAMERA).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -72,7 +131,7 @@ fun IntroPermissionScreen(navHostController: NavHostController = rememberNavCont
             }
         },
         onPermissionsResult = {
-            navHostController.navigate(NavItem.FirstOnboarding.route)
+            viewModel.checkRegisterStatus()
         }
     )
 

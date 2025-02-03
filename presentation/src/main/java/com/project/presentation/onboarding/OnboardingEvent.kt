@@ -4,11 +4,13 @@ import com.project.presentation.common.DayOfWeekEnum
 
 sealed class OnboardingEvent {
     data class ChangeNickname(val newValue: String): OnboardingEvent()
+    data object DuplicationCheck : OnboardingEvent()
     data class ChangeYear(val newValue: String): OnboardingEvent()
     data class ChangeMonth(val newValue: String): OnboardingEvent()
     data class ChangeDay(val newValue: String): OnboardingEvent()
     data object ClickMale: OnboardingEvent()
     data object ClickFemale: OnboardingEvent()
+    data class RequestFirstOnboarding(val isAdvertisementAgreement: Boolean) : OnboardingEvent()
     data class ClickCheckListItem(val idx: Int): OnboardingEvent()
     data class ChangeMonthAvgIncome(val newValue: String): OnboardingEvent()
     data class ChangeMonthAvgSaving(val newValue: String): OnboardingEvent()

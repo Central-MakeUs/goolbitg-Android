@@ -453,14 +453,14 @@ fun TodayTodoItem(
 }
 
 fun getChallengePricePhrase(context: Context, price: Int): String {
-    return when {
-        price in (2000 until 5000) -> context.getString(R.string.home_price_phrase_0)
-        price in (5000 until 10000) -> context.getString(R.string.home_price_phrase_1)
-        price in (10000 until 20000) -> context.getString(R.string.home_price_phrase_2)
-        price in (20000 until 30000) -> context.getString(R.string.home_price_phrase_3)
-        price in (30000 until 40000) -> context.getString(R.string.home_price_phrase_4)
-        price in (40000 until 50000) -> context.getString(R.string.home_price_phrase_5)
-        price in (50090 until 100000) -> context.getString(R.string.home_price_phrase_6)
+    return when (price) {
+        in (2000 until 5000) -> context.getString(R.string.home_price_phrase_0)
+        in (5000 until 10000) -> context.getString(R.string.home_price_phrase_1)
+        in (10000 until 20000) -> context.getString(R.string.home_price_phrase_2)
+        in (20000 until 30000) -> context.getString(R.string.home_price_phrase_3)
+        in (30000 until 40000) -> context.getString(R.string.home_price_phrase_4)
+        in (40000 until 50000) -> context.getString(R.string.home_price_phrase_5)
+        in (50090 until 100000) -> context.getString(R.string.home_price_phrase_6)
         else -> context.getString(R.string.home_price_phrase_7)
     }
 }

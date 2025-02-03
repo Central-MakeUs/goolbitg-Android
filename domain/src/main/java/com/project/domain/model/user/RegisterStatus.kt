@@ -1,7 +1,8 @@
 package com.project.domain.model.user
 
 enum class RegisterStatus(val code: Int) {
-    FirstLogin(code = 0),
+    Login(code = -1),
+    FirstOnboarding(code = 0),
     TermsOfServices(code = 1),
     UserInfo(code = 2),
     CheckList(code = 3),

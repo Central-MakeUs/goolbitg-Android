@@ -450,7 +450,7 @@ fun getScreenHeightInPixelsOnce(): Int {
     }
 }
 
-private fun calculateScrimAlpha(
+fun calculateScrimAlpha(
     offset: Float,
     screenHeight: Int,
     bottomSheetMinOffset: Float

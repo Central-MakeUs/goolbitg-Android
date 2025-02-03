@@ -30,10 +30,10 @@ fun BaseOutlinedTextFiled(
         unfocusedContainerColor = gray600,
         disabledContainerColor = gray600,
         errorContainerColor = gray600,
-        focusedBorderColor = com.project.presentation.ui.theme.error,
+        focusedBorderColor = gray500,
         unfocusedBorderColor = gray500,
         disabledBorderColor = gray500,
-        errorBorderColor = gray500,
+        errorBorderColor = com.project.presentation.ui.theme.error,
         cursorColor = com.project.presentation.ui.theme.error
     ),
     onValueChange: (String) -> Unit

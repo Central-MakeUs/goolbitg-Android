@@ -4,27 +4,43 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.project.data.preferences.AuthDataStore
+import com.project.domain.common.ErrorCode
+import com.project.domain.model.DataState
+import com.project.domain.usecase.auth.LoginUseCase
+import com.project.domain.usecase.auth.RegisterUseCase
+import com.project.domain.usecase.user.CheckRegisterStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(): ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authDataStore: AuthDataStore,
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase,
+    private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase
+) : ViewModel() {
     private val _state = MutableStateFlow(LoginState.create())
     val state get() = _state.asStateFlow()
+
+    private val isPermission = authDataStore.getIsPermissionFlow()
 
     private val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Log.e(TAG, "카카오계정으로 로그인 실패", error)
         } else if (token != null) {
-            Log.i(TAG, "카카오계정으로 로그인 성공 ${token.idToken}")
-            Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-
+            if (token.idToken != null) {
+                socialLogin(idToken = token.idToken!!)
+            }
         }
     }
 
@@ -47,8 +63,9 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                         callback = callback
                     )
                 } else if (token != null) {
-                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.idToken}")
-                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    if (token.idToken != null) {
+                        socialLogin(idToken = token.idToken!!)
+                    }
                 }
             }
         } else {
@@ -56,6 +73,108 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                 context,
                 callback = callback
             )
+        }
+    }
+
+    /**
+     * 소셜 로그인을 수행한다.
+     */
+    private fun socialLogin(idToken: String) {
+        viewModelScope.launch {
+            loginUseCase(type = state.value.loginType, idToken = idToken).collect { result ->
+                when (result) {
+                    is DataState.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                    is DataState.Success -> {
+                        if (result.data != null) {
+                            authDataStore.setAccessToken(accessToken = result.data!!.accessToken)
+                            authDataStore.setRefreshToken(refreshToken = result.data!!.refreshToken)
+                            checkPermissionFlow()
+                        }
+                    }
+                    is DataState.Error -> {
+                        if (result.code == ErrorCode.NotRegisteredUser.code) {
+                            register(idToken = idToken)
+                        }
+                    }
+                    is DataState.Exception -> {
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 회원가입을 수행한다
+     */
+    private fun register(idToken: String) {
+        viewModelScope.launch {
+            registerUseCase(type = state.value.loginType, idToken = idToken).collect { result ->
+                when (result) {
+                    is DataState.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                    is DataState.Success -> {
+                        if (result.data == true) {
+                            socialLogin(idToken = idToken)
+                        }
+                    }
+                    is DataState.Error -> {
+
+                    }
+                    is DataState.Exception -> {
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 권한 화면 진입 여부 확인
+     */
+    private fun checkPermissionFlow() {
+        viewModelScope.launch {
+            val isPermissionFlow = isPermission.firstOrNull()
+            if (isPermissionFlow == true) {
+                authDataStore.setIsPermissionFlow(isPermissionFlow = false)
+                _state.value = _state.value.copy(
+                    isPermission = true
+                )
+            } else {
+                checkRegisterStatus()
+            }
+        }
+    }
+
+    /**
+     * 온보딩 입력 플로우 체크
+     */
+    fun checkRegisterStatus() {
+        viewModelScope.launch {
+            checkRegisterStatusUseCase().collect { result ->
+                when (result) {
+                    is DataState.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                    is DataState.Success -> {
+                        _state.value = _state.value.copy(
+                            registerStatus = result.data?.status
+                        )
+                    }
+                    else -> {
+
+                    }
+                }
+            }
         }
     }
 }

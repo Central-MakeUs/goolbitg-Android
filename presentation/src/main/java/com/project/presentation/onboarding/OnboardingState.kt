@@ -1,22 +1,23 @@
 package com.project.presentation.onboarding
 
-import android.icu.util.GregorianCalendar
-import com.project.presentation.common.BirthState
+import com.project.presentation.common.BirthStatus
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.common.GenderEnum
-import com.project.presentation.common.NicknameState
+import com.project.presentation.common.NicknameStatus
+import java.time.LocalDate
 
 data class OnboardingState(
-    val currCalendar: GregorianCalendar,
+    val currDate: LocalDate,
 
     // flow1
     val nickname: String,
-    val nicknameState: NicknameState,
+    val nicknameStatus: NicknameStatus,
     val year: String,
     val month: String,
     val day: String,
-    val birthState: BirthState,
+    val birthStatus: BirthStatus,
     val gender: GenderEnum?,
+    val isFirstOnboardingSuccess: Boolean,
 
     // flow3
     val checkList: List<CheckListData>,
@@ -35,15 +36,17 @@ data class OnboardingState(
     val consumeType: String,
     val consumeTypeSub: String,
     val myConsumeScore: Int,
-    val sameTypeCount: Int
+    val sameTypeCount: Int,
+
+    val isLoading: Boolean
 ) {
     /**
      * 온보딩 첫번째 과정
      * 닉네임과 생년월일, 성별에 대해서 제대로 된 입력이 모두 들어있을 때
      */
     fun isFirstOnboardingCompleted(): Boolean {
-        return nicknameState == NicknameState.Completed
-                && birthState == BirthState.Completed
+        return nicknameStatus == NicknameStatus.Completed
+                && birthStatus == BirthStatus.Completed
                 && gender != null
     }
 
@@ -67,14 +70,15 @@ data class OnboardingState(
 
     companion object {
         fun create() = OnboardingState(
-            currCalendar = GregorianCalendar(),
+            currDate = LocalDate.now(),
             nickname = "",
-            nicknameState = NicknameState.Completed,
+            nicknameStatus = NicknameStatus.Empty,
             year = "",
             month = "",
             day = "",
-            birthState = BirthState.Completed,
+            birthStatus = BirthStatus.Empty,
             gender = null,
+            isFirstOnboardingSuccess = false,
             checkList = List(10) { CheckListData(question = "{체크리스트 문항}", isChecked = false) },
             monthAvgIncome = "",
             monthAvgSaving = "",
@@ -86,6 +90,7 @@ data class OnboardingState(
             consumeTypeSub = "",
             myConsumeScore = 0,
             sameTypeCount = 0,
+            isLoading = false
         )
     }
 }

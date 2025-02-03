@@ -108,6 +108,7 @@ fun BasePicker(
     modifier: Modifier = Modifier,
     startIndex: Int = 0,
     visibleItemsCount: Int = 5,
+    suffixStr: String = "",
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     onItemChanged: (String) -> Unit,
@@ -117,7 +118,7 @@ fun BasePicker(
     // 더미 아이템 포함한 리스트 생성
     val paddedItems = List(visibleItemsMiddle) { "" } + items + List(visibleItemsMiddle) { "" }
 
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = startIndex + visibleItemsMiddle)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = startIndex)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
     val itemHeightPixels = remember { mutableStateOf(0) }
@@ -157,8 +158,9 @@ fun BasePicker(
         ) {
             itemsIndexed(paddedItems) { index, item ->
                 val actualIndex = index - visibleItemsMiddle
+                val textValue = if (actualIndex in items.indices) "${item}${suffixStr}" else ""
                 Text(
-                    text = if (actualIndex in items.indices) item else "", // 더미 아이템은 빈 텍스트
+                    text = textValue, // 더미 아이템은 빈 텍스트
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = textStyle,

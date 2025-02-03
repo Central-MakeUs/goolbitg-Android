@@ -9,7 +9,7 @@ data class CheckRegisterStatusRes(
     @SerializedName("requiredInfoCompleted") val requiredInfoCompleted: Boolean
 ){
     fun toDomainModel(): RegisterStatusModel{
-        val convertedStatus = RegisterStatus.entries.find { it.code == status } ?: RegisterStatus.FirstLogin
+        val convertedStatus = RegisterStatus.entries.find { it.code == status } ?: RegisterStatus.FirstOnboarding
         return RegisterStatusModel(
             status = convertedStatus,
             requiredInfoCompleted = requiredInfoCompleted

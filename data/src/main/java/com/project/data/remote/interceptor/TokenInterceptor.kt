@@ -1,5 +1,6 @@
 package com.project.data.remote.interceptor
 
+import android.util.Log
 import com.project.data.preferences.AuthDataStore
 import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.request.auth.RefreshTokenReq
@@ -22,9 +23,14 @@ class TokenInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
+        val pathSuffix = request.url.encodedPath
+
         // refreshToken 요청인지 확인 (URL 경로로 판단)
-        if (request.url.encodedPath.contains("auth/refresh")) {
-            return chain.proceed(request) // refreshToken 요청은 그대로 진행
+        if (pathSuffix.contains("auth/login")
+            || pathSuffix.contains("auth/register")
+            || pathSuffix.contains("auth/refresh")
+        ) {
+            return chain.proceed(request)
         }
 
         val token =

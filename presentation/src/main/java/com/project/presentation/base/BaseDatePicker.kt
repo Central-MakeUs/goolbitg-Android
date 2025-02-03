@@ -121,14 +121,16 @@ fun BaseDatePicker(
         Box {
             Row(
                 modifier = Modifier
-                    .width(180.dp)
+                    .width(220.dp)
                     .align(Alignment.Center),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasePicker(
                     state = yearsPickerState,
                     items = yearList.map { it },
-                    modifier = Modifier.width(80.dp),
+                    modifier = Modifier.width(100.dp),
+                    suffixStr = "년",
+                    startIndex = yearList.indexOf(yearsPickerState.selectedItem),
                     textModifier = Modifier.padding(4.dp),
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = { selectedYear ->
@@ -138,8 +140,10 @@ fun BaseDatePicker(
                 )
                 BasePicker(
                     state = monthsPickerState,
-                    items = (1..12).map { it.toString().padStart(2, '0') },
-                    modifier = Modifier.width(44.dp),
+                    items = (1..12).map { it.toString() },
+                    modifier = Modifier.width(60.dp),
+                    suffixStr = "월",
+                    startIndex = (1..12).map { it.toString() }.indexOf(monthsPickerState.selectedItem),
                     textModifier = Modifier.padding(4.dp),
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = { selectedMonth ->
@@ -149,8 +153,10 @@ fun BaseDatePicker(
                 )
                 BasePicker(
                     state = daysPickerState,
-                    items = dayList.map { it.toString().padStart(2, '0') },
-                    modifier = Modifier.width(48.dp),
+                    items = dayList.map { it.toString() },
+                    modifier = Modifier.width(60.dp),
+                    suffixStr = "일",
+                    startIndex = dayList.map { it.toString() }.indexOf(daysPickerState.selectedItem),
                     textModifier = Modifier.padding(4.dp),
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = onDayChanged
@@ -159,7 +165,7 @@ fun BaseDatePicker(
 
             Box(
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(260.dp)
                     .height(40.dp)
                     .align(Alignment.Center)
                     .clip(RoundedCornerShape(roundSm))
