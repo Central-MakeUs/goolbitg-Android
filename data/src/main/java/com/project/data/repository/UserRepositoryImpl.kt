@@ -154,7 +154,7 @@ class UserRepositoryImpl @Inject constructor(
                 userDataSource.setRemoteUserPattern(
                     body = UserPatternReq(
                         primeUseDay = primeUseDay,
-                        primeUserTime = primeUserTime
+                        primeUseTime = primeUserTime
                     )
                 )
             },

@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class UserPatternReq(
     @SerializedName("primeUseDay") val primeUseDay: String,
-    @SerializedName("primeUserTime") val primeUserTime: String
+    @SerializedName("primeUseTime") val primeUseTime: String
 )
