@@ -1,10 +1,13 @@
 package com.project.data.di
 
 import com.project.data.remote.datasource.AuthDataSource
+import com.project.data.remote.datasource.ChallengeDataSource
 import com.project.data.remote.datasource.UserDataSource
 import com.project.data.repository.AuthRepositoryImpl
+import com.project.data.repository.ChallengeRepositoryImpl
 import com.project.data.repository.UserRepositoryImpl
 import com.project.domain.repository.AuthRepository
+import com.project.domain.repository.ChallengeRepository
 import com.project.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -26,5 +29,12 @@ object RepositoryModule {
     fun provideUserRepository(userDataSource: UserDataSource): UserRepository {
         return UserRepositoryImpl(userDataSource = userDataSource)
     }
+
+    @Provides
+    @Singleton
+    fun provideChallengeRepository(challengeDataSource: ChallengeDataSource): ChallengeRepository {
+        return ChallengeRepositoryImpl(challengeDataSource = challengeDataSource)
+    }
+
 
 }
