@@ -83,12 +83,15 @@ fun ChallengeContent(modifier: Modifier = Modifier) {
         ChallengeDateSelector(text = "2025년 01월 20일")
         ChallengeWeeklyCalendar(modifier = Modifier.fillMaxWidth())
         var selectedTabIdx by remember { mutableStateOf(0) }
-        BaseTab(
-            modifier = Modifier.height(41.dp),
-            items = listOf("ffff", "zdfsdg"),
-            selectedItemIndex = selectedTabIdx,
-            onSelectedTab = { selectedTabIdx = it }
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center) {
+            BaseTab(
+                modifier = Modifier.padding(vertical = 8.dp).size(247.dp, 41.dp),
+                items = listOf("진행 중","진행 완료"),
+                selectedItemIndex = selectedTabIdx,
+                onSelectedTab = {selectedTabIdx = it}
+            )
+        }
         val list = List(10) { ChallengeInfo(id = 1, title = "ff", subTitle = "fsg", imgUrl = "", savedPrice = 7000) }
         ChallengeListContent(modifier = Modifier.weight(1f), challengeList = list)
     }

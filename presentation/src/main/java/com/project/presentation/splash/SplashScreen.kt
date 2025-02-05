@@ -72,7 +72,8 @@ fun SplashScreen(
                     }
                 }
                 RegisterStatus.ConsumePattern -> {
-                    navHostController.navigate(NavItem.ChallengeAddition.route) {
+                    val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
+                    navHostController.navigate(route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }

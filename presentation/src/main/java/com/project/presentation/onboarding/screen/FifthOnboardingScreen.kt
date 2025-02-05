@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -52,6 +53,16 @@ fun FifthOnboardingScreen(
             state.value.majorExpenditureDayOfWeek != null
         }
     }
+
+    LaunchedEffect(state.value.isConsumePatternSuccess) {
+        if(state.value.isConsumePatternSuccess){
+            navHostController.navigate(NavItem.AnalysisConsumeType.route) {
+                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +100,7 @@ fun FifthOnboardingScreen(
                     text = stringResource(R.string.common_next),
                     visible = isNextStepVisible,
                     onClick = {
-                        navHostController.navigate(NavItem.AnalysisConsumeType.route)
+                        viewModel.onEvent(OnboardingEvent.RequestSetUserPattern)
                     },
                 )
             }

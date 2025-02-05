@@ -1,9 +1,12 @@
 package com.project.presentation.onboarding
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.project.presentation.common.BirthStatus
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.common.GenderEnum
 import com.project.presentation.common.NicknameStatus
+import com.project.presentation.item.CheckListEnum
 import java.time.LocalDate
 
 data class OnboardingState(
@@ -18,6 +21,9 @@ data class OnboardingState(
     val birthStatus: BirthStatus,
     val gender: GenderEnum?,
     val isFirstOnboardingSuccess: Boolean,
+    val isCheckListSuccess: Boolean,
+    val isConsumeHabitSuccess: Boolean,
+    val isConsumePatternSuccess: Boolean,
 
     // flow3
     val checkList: List<CheckListData>,
@@ -79,7 +85,15 @@ data class OnboardingState(
             birthStatus = BirthStatus.Empty,
             gender = null,
             isFirstOnboardingSuccess = false,
-            checkList = List(10) { CheckListData(question = "{체크리스트 문항}", isChecked = false) },
+            isCheckListSuccess = false,
+            isConsumeHabitSuccess = false,
+            isConsumePatternSuccess = false,
+            checkList = CheckListEnum.entries.map {
+                CheckListData(
+                    checkListStrId = it.strId,
+                    isChecked = false
+                )
+            },
             monthAvgIncome = "",
             monthAvgSaving = "",
             majorExpenditureDayOfWeek = null,
@@ -96,6 +110,6 @@ data class OnboardingState(
 }
 
 data class CheckListData(
-    val question: String,
+    @StringRes val checkListStrId: Int,
     var isChecked: Boolean
 )

@@ -11,15 +11,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.project.presentation.challenge.ChallengeScreen
-import com.project.presentation.challenge.ChallengeAdditionScreen
+import com.project.presentation.challenge.addition.ChallengeAdditionScreen
 import com.project.presentation.challenge.ChallengeDetailScreen
+import com.project.presentation.challenge.addition.ChallengeAdditionEvent
+import com.project.presentation.challenge.addition.ChallengeAdditionViewModel
 import com.project.presentation.home.HomeScreen
 import com.project.presentation.login.LoginScreen
 import com.project.presentation.mypage.MyPageScreen
@@ -139,8 +144,14 @@ private fun NavigationGraph(
             MyPageScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.ChallengeAddition.route) {
-            ChallengeAdditionScreen(navHostController = navHostController)
+        composable(
+            route = NavItem.ChallengeAddition.route,
+            arguments = listOf(navArgument("isOnboarding") { type = NavType.BoolType })
+        ) { backStackEntry ->
+            val isOnboarding = backStackEntry.arguments?.getBoolean("isOnboarding") ?: true
+            val viewModel: ChallengeAdditionViewModel = hiltViewModel()
+            viewModel.onEvent(ChallengeAdditionEvent.BackPressOption(!isOnboarding))
+            ChallengeAdditionScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         composable(NavItem.ChallengeDetail.route) {

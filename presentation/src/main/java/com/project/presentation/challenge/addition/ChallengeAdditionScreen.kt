@@ -1,4 +1,4 @@
-package com.project.presentation.challenge
+package com.project.presentation.challenge.addition
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,18 +22,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -54,13 +48,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.item.ChallengeInfo
-import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -72,13 +67,17 @@ import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun ChallengeAdditionScreen(navHostController: NavHostController = rememberNavController()) {
+fun ChallengeAdditionScreen(
+    navHostController: NavHostController = rememberNavController(),
+    viewModel: ChallengeAdditionViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
+
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
@@ -112,111 +111,121 @@ fun ChallengeAdditionScreen(navHostController: NavHostController = rememberNavCo
             .fillMaxSize()
             .background(bg1)
     ) {
-        // 콘텐츠 레이아웃
-        BottomSheetScaffold(
-            modifier = Modifier.drawBehind {
-                val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
-                val bottomSheetMinOffset =
-                    screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
-                bottomSheetScrimAlpha = calculateScrimAlpha(
-                    offset = offset,
-                    screenHeight = screenHeight,
-                    bottomSheetMinOffset = bottomSheetMinOffset
-                )
-            },
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 0.dp,
-            sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            containerColor = transparent,
-            sheetSwipeEnabled = false,
-            sheetContent = {
-                ChallengeBottomSheetContent(
-                    modifier = Modifier.fillMaxWidth(),
-                    challengeInfo = selectedChallenge,
-                    onChallenge = {
-                        coroutineScope.launch {
-                            // TODO: 챌린지 도전
-                            scaffoldState.bottomSheetState.partialExpand()
-                            selectedChallenge = null
-                        }
-                    },
-                )
-            },
-            sheetDragHandle = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(gray600)
-                        .draggable(
-                            orientation = Orientation.Vertical,
-                            state = rememberDraggableState { delta ->
-                                if (delta > 50f) {
-                                    // 드래그 이동 처리
-                                    coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.partialExpand()
-                                        selectedChallenge = null
+        Scaffold(containerColor = transparent) { innerPadding ->
+            // 콘텐츠 레이아웃
+            BottomSheetScaffold(
+                modifier = Modifier.padding(innerPadding).drawBehind {
+                    val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
+                    val bottomSheetMinOffset =
+                        screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
+                    bottomSheetScrimAlpha = calculateScrimAlpha(
+                        offset = offset,
+                        screenHeight = screenHeight,
+                        bottomSheetMinOffset = bottomSheetMinOffset
+                    )
+                },
+                scaffoldState = scaffoldState,
+                sheetPeekHeight = 0.dp,
+                sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                containerColor = transparent,
+                sheetSwipeEnabled = false,
+                sheetContent = {
+                    ChallengeBottomSheetContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        challengeInfo = selectedChallenge,
+                        onChallenge = {
+                            coroutineScope.launch {
+                                // TODO: 챌린지 도전
+                                scaffoldState.bottomSheetState.partialExpand()
+                                selectedChallenge = null
+                            }
+                        },
+                    )
+                },
+                sheetDragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(gray600)
+                            .draggable(
+                                orientation = Orientation.Vertical,
+                                state = rememberDraggableState { delta ->
+                                    if (delta > 50f) {
+                                        // 드래그 이동 처리
+                                        coroutineScope.launch {
+                                            scaffoldState.bottomSheetState.partialExpand()
+                                            selectedChallenge = null
+                                        }
                                     }
+                                }
+                            )
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier.size(32.dp, 4.dp)
+                                .clip(CircleShape)
+                                .background(gray400)
+                        )
+                    }
+                },
+                sheetContentColor = gray600,
+                sheetContainerColor = gray600,
+                content = { innerPadding ->
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        ChallengeAdditionHeader(
+                            isBackEnabled = state.value.isBackEnabled,
+                            onBack = { navHostController.popBackStack() }
+                        )
+                        ChallengeAdditionContent(
+                            nickname = "어린굴비",
+                            modifier = Modifier.weight(1f),
+                            onChallengeClick = {
+                                coroutineScope.launch {
+                                    selectedChallenge = it
+                                    scaffoldState.bottomSheetState.expand()
                                 }
                             }
                         )
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier.size(32.dp, 4.dp)
-                            .clip(CircleShape)
-                            .background(gray400)
-                    )
+                    }
+                    if (isBottomSheetScrimVisible) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .drawBehind {
+                                    drawRect(black.copy(alpha = bottomSheetScrimAlpha))
+                                }
+                        )
+                    }
                 }
-            },
-            sheetContentColor = gray600,
-            sheetContainerColor = gray600,
-            content = { innerPadding ->
-                Column(modifier = Modifier.padding(innerPadding)) {
-                    ChallengeAdditionHeader(onBack = { navHostController.popBackStack() })
-                    ChallengeAdditionContent(
-                        nickname = "어린굴비",
-                        modifier = Modifier.weight(1f),
-                        onChallengeClick = {
-                            coroutineScope.launch {
-                                selectedChallenge = it
-                                scaffoldState.bottomSheetState.expand()
-                            }
-                        }
-                    )
-                }
-                if (isBottomSheetScrimVisible) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .drawBehind {
-                                drawRect(black.copy(alpha = bottomSheetScrimAlpha))
-                            }
-                    )
-                }
-            }
-        )
+            )
+        }
     }
 }
 
 @Composable
 fun ChallengeAdditionHeader(
     modifier: Modifier = Modifier,
+    isBackEnabled: Boolean,
     onBack: () -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BaseIcon(
-            modifier = Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onBack() }
-                .padding(16.dp),
-            iconId = R.drawable.ic_arrow_back
-        )
+        if(isBackEnabled){
+            BaseIcon(
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onBack() }
+                    .padding(16.dp),
+                iconId = R.drawable.ic_arrow_back
+            )
+        }else{
+            Spacer(modifier = Modifier.size(64.dp))
+        }
         Text(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.challenge_addition_header_title),
@@ -436,6 +445,14 @@ fun ChallengeBottomSheetContent(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             text = stringResource(R.string.common_challenge),
             onClick = onChallenge
+        )
+
+        // 이거 안해주면 시스템 네비게이션바랑 겹침
+        Spacer(
+            modifier =
+            Modifier.height(
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            ),
         )
     }
 }

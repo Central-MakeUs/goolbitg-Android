@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -27,7 +28,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray100
+import com.project.presentation.ui.theme.gray300
+import com.project.presentation.ui.theme.gray800
 import com.project.presentation.ui.theme.white
 
 @Composable
@@ -35,41 +39,43 @@ fun BaseTab(
     items: List<String>,
     modifier: Modifier,
     indicatorPadding: Dp = 4.dp,
+    spacePadding: Dp = 15.dp,
     selectedItemIndex: Int = 0,
     onSelectedTab: (index: Int) -> Unit
 ) {
     var tabWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
     val tabItemWidth by remember {
-        derivedStateOf { mutableStateOf(tabWidth / 2) }
+        derivedStateOf { mutableStateOf((tabWidth - indicatorPadding * 2 - spacePadding) / 2) }
     }
 
     val indicatorOffset: Dp by animateDpAsState(
         if (selectedItemIndex == 0) {
-            tabWidth * (selectedItemIndex / items.size.toFloat())
+            indicatorPadding
         } else {
-            tabWidth * (selectedItemIndex / items.size.toFloat()) - indicatorPadding
+            indicatorPadding + tabItemWidth.value + spacePadding
         }
     )
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .onGloballyPositioned { coordinates ->
-                tabWidth = with(density){ coordinates.size.width.toDp() }
+                tabWidth = with(density) { coordinates.size.width.toDp() }
             }
             .background(color = gray100, shape = CircleShape)
     ) {
         MyTabIndicator(
             modifier = Modifier
-                .padding(indicatorPadding)
+                .padding(vertical = indicatorPadding)
                 .fillMaxHeight()
                 .width(tabItemWidth.value),
             indicatorOffset = indicatorOffset
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(indicatorPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -81,8 +87,12 @@ fun BaseTab(
                     onClick = {
                         onSelectedTab(index)
                     },
-                    title = title
+                    title = title,
+                    isSelected = index == selectedItemIndex
                 )
+                if (index != items.size - 1) {
+                    Spacer(modifier = Modifier.width(spacePadding))
+                }
             }
         }
 
@@ -107,7 +117,8 @@ private fun MyTabIndicator(
 private fun MyTabItem(
     modifier: Modifier,
     onClick: () -> Unit,
-    title: String
+    title: String,
+    isSelected: Boolean
 ) {
     Box(
         modifier = modifier
@@ -116,8 +127,12 @@ private fun MyTabItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onClick() },
-        contentAlignment = Alignment.Center
     ) {
-        Text(text = title)
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = title,
+            style = if (isSelected) goolbitgTypography.btn4 else goolbitgTypography.body4,
+            color = if(isSelected) gray800 else gray300
+        )
     }
 }

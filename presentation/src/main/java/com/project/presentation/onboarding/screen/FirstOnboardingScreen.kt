@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -45,7 +49,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -56,18 +59,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieClipSpec
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieAnimatable
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseDatePicker
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.BaseOutlinedTextFiled
-import com.project.presentation.challenge.calculateScrimAlpha
-import com.project.presentation.challenge.getScreenHeightInPixelsOnce
+import com.project.presentation.challenge.addition.calculateScrimAlpha
+import com.project.presentation.challenge.addition.getScreenHeightInPixelsOnce
 import com.project.presentation.common.AgreementEnum
 import com.project.presentation.common.GenderEnum
 import com.project.presentation.common.NicknameStatus
@@ -149,173 +148,174 @@ fun FirstOnboardingScreen(
             .fillMaxSize()
             .background(bg1)
     ) {
-        BottomSheetScaffold(
-            modifier = Modifier.drawBehind {
-                val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
-                val bottomSheetMinOffset =
-                    screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
-                bottomSheetScrimAlpha = calculateScrimAlpha(
-                    offset = offset,
-                    screenHeight = screenHeight,
-                    bottomSheetMinOffset = bottomSheetMinOffset
-                )
-            },
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 0.dp,
-            sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            containerColor = transparent,
-            sheetSwipeEnabled = false,
-            sheetContent = {
-                if (isAgreementBottomSheet) {
-                    AgreementBottomSheetContent(
-                        onAgreement = { isAdvertisementAgree ->
-                            coroutineScope.launch {
-                                scaffoldState.bottomSheetState.partialExpand()
-                                isAgreementBottomSheet = false
-                            }
-                            viewModel.onEvent(OnboardingEvent.RequestFirstOnboarding(isAdvertisementAgree))
-                        }
-                    )
-                } else {
-                    BirthBottomSheetContent(
-                        initYear = state.currDate.year.toString(),
-                        initMonth = state.currDate.monthValue.toString(),
-                        initDay = state.currDate.dayOfMonth.toString(),
-                        yearList = (1900..state.currDate.year).map { it.toString() },
-                        onConfirm = { year, month, day ->
-                            coroutineScope.launch {
-                                scaffoldState.bottomSheetState.partialExpand()
-                            }
-                            viewModel.onEvent(event = OnboardingEvent.ChangeYear(year))
-                            viewModel.onEvent(event = OnboardingEvent.ChangeMonth(month))
-                            viewModel.onEvent(event = OnboardingEvent.ChangeDay(day))
-                        }
-                    )
-                }
-
-            },
-            sheetDragHandle = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(gray600)
-                        .draggable(
-                            orientation = Orientation.Vertical,
-                            state = rememberDraggableState { delta ->
-                                if (delta > 50f) {
-                                    // 드래그 이동 처리
-                                    coroutineScope.launch {
-                                        scaffoldState.bottomSheetState.partialExpand()
-                                        isAgreementBottomSheet = false
-                                    }
+        Scaffold(containerColor = transparent) { innerPadding ->
+            BottomSheetScaffold(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .drawBehind {
+                        val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
+                        val bottomSheetMinOffset =
+                            screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
+                        bottomSheetScrimAlpha = calculateScrimAlpha(
+                            offset = offset,
+                            screenHeight = screenHeight,
+                            bottomSheetMinOffset = bottomSheetMinOffset
+                        )
+                    },
+                scaffoldState = scaffoldState,
+                sheetPeekHeight = 0.dp,
+                sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                containerColor = transparent,
+                sheetSwipeEnabled = false,
+                sheetContent = {
+                    if (isAgreementBottomSheet) {
+                        AgreementBottomSheetContent(
+                            onAgreement = { isAdvertisementAgree ->
+                                coroutineScope.launch {
+                                    scaffoldState.bottomSheetState.partialExpand()
+                                    isAgreementBottomSheet = false
                                 }
+                                viewModel.onEvent(OnboardingEvent.RequestFirstOnboarding(isAdvertisementAgree))
                             }
                         )
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp, 4.dp)
-                            .clip(CircleShape)
-                            .background(gray400)
-                    )
-                }
-            },
-            sheetContentColor = gray600,
-            sheetContainerColor = gray600,
-            content = { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    FirstOnboardingBody(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = state,
-                        onNicknameChanged = {
-                            viewModel.onEvent(
-                                event = OnboardingEvent.ChangeNickname(it)
-                            )
-                        },
-                        onDuplicationCheck = {
-                            focusManager.clearFocus(force = true)
-                            viewModel.onEvent(event = OnboardingEvent.DuplicationCheck)
-                        },
-                        onBirthClick = {
-                            focusManager.clearFocus(force = true)
-                            coroutineScope.launch {
-                                scaffoldState.bottomSheetState.expand()
-                            }
-                        },
-                        onMaleClick = {
-                            focusManager.clearFocus(force = true)
-                            viewModel.onEvent(event = OnboardingEvent.ClickMale)
-                        },
-                        onFemaleClick = {
-                            focusManager.clearFocus(force = true)
-                            viewModel.onEvent(event = OnboardingEvent.ClickFemale)
-                        }
-                    )
-
-                    AnimatedVisibility(
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                            .align(Alignment.BottomCenter),
-                        visible = nextBtnState,
-                        enter = fadeIn()
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = spacingMd)
-                                .clip(CircleShape)
-                                .background(
-                                    brush = Brush.horizontalGradient(listOf(main100, Color(0xFF67BF4E)))
-                                )
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    coroutineScope.launch {
-                                        focusManager.clearFocus(force = true)
-                                        isAgreementBottomSheet = true
-                                        scaffoldState.bottomSheetState.expand()
-                                    }
+                    } else {
+                        BirthBottomSheetContent(
+                            initYear = state.currDate.year.toString(),
+                            initMonth = state.currDate.monthValue.toString(),
+                            initDay = state.currDate.dayOfMonth.toString(),
+                            yearList = (1900..state.currDate.year).map { it.toString() },
+                            onConfirm = { year, month, day ->
+                                coroutineScope.launch {
+                                    scaffoldState.bottomSheetState.partialExpand()
                                 }
-                                .padding(vertical = 16.dp),
-                            text = stringResource(R.string.onboarding_first_agreement_start),
-                            textAlign = TextAlign.Center,
-                            style = goolbitgTypography.btn1,
-                            color = white
+                                viewModel.onEvent(event = OnboardingEvent.ChangeYear(year))
+                                viewModel.onEvent(event = OnboardingEvent.ChangeMonth(month))
+                                viewModel.onEvent(event = OnboardingEvent.ChangeDay(day))
+                            }
                         )
                     }
-                }
-                if (isBottomSheetScrimVisible) {
+
+                },
+                sheetDragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(gray600)
+                            .draggable(
+                                orientation = Orientation.Vertical,
+                                state = rememberDraggableState { delta ->
+                                    if (delta > 50f) {
+                                        // 드래그 이동 처리
+                                        coroutineScope.launch {
+                                            scaffoldState.bottomSheetState.partialExpand()
+                                            isAgreementBottomSheet = false
+                                        }
+                                    }
+                                }
+                            )
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp, 4.dp)
+                                .clip(CircleShape)
+                                .background(gray400)
+                        )
+                    }
+                },
+                sheetContentColor = gray600,
+                sheetContainerColor = gray600,
+                content = {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .drawBehind {
-                                drawRect(black.copy(alpha = bottomSheetScrimAlpha))
+                    ) {
+                        FirstOnboardingBody(
+                            modifier = Modifier.fillMaxSize(),
+                            state = state,
+                            onNicknameChanged = {
+                                viewModel.onEvent(
+                                    event = OnboardingEvent.ChangeNickname(it)
+                                )
+                            },
+                            onDuplicationCheck = {
+                                focusManager.clearFocus(force = true)
+                                viewModel.onEvent(event = OnboardingEvent.DuplicationCheck)
+                            },
+                            onBirthClick = {
+                                focusManager.clearFocus(force = true)
+                                coroutineScope.launch {
+                                    scaffoldState.bottomSheetState.expand()
+                                }
+                            },
+                            onMaleClick = {
+                                focusManager.clearFocus(force = true)
+                                viewModel.onEvent(event = OnboardingEvent.ClickMale)
+                            },
+                            onFemaleClick = {
+                                focusManager.clearFocus(force = true)
+                                viewModel.onEvent(event = OnboardingEvent.ClickFemale)
                             }
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { }
-                    )
+                        )
+
+                        AnimatedVisibility(
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                                .align(Alignment.BottomCenter),
+                            visible = nextBtnState,
+                            enter = fadeIn()
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = spacingMd)
+                                    .clip(CircleShape)
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            listOf(
+                                                main100,
+                                                Color(0xFF67BF4E)
+                                            )
+                                        )
+                                    )
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) {
+                                        coroutineScope.launch {
+                                            focusManager.clearFocus(force = true)
+                                            isAgreementBottomSheet = true
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
+                                    }
+                                    .padding(vertical = 16.dp),
+                                text = stringResource(R.string.onboarding_first_agreement_start),
+                                textAlign = TextAlign.Center,
+                                style = goolbitgTypography.btn1,
+                                color = white
+                            )
+                        }
+                    }
+                    if (isBottomSheetScrimVisible) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .drawBehind {
+                                    drawRect(black.copy(alpha = bottomSheetScrimAlpha))
+                                }
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) { }
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
 
         if (state.isLoading) {
-            LoadingBox()
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(black.copy(alpha = 0.5f))
-            ) {
-
-            }
+            BaseLoadingBox()
         }
     }
 
@@ -435,7 +435,11 @@ fun InputNicknameContent(
                 Text(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .border(width = 1.dp, color = Color(0xFF3E3E3E), shape = RoundedCornerShape(6.dp))
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFF3E3E3E),
+                            shape = RoundedCornerShape(6.dp)
+                        )
                         .background(Color(0xFF212121))
                         .padding(horizontal = 16.dp, vertical = 14.5.dp),
                     text = stringResource(R.string.onboarding_first_nickname_check),
@@ -450,7 +454,7 @@ fun InputNicknameContent(
         Text(
             text = nicknameStatus.strId?.let { stringResource(it) } ?: "",
             color = color,
-            style = goolbitgTypography.body1
+            style = goolbitgTypography.caption2
         )
 
     }
@@ -586,7 +590,7 @@ fun BirthBottomSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 26.dp)
+            .padding(top = 26.dp)
     ) {
         BaseDatePicker(
             yearList = yearList,
@@ -600,12 +604,20 @@ fun BirthBottomSheetContent(
                 day = it
             },
         )
+        Spacer(modifier = Modifier.height(42.dp))
         BaseBottomBtn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             text = stringResource(R.string.common_apply),
             onClick = { onConfirm(year, month, day) }
+        )
+        // 이거 안해주면 시스템 네비게이션바랑 겹침
+        Spacer(
+            modifier =
+            Modifier.height(
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            ),
         )
     }
 }
@@ -647,7 +659,11 @@ fun AgreementBottomSheetContent(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(CircleShape)
-            .border(width = 1.dp, color = if (isAllChecked) main15 else gray400, shape = CircleShape)
+            .border(
+                width = 1.dp,
+                color = if (isAllChecked) main15 else gray400,
+                shape = CircleShape
+            )
             .background(if (isAllChecked) main20 else gray600)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -716,41 +732,31 @@ fun AgreementBottomSheetContent(
                     )
                 }
             }
-            val isActive = agreementCheckList.subList(0, agreementCheckList.size - 1).all { it }
-            BaseBottomBtn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                text = stringResource(R.string.common_start),
-                textColor = if (isActive) white else gray400,
-                backgroundColor = if (isActive) main100 else gray500,
-                onClick = { onAgreement(agreementCheckList[agreementCheckList.size - 1]) }
-            )
         }
-    }
-}
-
-@Composable
-fun LoadingBox(modifier: Modifier = Modifier) {
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.illu_onboarding2_card)
-    )
-    val lottieAnimatable = rememberLottieAnimatable()
-    LaunchedEffect(composition) {
-        lottieAnimatable.animate(
-            composition = composition,
-            clipSpec = LottieClipSpec.Frame(0, 1200),
-            initialProgress = 0f
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(gray500)
         )
-    }
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(black.copy(alpha = 0.5f))) {
-        LottieAnimation(
-            modifier = Modifier.align(Alignment.Center),
-            composition = composition,
-            contentScale = ContentScale.FillHeight,
-            iterations = Int.MAX_VALUE
+
+        val isActive = agreementCheckList.subList(0, agreementCheckList.size - 1).all { it }
+        BaseBottomBtn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = stringResource(R.string.common_start),
+            textColor = if (isActive) white else gray400,
+            backgroundColor = if (isActive) main100 else gray500,
+            onClick = { onAgreement(agreementCheckList[agreementCheckList.size - 1]) }
+        )
+
+        // 이거 안해주면 시스템 네비게이션바랑 겹침
+        Spacer(
+            modifier =
+            Modifier.height(
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            ),
         )
     }
 }

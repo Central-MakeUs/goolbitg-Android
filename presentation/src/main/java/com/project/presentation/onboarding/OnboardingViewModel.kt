@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.project.domain.model.DataState
 import com.project.domain.usecase.user.CheckNicknameDuplicatedUseCase
 import com.project.domain.usecase.user.SetUserAgreementUseCase
+import com.project.domain.usecase.user.SetUserCheckListUseCase
+import com.project.domain.usecase.user.SetUserHabitUseCase
 import com.project.domain.usecase.user.SetUserInfoUseCase
+import com.project.domain.usecase.user.SetUserPatternUseCase
 import com.project.presentation.common.BirthStatus
 import com.project.presentation.common.GenderEnum
 import com.project.presentation.common.NicknameStatus
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -24,7 +28,10 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor(
     private val checkNicknameDuplicatedUseCase: CheckNicknameDuplicatedUseCase,
     private val setUserAgreementUseCase: SetUserAgreementUseCase,
-    private val setUserInfoUseCase: SetUserInfoUseCase
+    private val setUserInfoUseCase: SetUserInfoUseCase,
+    private val setUserCheckListUseCase: SetUserCheckListUseCase,
+    private val setUserHabitUseCase: SetUserHabitUseCase,
+    private val setUserPatternUseCase: SetUserPatternUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingState.create())
     val state get() = _state.asStateFlow()
@@ -127,6 +134,18 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingEvent.RequestFirstOnboarding -> {
                 registerAgreementInfo(event.isAdvertisementAgreement)
             }
+
+            is OnboardingEvent.RequestSetUserCheckList -> {
+                setUserCheckList()
+            }
+
+            is OnboardingEvent.RequestSetUserHabit -> {
+                setUserConsumeHabit()
+            }
+
+            is OnboardingEvent.RequestSetUserPattern -> {
+                setUserConsumePattern()
+            }
         }
     }
 
@@ -202,6 +221,90 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    private fun setUserCheckList(){
+        viewModelScope.launch {
+            setUserCheckListUseCase(
+                check1 = state.value.checkList[0].isChecked,
+                check2 = state.value.checkList[1].isChecked,
+                check3 = state.value.checkList[2].isChecked,
+                check4 = state.value.checkList[3].isChecked,
+                check5 = state.value.checkList[4].isChecked,
+                check6 = state.value.checkList[5].isChecked,
+            ).collect{ result ->
+                when(result){
+                    is DataState.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                    is DataState.Success -> {
+                        _state.value = state.value.copy(
+                            isCheckListSuccess = true
+                        )
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun setUserConsumeHabit(){
+        viewModelScope.launch {
+            setUserHabitUseCase(
+                avgIncomePerMonth = state.value.monthAvgIncome.toInt(),
+                avgSpendingPerMonth = state.value.monthAvgSaving.toInt()
+            ).collect{ result ->
+                when(result){
+                    is DataState.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                    is DataState.Success -> {
+                        _state.value = state.value.copy(
+                            isConsumeHabitSuccess = true
+                        )
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun setUserConsumePattern(){
+        viewModelScope.launch {
+            if(state.value.majorExpenditureDayOfWeek != null){
+                val hour = if(state.value.majorExpenditureAmpm == "PM") {
+                    state.value.majorExpenditureHours.toInt() + 12
+                }else{
+                    state.value.majorExpenditureHours.toInt()
+                }
+                val time = LocalTime.of(hour, state.value.majorExpenditureMinutes.toInt(), 0)
+                val timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss")
+                val timeStr = time.format(timeFormatter)
+
+                setUserPatternUseCase(
+                    primeUseDay = state.value.majorExpenditureDayOfWeek!!.value,
+                    primeUserTime = timeStr
+                ).collect{ result ->
+                    when(result){
+                        is DataState.Loading -> {
+                            _state.value = state.value.copy(
+                                isLoading = result.isLoading
+                            )
+                        }
+                        is DataState.Success -> {
+                            _state.value = state.value.copy(
+                                isConsumePatternSuccess = true
+                            )
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
     private fun checkAndChangeNickname(newValue: String) {
         // 글자수 6자로 제한
         if (newValue.length > 6 || newValue.contains(" ")) return
@@ -238,4 +341,5 @@ class OnboardingViewModel @Inject constructor(
             )
         }
     }
+
 }

@@ -70,13 +70,6 @@ fun ShowConsumeTypeScreen(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            delay(3000)
-
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -87,7 +80,13 @@ fun ShowConsumeTypeScreen(
             ShowConsumeTypeContent(
                 state = state,
                 modifier = Modifier.padding(innerPadding),
-                onNext = { navHostController.navigate(NavItem.Challenge.route) }
+                onNext = {
+                    val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
+                    navHostController.navigate(route) {
+                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
     }

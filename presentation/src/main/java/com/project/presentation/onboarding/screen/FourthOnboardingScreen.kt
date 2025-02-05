@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -60,6 +61,16 @@ fun FourthOnboardingScreen(
             state.value.isFourthOnboardingCompleted()
         }
     }
+
+    LaunchedEffect(state.value.isConsumeHabitSuccess) {
+        if(state.value.isConsumeHabitSuccess){
+            navHostController.navigate(NavItem.FifthOnboarding.route) {
+                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +96,7 @@ fun FourthOnboardingScreen(
                     text = stringResource(R.string.common_next),
                     visible = isNextBtnVisible,
                     onClick = {
-                        navHostController.navigate(NavItem.FifthOnboarding.route)
+                        viewModel.onEvent(OnboardingEvent.RequestSetUserHabit)
                     },
                 )
             }

@@ -43,6 +43,12 @@
     <string name="onboarding_third_title">소비중독 체크리스트</string>
     <string name="onboarding_third_sub_title">본인이 생각하는 소비습관을\n모두 선택해 주세요</string>
     <string name="onboarding_third_sub_title_highlight">모두</string>
+    <string name="onboarding_third_checklist_1">스스로 통제하지 못한다</string>
+    <string name="onboarding_third_checklist_2">쇼핑할 때 죄책감이 든다</string>
+    <string name="onboarding_third_checklist_3">쇼핑할 때 긴장이나 불안감이 풀어진다</string>
+    <string name="onboarding_third_checklist_4">쇼핑은 필요보다 그 자체를 즐긴다</string>
+    <string name="onboarding_third_checklist_5">쇼핑 후 사용하지 않는 물건이 가득하다</string>
+    <string name="onboarding_third_checklist_6">물건을 사면 기분이 좋아진다</string>
 
     <string name="onboarding_fourth_title">소비 습관 점수</string>
     <string name="onboarding_fourth_sub_title">본인의 평균 수입과 저축으로\n과소비 지수를 측정해드려요!</string>

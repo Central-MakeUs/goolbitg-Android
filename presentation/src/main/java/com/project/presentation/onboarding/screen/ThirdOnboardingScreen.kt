@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -69,6 +70,16 @@ fun ThirdOnboardingScreenScreen(
             state.value.isThirdOnboardingCompleted()
         }
     }
+
+    LaunchedEffect(state.value.isCheckListSuccess) {
+        if(state.value.isCheckListSuccess){
+            navHostController.navigate(NavItem.FourthOnboarding.route) {
+                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +94,7 @@ fun ThirdOnboardingScreenScreen(
                     viewModel.onEvent(OnboardingEvent.ClickCheckListItem(idx = idx))
                 },
                 onNext = {
-                    navHostController.navigate(NavItem.FourthOnboarding.route)
+                    viewModel.onEvent(OnboardingEvent.RequestSetUserCheckList)
                 }
             )
         }
@@ -190,7 +201,7 @@ fun ThirdOnboardingBody(
                 itemsIndexed(items = checkList) { idx, item ->
                     OnboardingCheckListItem(
                         isSelected = item.isChecked,
-                        text = item.question,
+                        text = stringResource(item.checkListStrId),
                         onItemClick = {
                             onItemClick(idx)
                         }
