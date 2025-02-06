@@ -14,20 +14,20 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ChallengeDataSource {
-    @GET("/challenges")
+    @GET("/v1/challenges")
     suspend fun fetchChallengeList(
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 10,
         @Query("spendingTypeId") spendingTypeId: Int? = null
     ): Response<ChallengeListRes>
 
-    @GET("/challenges/{challengeId}")
+    @GET("/v1/challenges/{challengeId}")
     suspend fun fetchChallengeInfo(@Path("challengeId") challengeId: Int): Response<ChallengeInfoRes>
 
-    @POST("/challenges/{challengeId}/enroll")
+    @POST("/v1/challenges/{challengeId}/enroll")
     suspend fun enrollChallenge(@Path("challengeId") challengeId: Int): Response<Unit>
 
-    @GET("/challengeRecords")
+    @GET("/v1/challengeRecords")
     suspend fun fetchEnrolledChallengeList(
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 10,
@@ -35,28 +35,28 @@ interface ChallengeDataSource {
         @Query("status") status: String? = null
     ): Response<ChallengeRecordListRes>
 
-    @GET("/challengeRecords/{challengeId}")
+    @GET("/v1/challengeRecords/{challengeId}")
     suspend fun fetchEnrolledChallengeInfo(
         @Path("challengeId") challengeId: Int,
         @Query("date") date: String? = null
     ): Response<ChallengeRecordRes>
 
-    @DELETE("/challengeRecords/{challengeId}")
+    @DELETE("/v1/challengeRecords/{challengeId}")
     suspend fun deleteChallenge(
         @Path("challengeId") challengeId: Int,
     ): Response<Unit>
 
-    @POST("/challengeRecords/{challengeId}/check")
+    @POST("/v1/challengeRecords/{challengeId}/check")
     suspend fun completeTodayChallengeRecord(
         @Path("challengeId") challengeId: Int,
     ): Response<ChallengeRecordRes>
 
-    @GET("/challengeStat/{challengeId}")
+    @GET("/v1/challengeStat/{challengeId}")
     suspend fun fetchChallengeStat(
         @Path("challengeId") challengeId: Int,
     ): Response<ChallengeStatRes>
 
-    @GET("/challengeTripple/{challengeId}")
+    @GET("/v1/challengeTripple/{challengeId}")
     suspend fun fetchChallengeTriple(
         @Path("challengeId") challengeId: Int,
     ): Response<ChallengeTripleRes>
