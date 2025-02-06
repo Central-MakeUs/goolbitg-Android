@@ -10,7 +10,7 @@ data class ChallengeInfoRes(
     @SerializedName("imageUrlLarge") val imageUrlLarge: String,
     @SerializedName("reward") val reward: Int,
     @SerializedName("participantCount") val participantCount: Int,
-    @SerializedName("avgAchieveRatio") val avgAchieveRatio: Int,
+    @SerializedName("avgAchieveRatio") val avgAchieveRatio: Float,
     @SerializedName("maxAchieveDays") val maxAchieveDays: Int,
 ) {
     fun toDomainModel() = ChallengeInfoModel(

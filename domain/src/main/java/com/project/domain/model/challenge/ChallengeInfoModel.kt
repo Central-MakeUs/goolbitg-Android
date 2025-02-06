@@ -7,6 +7,6 @@ data class ChallengeInfoModel(
     val imageUrlLarge: String,
     val reward: Int,
     val participantCount: Int,
-    val avgAchieveRatio: Int,
+    val avgAchieveRatio: Float,
     val maxAchieveDays: Int,
 )

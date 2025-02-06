@@ -1,7 +1,6 @@
 package com.project.data.remote.response.challenge
 
 import com.google.gson.annotations.SerializedName
-import com.project.domain.model.challenge.ChallengeListModel
 import com.project.domain.model.challenge.ChallengeRecordListModel
 
 data class ChallengeRecordListRes(
