@@ -34,7 +34,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getWeeklyRecordStatus(date: String): Flow<DataState<WeeklyRecordStatusModel>> {
+    override suspend fun getWeeklyRecordStatus(date: String?): Flow<DataState<WeeklyRecordStatusModel>> {
         return NetworkUtils.handleApi(
             execute = { userDataSource.getWeeklyRecordStatus(date = date) },
             mapper = { it?.toDomainModel() }

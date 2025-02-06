@@ -1,14 +1,16 @@
 package com.project.presentation.home
 
+import com.project.domain.model.challenge.ChallengeRecordModel
+import com.project.domain.model.user.WeeklyRecordStatusModel
 import com.project.presentation.item.HomeChallengeStamp
-import com.project.presentation.item.HomeTodayChallenge
 import java.time.LocalDate
 
 data class HomeState(
     val currDate: LocalDate,
     val totalPrice: Int?,
-    val challengeStampList: List<HomeChallengeStamp>,
-    val todayChallengeList: List<HomeTodayChallenge>,
+    val dayList: List<Int>,
+    val weeklyRecordStatusModel: WeeklyRecordStatusModel?,
+    val challengeRecordModel: List<ChallengeRecordModel>,
 
     val isLoading: Boolean
 ){
@@ -16,8 +18,9 @@ data class HomeState(
         fun create() = HomeState(
             currDate = LocalDate.now(),
             totalPrice = null,
-            challengeStampList = listOf(),
-            todayChallengeList = listOf(),
+            dayList = listOf(),
+            weeklyRecordStatusModel = null,
+            challengeRecordModel = listOf(),
             isLoading = false
         )
     }

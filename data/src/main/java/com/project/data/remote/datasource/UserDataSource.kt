@@ -24,7 +24,7 @@ interface UserDataSource {
     suspend fun checkRegisterStatus(): Response<CheckRegisterStatusRes>
 
     @GET("/v1/users/me/weeklyStatus")
-    suspend fun getWeeklyRecordStatus(@Query("date") date: String): Response<GetWeeklyRecordStatusRes>
+    suspend fun getWeeklyRecordStatus(@Query("date") date: String? = null): Response<GetWeeklyRecordStatusRes>
 
     @POST("/v1/users/nickname/check")
     suspend fun checkNicknameDuplicated(@Body body: CheckNicknameDuplicatedReq): Response<CheckNicknameDuplicatedRes>

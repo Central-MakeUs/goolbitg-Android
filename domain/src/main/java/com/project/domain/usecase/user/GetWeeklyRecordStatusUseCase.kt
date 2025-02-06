@@ -6,6 +6,6 @@ import javax.inject.Inject
 class GetWeeklyRecordStatusUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(date: String) =
+    suspend operator fun invoke(date: String? = null) =
         userRepository.getWeeklyRecordStatus(date = date)
 }

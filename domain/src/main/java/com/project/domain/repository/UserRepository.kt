@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     suspend fun getRemoteUserInfo(): Flow<DataState<UserInfoModel>>
     suspend fun checkRegisterStatus(): Flow<DataState<RegisterStatusModel>>
-    suspend fun getWeeklyRecordStatus(date: String): Flow<DataState<WeeklyRecordStatusModel>>
+    suspend fun getWeeklyRecordStatus(date: String?): Flow<DataState<WeeklyRecordStatusModel>>
     suspend fun checkNicknameDuplicated(nickname: String): Flow<DataState<CheckNicknameModel>>
     suspend fun agreePushNotification(): Flow<DataState<Boolean>>
     suspend fun setRemoteUserAgreement(

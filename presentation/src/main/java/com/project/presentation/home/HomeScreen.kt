@@ -8,10 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,17 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,14 +40,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.project.domain.model.challenge.ChallengeRecordModel
+import com.project.domain.model.user.WeeklyRecordStatusModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseTintIcon
 import com.project.presentation.base.extension.ComposeExtension.innerShadow
 import com.project.presentation.base.extension.StringExtension.priceComma
 import com.project.presentation.common.DayOfWeekEnum
-import com.project.presentation.item.HomeChallengeStamp
-import com.project.presentation.item.HomeTodayChallenge
 import com.project.presentation.navigation.BaseBottomNavBar
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
@@ -98,9 +92,9 @@ fun HomeScreen(
                 )
 
                 HomeContent(
-                    nickname = "영광굴비",
-                    weekChallengeStampList = state.value.challengeStampList,
-                    todayChallengeList = state.value.todayChallengeList,
+                    dayList = state.value.dayList,
+                    weeklyRecordStatusModel = state.value.weeklyRecordStatusModel,
+                    todayChallengeList = state.value.challengeRecordModel,
                     onChallengeSelected = {
 
                     }
@@ -135,7 +129,10 @@ fun HomeHeader(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onNotification() }) {
-            BaseIcon(modifier = Modifier.align(Alignment.BottomStart), iconId = R.drawable.ic_notification)
+            BaseIcon(
+                modifier = Modifier.align(Alignment.BottomStart),
+                iconId = R.drawable.ic_notification
+            )
             if (newAlarmCount != 0) {
                 Box(
                     modifier = Modifier
@@ -160,13 +157,13 @@ fun HomeHeader(
 
 @Composable
 fun HomeContent(
-    nickname: String,
-    weekChallengeStampList: List<HomeChallengeStamp>,
-    todayChallengeList: List<HomeTodayChallenge>,
+    dayList: List<Int>,
+    weeklyRecordStatusModel: WeeklyRecordStatusModel?,
+    todayChallengeList: List<ChallengeRecordModel>,
     modifier: Modifier = Modifier,
-    onChallengeSelected: (HomeTodayChallenge) -> Unit
+    onChallengeSelected: (ChallengeRecordModel) -> Unit
 ) {
-    var targetNumber by remember { mutableIntStateOf(10000) }
+    val saving = weeklyRecordStatusModel?.saving ?: 0
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -175,7 +172,7 @@ fun HomeContent(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.home_title).replace("#VALUE#", nickname),
+                text = stringResource(R.string.home_title).replace("#VALUE#", weeklyRecordStatusModel?.nickname ?: ""),
                 style = goolbitgTypography.h3, color = white
             )
             Spacer(modifier = Modifier.height(40.dp))
@@ -183,16 +180,26 @@ fun HomeContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Bottom
             ) {
-                RouletteNumberAnimation(targetNumber = targetNumber, digitCount = targetNumber.toString().length)
-                Text(text = stringResource(R.string.home_sub_title), style = goolbitgTypography.h4, color = white)
+                RouletteNumberAnimation(
+                    targetNumber = saving,
+                    digitCount = saving.toString().length
+                )
+                Text(
+                    text = stringResource(R.string.home_sub_title),
+                    style = goolbitgTypography.h4,
+                    color = white
+                )
             }
         }
         item {
             Spacer(modifier = Modifier.height(8.dp))
-            HomeChallengeDetailInfo(price = targetNumber, continuousDay = 3)
+            HomeChallengeDetailInfo(price = saving, continuousDay = weeklyRecordStatusModel?.continueCount ?: 0)
         }
         item {
-            HomeWeekCard(weekChallengeStampList = weekChallengeStampList)
+            HomeWeekCard(
+                dayList = dayList,
+                weeklyRecordStatusModel = weeklyRecordStatusModel
+            )
         }
         item {
             TodayTodoListContent(
@@ -253,7 +260,11 @@ fun HomeChallengeDetailInfo(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(roundXs))
-            .border(width = 1.dp, color = white.copy(alpha = 0.3f), shape = RoundedCornerShape(roundXs))
+            .border(
+                width = 1.dp,
+                color = white.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(roundXs)
+            )
             .background(white.copy(alpha = 0.1f))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -261,7 +272,10 @@ fun HomeChallengeDetailInfo(
         BaseTintIcon(iconId = R.drawable.ic_challenge_reword_12, tint = white.copy(alpha = 0.5f))
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = stringResource(R.string.home_achieved_day).replace("#VALUE#", continuousDay.toString()),
+            text = stringResource(R.string.home_achieved_day).replace(
+                "#VALUE#",
+                continuousDay.toString()
+            ),
             style = goolbitgTypography.body5,
             color = white.copy(alpha = 0.5f)
         )
@@ -285,7 +299,8 @@ fun HomeChallengeDetailInfo(
 @Composable
 fun HomeWeekCard(
     modifier: Modifier = Modifier,
-    weekChallengeStampList: List<HomeChallengeStamp>
+    dayList: List<Int>,
+    weeklyRecordStatusModel: WeeklyRecordStatusModel?
 ) {
     Column(
         modifier = modifier
@@ -320,30 +335,32 @@ fun HomeWeekCard(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             val dayOfWeekList = DayOfWeekEnum.entries
-            weekChallengeStampList.forEachIndexed { idx, item ->
-                Column(
-                    modifier = Modifier.width(40.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (item.isToday) {
-                        Box(
-                            modifier = Modifier
-                                .size(4.dp)
-                                .clip(CircleShape)
-                                .background(white)
+            weeklyRecordStatusModel?.let {
+                it.weeklyStatus.forEachIndexed { idx, item ->
+                    Column(
+                        modifier = Modifier.width(40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (it.todayIndex == idx) {
+                            Box(
+                                modifier = Modifier
+                                    .size(4.dp)
+                                    .clip(CircleShape)
+                                    .background(white)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(dayOfWeekList[idx].strId2),
+                            color = white,
+                            style = goolbitgTypography.caption1
                         )
-                    } else {
-                        Spacer(modifier = Modifier.height(4.dp))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(dayOfWeekList[idx].strId2),
-                        color = white,
-                        style = goolbitgTypography.caption1
-                    )
-                }
-                if (idx != dayOfWeekList.size - 1) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    if (idx != dayOfWeekList.size - 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -354,28 +371,39 @@ fun HomeWeekCard(
                 .height(52.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            weekChallengeStampList.forEachIndexed { idx, item ->
-                if (item.isComplete) {
-                    BaseIcon(modifier = Modifier.size(40.dp), iconId = R.drawable.img_home_stamp)
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .border(width = 1.dp, color = white.copy(alpha = 0.15f), shape = CircleShape)
-                            .background(transparent)
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = item.date.dayOfMonth.toString(),
-                            style = goolbitgTypography.body1,
-                            color = white.copy(alpha = 0.3f),
+            weeklyRecordStatusModel?.let {
+                it.weeklyStatus.forEachIndexed { idx, item ->
+                    val isStamp =
+                        item.totalChallenges != 0 && item.totalChallenges == item.achievedChallenges
+                    if (isStamp) {
+                        BaseIcon(
+                            modifier = Modifier.size(40.dp),
+                            iconId = R.drawable.img_home_stamp
                         )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    width = 1.dp,
+                                    color = white.copy(alpha = 0.15f),
+                                    shape = CircleShape
+                                )
+                                .background(transparent)
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = dayList[idx].toString(),
+                                style = goolbitgTypography.body1,
+                                color = white.copy(alpha = 0.3f),
+                            )
+                        }
                     }
-                }
-                if (idx != weekChallengeStampList.size - 1) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    if (idx != it.weeklyStatus.size - 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -385,16 +413,20 @@ fun HomeWeekCard(
 @Composable
 fun TodayTodoListContent(
     modifier: Modifier = Modifier,
-    todayChallengeList: List<HomeTodayChallenge>,
-    onChallengeSelected: (HomeTodayChallenge) -> Unit,
+    todayChallengeList: List<ChallengeRecordModel>,
+    onChallengeSelected: (ChallengeRecordModel) -> Unit,
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
-        Text(text = stringResource(R.string.home_today_list_title), color = white, style = goolbitgTypography.h4)
+        Text(
+            text = stringResource(R.string.home_today_list_title),
+            color = white,
+            style = goolbitgTypography.h4
+        )
         Text(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.home_today_list_subtitle).replace(
                 "#VALUE#",
-                todayChallengeList.sumOf { it.savedPrice }.priceComma()
+                todayChallengeList.sumOf { it.challenge.reward }.priceComma()
             ),
             color = gray300,
             style = goolbitgTypography.body4,
@@ -417,15 +449,16 @@ fun TodayTodoListContent(
 
 @Composable
 fun TodayTodoItem(
-    todayChallenge: HomeTodayChallenge,
+    todayChallenge: ChallengeRecordModel,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit
 ) {
+    val isSuccess = todayChallenge.status == "SUCCESS"
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(CircleShape)
-            .border(width = 1.dp, color = if (todayChallenge.isChecked) main15 else gray500, shape = CircleShape)
+            .border(width = 1.dp, color = if (isSuccess) main15 else gray500, shape = CircleShape)
             .background(gray700)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -435,18 +468,18 @@ fun TodayTodoItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val checkDrawableId =
-            if (todayChallenge.isChecked) R.drawable.ic_checkbox_green else R.drawable.ic_checkbox_gray
+            if (isSuccess) R.drawable.ic_checkbox_green else R.drawable.ic_checkbox_gray
         BaseIcon(modifier = Modifier.size(24.dp), iconId = checkDrawableId)
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = Modifier.weight(1f),
-            text = todayChallenge.title,
-            color = if (todayChallenge.isChecked) main100 else white,
+            text = todayChallenge.challenge.title,
+            color = if (isSuccess) main100 else white,
             style = goolbitgTypography.body4
         )
         Text(
-            text = "+${todayChallenge.savedPrice.priceComma()}",
-            color = if (todayChallenge.isChecked) main50 else gray400,
+            text = "+${todayChallenge.challenge.reward.priceComma()}",
+            color = if (isSuccess) main50 else gray400,
             style = goolbitgTypography.body5
         )
     }
