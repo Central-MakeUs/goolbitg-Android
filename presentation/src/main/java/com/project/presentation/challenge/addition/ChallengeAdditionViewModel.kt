@@ -81,7 +81,7 @@ class ChallengeAdditionViewModel @Inject constructor(
                 when(result){
                     is DataState.Loading -> {
                         _state.value = state.value.copy(
-                            isLoading = result.isLoading
+                            isEnrollLoading = result.isLoading
                         )
                     }
                     is DataState.Success -> {

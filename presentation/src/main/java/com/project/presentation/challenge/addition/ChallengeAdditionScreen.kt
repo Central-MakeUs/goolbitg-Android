@@ -63,6 +63,7 @@ import com.project.domain.model.challenge.ChallengeInfoModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
@@ -238,6 +239,9 @@ fun ChallengeAdditionScreen(
                     }
                 }
             )
+        }
+        if(state.value.isEnrollLoading){
+            BaseLoadingBox()
         }
     }
 }

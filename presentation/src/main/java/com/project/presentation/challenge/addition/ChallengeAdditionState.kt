@@ -8,7 +8,8 @@ data class ChallengeAdditionState(
     val etcChallengeList: List<ChallengeInfoModel>,
     val isBackEnabled: Boolean,
     val isEnrollSuccess: Boolean,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val isEnrollLoading: Boolean,
 ){
     companion object{
         fun create() = ChallengeAdditionState(
@@ -17,7 +18,8 @@ data class ChallengeAdditionState(
             etcChallengeList = listOf(),
             isBackEnabled = true,
             isEnrollSuccess = false,
-            isLoading = false
+            isLoading = false,
+            isEnrollLoading = false
         )
     }
 }
