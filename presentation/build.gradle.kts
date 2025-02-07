@@ -103,4 +103,7 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie)
+
+    // Shimmer (Skeleton UI)
+    implementation(libs.shimmer)
 }

@@ -34,6 +34,7 @@ datastore = "1.0.0"
 kakao = "2.20.6"
 composeMaterial3 = "1.0.0-alpha31"
 lottie = "6.6.2"
+shimmer = "1.0.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -97,6 +98,8 @@ kakao-all = { group = "com.kakao.sdk", name = "v2-all", version.ref = "kakao"}
 androidx-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
 
 lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie"}
+
+shimmer = { group = "com.valentinilk.shimmer", name = "compose-shimmer", version.ref = "shimmer"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
