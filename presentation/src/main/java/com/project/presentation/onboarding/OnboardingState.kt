@@ -1,6 +1,5 @@
 package com.project.presentation.onboarding
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.project.presentation.common.BirthStatus
 import com.project.presentation.common.DayOfWeekEnum
@@ -11,6 +10,7 @@ import java.time.LocalDate
 
 data class OnboardingState(
     val currDate: LocalDate,
+    val localNickname: String,
 
     // flow1
     val nickname: String,
@@ -77,6 +77,7 @@ data class OnboardingState(
     companion object {
         fun create() = OnboardingState(
             currDate = LocalDate.now(),
+            localNickname = "",
             nickname = "",
             nicknameStatus = NicknameStatus.Empty,
             year = "",

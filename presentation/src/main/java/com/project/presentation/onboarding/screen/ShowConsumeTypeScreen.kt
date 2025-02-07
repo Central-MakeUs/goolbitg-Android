@@ -105,11 +105,12 @@ fun ShowConsumeTypeContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(36.dp))
-
-        val title = stringResource(R.string.show_consume_type_title).replace(
-            "#NICKNAME#",
-            state.value.nickname
-        ).replace("#TYPE#", state.value.consumeType)
+        val nickname = state.value.nickname.ifEmpty {
+            state.value.localNickname
+        }
+        val title = stringResource(R.string.show_consume_type_title)
+            .replace("#NICKNAME#", nickname)
+            .replace("#TYPE#", state.value.consumeType)
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = title,

@@ -23,9 +23,9 @@ data class UserInfoModel(
 )
 
 data class SpendingTypeModel(
-    val id: Int,
-    val title: String,
-    val imgUrl: String,
-    val goal: Int,
-    val peopleCount: Int
+    val id: Int?,
+    val title: String?,
+    val imgUrl: String?,
+    val goal: Int?,
+    val peopleCount: Int?
 )

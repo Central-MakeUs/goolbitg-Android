@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.data.preferences.DataStoreKeys.ACCESS_TOKEN
 import com.project.data.preferences.DataStoreKeys.IS_PERMISSION_FLOW
+import com.project.data.preferences.DataStoreKeys.NICKNAME
 import com.project.data.preferences.DataStoreKeys.REFRESH_TOKEN
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,6 +36,12 @@ constructor(
         }
     }
 
+    fun getNickname(): Flow<String?> {
+        return context.datastore.data.map {
+            it[NICKNAME]
+        }
+    }
+
     suspend fun setAccessToken(accessToken: String) {
         context.datastore.edit { preferences ->
             preferences[ACCESS_TOKEN] = accessToken
@@ -50,6 +57,12 @@ constructor(
     suspend fun setIsPermissionFlow(isPermissionFlow: Boolean) {
         context.datastore.edit { preferences ->
             preferences[IS_PERMISSION_FLOW] = isPermissionFlow
+        }
+    }
+
+    suspend fun setNickname(nickname: String) {
+        context.datastore.edit { preferences ->
+            preferences[NICKNAME] = nickname
         }
     }
 }

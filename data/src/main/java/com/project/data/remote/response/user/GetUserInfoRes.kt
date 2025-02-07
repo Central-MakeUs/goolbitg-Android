@@ -68,11 +68,11 @@ data class GetUserInfoRes(
 }
 
 data class SpendingTypeRes(
-    @SerializedName("id") val id: Int,
-    @SerializedName("title") val title: String,
-    @SerializedName("imgUrl") val imgUrl: String,
-    @SerializedName("goal") val goal: Int,
-    @SerializedName("peopleCount") val peopleCount: Int,
+    @SerializedName("id") val id: Int?,
+    @SerializedName("title") val title: String?,
+    @SerializedName("imgUrl") val imgUrl: String?,
+    @SerializedName("goal") val goal: Int?,
+    @SerializedName("peopleCount") val peopleCount: Int?,
 ) {
     fun toDomainModel() = SpendingTypeModel(
         id = id,

@@ -8,4 +8,5 @@ object DataStoreKeys {
     val ACCESS_TOKEN = stringPreferencesKey("access_token")
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     val IS_PERMISSION_FLOW = booleanPreferencesKey("is_permission_flow")
+    val NICKNAME = stringPreferencesKey("nickname")
 }

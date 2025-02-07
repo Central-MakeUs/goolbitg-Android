@@ -15,11 +15,14 @@ import com.project.domain.model.DataState
 import com.project.domain.usecase.auth.LoginUseCase
 import com.project.domain.usecase.auth.RegisterUseCase
 import com.project.domain.usecase.user.CheckRegisterStatusUseCase
+import com.project.domain.usecase.user.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +30,8 @@ class LoginViewModel @Inject constructor(
     private val authDataStore: AuthDataStore,
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
-    private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase
+    private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState.create())
     val state get() = _state.asStateFlow()
@@ -166,13 +170,34 @@ class LoginViewModel @Inject constructor(
                         )
                     }
                     is DataState.Success -> {
-                        _state.value = _state.value.copy(
-                            registerStatus = result.data?.status
-                        )
+                        getUserInfo()
+                        withContext(Dispatchers.Default){
+                            _state.value = _state.value.copy(
+                                registerStatus = result.data?.status
+                            )
+                        }
                     }
                     else -> {
 
                     }
+                }
+            }
+        }
+    }
+
+    private fun getUserInfo(){
+        viewModelScope.launch {
+            getUserInfoUseCase().collect{ result ->
+                when(result){
+                    is DataState.Success -> {
+                        result.data?.let { model ->
+                            model.nickname?.let { nickname ->
+                                authDataStore.setNickname(nickname)
+                            }
+
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }

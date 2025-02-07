@@ -8,6 +8,7 @@ import com.project.domain.model.DataState
 import com.project.domain.model.user.RegisterStatus
 import com.project.domain.usecase.auth.RefreshTokenUseCase
 import com.project.domain.usecase.user.CheckRegisterStatusUseCase
+import com.project.domain.usecase.user.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val authDataStore: AuthDataStore,
     private val refreshTokenUseCase: RefreshTokenUseCase,
-    private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase
+    private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<SplashState> = MutableStateFlow(SplashState.create())
@@ -73,15 +75,36 @@ class SplashViewModel @Inject constructor(
                 when(result){
                     is DataState.Loading -> {}
                     is DataState.Success -> {
-                        _state.value = _state.value.copy(
-                            registerStatus = result.data?.status
-                        )
+                        getUserInfo()
+                        withContext(Dispatchers.Default){
+                            _state.value = _state.value.copy(
+                                registerStatus = result.data?.status
+                            )
+                        }
                     }
                     else -> {
                         _state.value = _state.value.copy(
                             registerStatus = RegisterStatus.Login
                         )
                     }
+                }
+            }
+        }
+    }
+
+    private fun getUserInfo(){
+        viewModelScope.launch {
+            getUserInfoUseCase().collect{ result ->
+                when(result){
+                    is DataState.Success -> {
+                        result.data?.let { model ->
+                            model.nickname?.let { nickname ->
+                                authDataStore.setNickname(nickname)
+                            }
+
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }

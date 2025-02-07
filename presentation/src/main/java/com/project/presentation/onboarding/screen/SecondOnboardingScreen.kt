@@ -56,7 +56,9 @@ fun SecondOnboardingScreen(
                 .padding(innerPadding)) {
                 SecondOnboardingContent(
                     modifier = Modifier.fillMaxSize(),
-                    nickname = state.nickname
+                    nickname = state.nickname.ifEmpty {
+                        state.localNickname
+                    }
                 )
 
                 BaseBottomBtn(

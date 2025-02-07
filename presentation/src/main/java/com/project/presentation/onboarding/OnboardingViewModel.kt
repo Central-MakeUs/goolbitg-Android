@@ -3,6 +3,7 @@ package com.project.presentation.onboarding
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.data.preferences.AuthDataStore
 import com.project.domain.model.DataState
 import com.project.domain.usecase.user.CheckNicknameDuplicatedUseCase
 import com.project.domain.usecase.user.SetUserAgreementUseCase
@@ -26,6 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
+    private val authDataStore: AuthDataStore,
     private val checkNicknameDuplicatedUseCase: CheckNicknameDuplicatedUseCase,
     private val setUserAgreementUseCase: SetUserAgreementUseCase,
     private val setUserInfoUseCase: SetUserInfoUseCase,
@@ -132,7 +134,7 @@ class OnboardingViewModel @Inject constructor(
             }
 
             is OnboardingEvent.RequestFirstOnboarding -> {
-                registerAgreementInfo(event.isAdvertisementAgreement)
+                registerAgreementAndUserInfo(event.isAdvertisementAgreement)
             }
 
             is OnboardingEvent.RequestSetUserCheckList -> {
@@ -178,7 +180,7 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun registerAgreementInfo(isAdvertisementAgreement: Boolean){
+    private fun registerAgreementAndUserInfo(isAdvertisementAgreement: Boolean){
         viewModelScope.launch {
             setUserAgreementUseCase(
                 agreement1 = true,
@@ -207,6 +209,7 @@ class OnboardingViewModel @Inject constructor(
                                     )
                                 }
                                 is DataState.Success -> {
+                                    authDataStore.setNickname(nickname = state.value.nickname)
                                     _state.value = _state.value.copy(
                                         isFirstOnboardingSuccess = true
                                     )
