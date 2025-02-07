@@ -41,7 +41,6 @@ fun BaseBottomNavBar(
     items: List<NavItem> = listOf(
         NavItem.Home,
         NavItem.Challenge,
-        NavItem.BuyOrNot,
         NavItem.MyPage,
     )
 ) {
@@ -84,12 +83,14 @@ fun BaseBottomNavBar(
                     }
                 },
                 onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if(!isSelected){
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
