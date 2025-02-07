@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -32,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -43,6 +46,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,10 +57,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.project.domain.model.challenge.ChallengeInfoModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
-import com.project.presentation.item.ChallengeInfo
+import com.project.presentation.base.extension.ComposeExtension.fadingEdge
+import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -67,6 +76,7 @@ import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +87,19 @@ fun ChallengeAdditionScreen(
     viewModel: ChallengeAdditionViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.value.isEnrollSuccess) {
+        if (state.value.isEnrollSuccess) {
+            if (state.value.isBackEnabled) {
+                navHostController.popBackStack()
+            } else {
+                navHostController.navigate(NavItem.Challenge.route) {
+                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -103,7 +126,7 @@ fun ChallengeAdditionScreen(
     }
 
     var selectedChallenge by remember {
-        mutableStateOf<ChallengeInfo?>(null)
+        mutableStateOf<ChallengeInfoModel?>(null)
     }
 
     Box(
@@ -114,16 +137,18 @@ fun ChallengeAdditionScreen(
         Scaffold(containerColor = transparent) { innerPadding ->
             // 콘텐츠 레이아웃
             BottomSheetScaffold(
-                modifier = Modifier.padding(innerPadding).drawBehind {
-                    val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
-                    val bottomSheetMinOffset =
-                        screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
-                    bottomSheetScrimAlpha = calculateScrimAlpha(
-                        offset = offset,
-                        screenHeight = screenHeight,
-                        bottomSheetMinOffset = bottomSheetMinOffset
-                    )
-                },
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .drawBehind {
+                        val offset = scaffoldState.bottomSheetState.requireOffset() // 바텀시트 현재 오프셋 값
+                        val bottomSheetMinOffset =
+                            screenHeight - bottomSheetContentHeightInPx - bottomSheetDragHandleHeightInPx // 바텀시트가 가질 수 있는 최소 offset 값
+                        bottomSheetScrimAlpha = calculateScrimAlpha(
+                            offset = offset,
+                            screenHeight = screenHeight,
+                            bottomSheetMinOffset = bottomSheetMinOffset
+                        )
+                    },
                 scaffoldState = scaffoldState,
                 sheetPeekHeight = 0.dp,
                 sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
@@ -135,8 +160,14 @@ fun ChallengeAdditionScreen(
                         challengeInfo = selectedChallenge,
                         onChallenge = {
                             coroutineScope.launch {
-                                // TODO: 챌린지 도전
                                 scaffoldState.bottomSheetState.partialExpand()
+                                selectedChallenge?.let {
+                                    viewModel.onEvent(
+                                        ChallengeAdditionEvent.EnrollChallenge(
+                                            challengeId = it.id
+                                        )
+                                    )
+                                }
                                 selectedChallenge = null
                             }
                         },
@@ -163,7 +194,8 @@ fun ChallengeAdditionScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Box(
-                            modifier = Modifier.size(32.dp, 4.dp)
+                            modifier = Modifier
+                                .size(32.dp, 4.dp)
                                 .clip(CircleShape)
                                 .background(gray400)
                         )
@@ -178,7 +210,10 @@ fun ChallengeAdditionScreen(
                             onBack = { navHostController.popBackStack() }
                         )
                         ChallengeAdditionContent(
-                            nickname = "어린굴비",
+                            nickname = state.value.nickname,
+                            popularChallengeList = state.value.popularChallengeList,
+                            etcChallengeList = state.value.etcChallengeList,
+                            isLoading = state.value.isLoading,
                             modifier = Modifier.weight(1f),
                             onChallengeClick = {
                                 coroutineScope.launch {
@@ -195,6 +230,10 @@ fun ChallengeAdditionScreen(
                                 .drawBehind {
                                     drawRect(black.copy(alpha = bottomSheetScrimAlpha))
                                 }
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {}
                         )
                     }
                 }
@@ -213,7 +252,7 @@ fun ChallengeAdditionHeader(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if(isBackEnabled){
+        if (isBackEnabled) {
             BaseIcon(
                 modifier = Modifier
                     .clickable(
@@ -223,7 +262,7 @@ fun ChallengeAdditionHeader(
                     .padding(16.dp),
                 iconId = R.drawable.ic_arrow_back
             )
-        }else{
+        } else {
             Spacer(modifier = Modifier.size(64.dp))
         }
         Text(
@@ -240,18 +279,63 @@ fun ChallengeAdditionHeader(
 @Composable
 fun ChallengeAdditionContent(
     nickname: String,
+    popularChallengeList: List<ChallengeInfoModel>,
+    etcChallengeList: List<ChallengeInfoModel>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
-    onChallengeClick: (ChallengeInfo) -> Unit
+    onChallengeClick: (ChallengeInfoModel) -> Unit
 ) {
+    val listState = rememberLazyListState()
+    // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
+    val showTopFade by remember {
+        derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }
+    }
+    val showBottomFade by remember {
+        derivedStateOf {
+            (listState.layoutInfo.totalItemsCount > 0 &&
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastItem ->
+                        lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
+                                lastItem.offset + lastItem.size <= listState.layoutInfo.viewportEndOffset
+                    } ?: true).not()
+        }
+    }
+
+    val listFade by remember {
+        derivedStateOf {
+            when {
+                showTopFade && showBottomFade -> Brush.verticalGradient(
+                    0f to transparent,
+                    0.05f to white,
+                    0.95f to white,
+                    1f to transparent
+                )
+
+                showTopFade -> Brush.verticalGradient(0f to transparent, 0.05f to white)
+                showBottomFade -> Brush.verticalGradient(0.95f to white, 1f to transparent)
+                else -> null
+            }
+        }
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .then(
+                if (listFade != null) {
+                    Modifier.fadingEdge(listFade!!)
+                } else {
+                    Modifier
+                }
+            ).padding(horizontal = 24.dp),
+        contentPadding = PaddingValues(bottom = 16.dp),
+        state = listState
     ) {
         item {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = stringResource(R.string.challenge_addition_title).replace("#VALUE#", nickname),
+                text = stringResource(R.string.challenge_addition_title).replace(
+                    "#VALUE#",
+                    nickname
+                ),
                 color = white,
                 style = goolbitgTypography.h1
             )
@@ -264,11 +348,6 @@ fun ChallengeAdditionContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        val popularList = listOf(
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능", imgUrl = "", savedPrice = 15000),
-            ChallengeInfo(id = 1, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능", imgUrl = "", savedPrice = 7000),
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
-        )
         item {
             Column(
                 modifier = Modifier
@@ -283,36 +362,47 @@ fun ChallengeAdditionContent(
                     style = goolbitgTypography.h4,
                     color = white
                 )
-                popularList.forEachIndexed { idx, item ->
-                    PopularChallengeItem(
-                        rank = (idx + 1).toString(),
-                        item = item,
-                        onItemSelected = {
-                            onChallengeClick(item)
-                        }
-                    )
-                    if (idx != popularList.size - 1) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .height(1.dp)
-                                .background(gray500)
+                if(isLoading){
+                    (1..3).forEach {
+                        PopularChallengeLoadingItem(
+                            rank = it.toString(),
+                            alpha = (4 - it) / 3f,
                         )
+                        if (it != 3) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .height(1.dp)
+                                    .background(gray500)
+                            )
+                        }
+                    }
+                }else{
+                    popularChallengeList.forEachIndexed { idx, item ->
+                        PopularChallengeItem(
+                            rank = (idx + 1).toString(),
+                            alpha = (popularChallengeList.size - idx) / popularChallengeList.size.toFloat(),
+                            item = item,
+                            onItemSelected = {
+                                onChallengeClick(item)
+                            }
+                        )
+                        if (idx != popularChallengeList.size - 1) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .height(1.dp)
+                                    .background(gray500)
+                            )
+                        }
                     }
                 }
 
             }
         }
 
-        val etcList = listOf(
-            ChallengeInfo(id = 1, title = "야식 안시켜먹기", subTitle = "15,000원 절약 가능", imgUrl = "", savedPrice = 15000),
-            ChallengeInfo(id = 2, title = "택시 안타고 대중교통 이용하기", subTitle = "7,000원 절약 가능", imgUrl = "", savedPrice = 7000),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
-            ChallengeInfo(id = 3, title = "야식 안시켜먹기", subTitle = "10,000원 절약 가능", imgUrl = "", savedPrice = 10000),
-        )
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Column(
@@ -328,21 +418,36 @@ fun ChallengeAdditionContent(
                     style = goolbitgTypography.h4,
                     color = white
                 )
-                etcList.forEachIndexed { idx, item ->
-                    EtcChallengeItem(
-                        item = item,
-                        onItemSelected = {
-                            onChallengeClick(item)
+                if(isLoading){
+                    (1..10).forEach {
+                        EtcChallengeLoadingItem()
+                        if (it != 10) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .height(1.dp)
+                                    .background(gray500)
+                            )
                         }
-                    )
-                    if (idx != etcList.size - 1) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .height(1.dp)
-                                .background(gray500)
+                    }
+                }else{
+                    etcChallengeList.forEachIndexed { idx, item ->
+                        EtcChallengeItem(
+                            item = item,
+                            onItemSelected = {
+                                onChallengeClick(item)
+                            }
                         )
+                        if (idx != etcChallengeList.size - 1) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .height(1.dp)
+                                    .background(gray500)
+                            )
+                        }
                     }
                 }
 
@@ -351,10 +456,12 @@ fun ChallengeAdditionContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PopularChallengeItem(
     rank: String,
-    item: ChallengeInfo,
+    alpha: Float,
+    item: ChallengeInfoModel,
     modifier: Modifier = Modifier,
     onItemSelected: () -> Unit
 ) {
@@ -364,13 +471,24 @@ fun PopularChallengeItem(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            )  { onItemSelected() }
+            ) { onItemSelected() }
             .padding(horizontal = 8.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = rank, style = goolbitgTypography.h1, color = main100)
+        Text(text = rank, style = goolbitgTypography.h1, color = main100.copy(alpha = alpha))
         Spacer(modifier = Modifier.width(16.dp))
-        BaseIcon(modifier = Modifier.size(45.dp), iconId = R.drawable.ic_challenge_default)
+        if (item.imageUrlSmall.isEmpty()) {
+            BaseIcon(modifier = Modifier.size(45.dp), iconId = R.drawable.ic_challenge_default)
+        } else {
+            GlideImage(
+                modifier = Modifier
+                    .size(45.dp)
+                    .clip(CircleShape),
+                model = item.imageUrlSmall,
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Column(
             modifier = Modifier.weight(1f),
@@ -378,15 +496,66 @@ fun PopularChallengeItem(
         ) {
             Text(text = item.title, style = goolbitgTypography.body3, color = white)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = item.subTitle, style = goolbitgTypography.body4, color = gray300)
+            Text(
+                text = stringResource(R.string.challenge_addition_item_sub_title)
+                    .replace("#VALUE#", item.reward.toString()),
+                style = goolbitgTypography.body4, color = gray300
+            )
         }
         BaseIcon(iconId = R.drawable.ic_arrow_right_over)
     }
 }
 
 @Composable
+fun PopularChallengeLoadingItem(
+    rank: String,
+    alpha: Float,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = rank, style = goolbitgTypography.h1, color = main100.copy(alpha = alpha))
+        Spacer(modifier = Modifier.width(16.dp))
+        Box(modifier = Modifier
+            .size(45.dp)
+            .clip(CircleShape)
+            .shimmer()
+            .background(gray500))
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .shimmer()
+                    .background(white),
+                text = "",
+                style = goolbitgTypography.body3,
+                color = white
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .shimmer()
+                    .background(white),
+                text = "",
+                style = goolbitgTypography.body4, color = gray300
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
 fun EtcChallengeItem(
-    item: ChallengeInfo,
+    item: ChallengeInfoModel,
     modifier: Modifier = Modifier,
     onItemSelected: () -> Unit
 ) {
@@ -399,7 +568,18 @@ fun EtcChallengeItem(
             .padding(horizontal = 8.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BaseIcon(modifier = Modifier.size(45.dp), iconId = R.drawable.ic_challenge_default)
+        if (item.imageUrlSmall.isEmpty()) {
+            BaseIcon(modifier = Modifier.size(45.dp), iconId = R.drawable.ic_challenge_default)
+        } else {
+            GlideImage(
+                modifier = Modifier
+                    .size(45.dp)
+                    .clip(CircleShape),
+                model = item.imageUrlSmall,
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Column(
             modifier = Modifier.weight(1f),
@@ -407,23 +587,72 @@ fun EtcChallengeItem(
         ) {
             Text(text = item.title, style = goolbitgTypography.body3, color = white)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = item.subTitle, style = goolbitgTypography.body4, color = gray300)
+            Text(
+                text = stringResource(R.string.challenge_addition_item_sub_title)
+                    .replace("#VALUE#", item.reward.toString()),
+                style = goolbitgTypography.body4, color = gray300
+            )
         }
         BaseIcon(iconId = R.drawable.ic_arrow_right_over)
     }
 }
 
 @Composable
+fun EtcChallengeLoadingItem(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier
+            .size(45.dp)
+            .clip(CircleShape)
+            .shimmer()
+            .background(gray500))
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .shimmer()
+                    .background(white),
+                text = "",
+                style = goolbitgTypography.body3,
+                color = white
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .shimmer()
+                    .background(white),
+                text = "",
+                style = goolbitgTypography.body4, color = gray300
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
 fun ChallengeBottomSheetContent(
-    challengeInfo: ChallengeInfo?,
+    challengeInfo: ChallengeInfoModel?,
     modifier: Modifier = Modifier,
     onChallenge: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(gray500))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(gray500)
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -431,18 +660,41 @@ fun ChallengeBottomSheetContent(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BaseIcon(modifier = Modifier.size(160.dp), iconId = R.drawable.ic_challenge_default)
+            if (challengeInfo?.imageUrlSmall.isNullOrEmpty()) {
+                BaseIcon(modifier = Modifier.size(160.dp), iconId = R.drawable.ic_challenge_default)
+            } else {
+                GlideImage(
+                    modifier = Modifier
+                        .size(160.dp)
+                        .clip(CircleShape),
+                    model = challengeInfo?.imageUrlLarge ?: "",
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = challengeInfo?.title ?: "", style = goolbitgTypography.h3, color = gray50)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = challengeInfo?.subTitle ?: "", style = goolbitgTypography.body5, color = gray300)
+
+            if (challengeInfo != null) {
+                Text(
+                    text = stringResource(R.string.challenge_addition_item_sub_title)
+                        .replace("#VALUE#", challengeInfo.reward.toString()),
+                    style = goolbitgTypography.body5,
+                    color = gray300
+                )
+            }
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(gray500))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(gray500)
+        )
         BaseBottomBtn(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             text = stringResource(R.string.common_challenge),
             onClick = onChallenge
         )

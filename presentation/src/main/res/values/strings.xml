@@ -81,20 +81,22 @@
     <string name="home_achieved_day">#VALUE#일째 달성중</string>
     <string name="home_today_list_title">오늘 실천해야해요</string>
     <string name="home_today_list_subtitle">총 #VALUE#원 절약 가능</string>
-    <string name="home_price_phrase_0">커피 한잔만큼 아꼈어요</string>
-    <string name="home_price_phrase_1">기본 택시비만큼 아꼈어요</string>
-    <string name="home_price_phrase_2">영화 티켓 1장만큼 아꼈어요</string>
-    <string name="home_price_phrase_3">치킨 1마리만큼 아꼈어요</string>
-    <string name="home_price_phrase_4">홀케이크 1개만큼 아꼈어요</string>
-    <string name="home_price_phrase_5">스탠리 텀블러 1개만큼 아꼈어요</string>
-    <string name="home_price_phrase_6">한우세트만큼 아꼈어요</string>
-    <string name="home_price_phrase_7">신세계 상품권 1장만큼 아꼈어요</string>
+    <string name="home_price_phrase_0">챌린지를 시작해보세요!</string>
+    <string name="home_price_phrase_1">커피 한잔만큼 아꼈어요</string>
+    <string name="home_price_phrase_2">기본 택시비만큼 아꼈어요</string>
+    <string name="home_price_phrase_3">영화 티켓 1장만큼 아꼈어요</string>
+    <string name="home_price_phrase_4">치킨 1마리만큼 아꼈어요</string>
+    <string name="home_price_phrase_5">홀케이크 1개만큼 아꼈어요</string>
+    <string name="home_price_phrase_6">스탠리 텀블러 1개만큼 아꼈어요</string>
+    <string name="home_price_phrase_7">한우세트만큼 아꼈어요</string>
+    <string name="home_price_phrase_8">신세계 상품권 1장만큼 아꼈어요</string>
 
     <string name="challenge_addition_header_title">챌린지 추가</string>
     <string name="challenge_addition_title">#VALUE#님,\n어떤 습관을 만들어 볼까요?</string>
     <string name="challenge_addition_sub_title">만들고 싶은 습관 1개를 선택해주세요</string>
     <string name="challenge_addition_same_consume_type_challenge">같은 소비유형 인기 챌린지</string>
     <string name="challenge_addition_etc_challenge">그 외 이런습관은 어때요?</string>
+    <string name="challenge_addition_item_sub_title">총 #VALUE#원 절약 가능</string>
 
     <string name="challenge_detail_sub_title">#VALUE#님은</string>
     <string name="challenge_detail_title">#VALUE#일째, 열심히 진행중입니다</string>
