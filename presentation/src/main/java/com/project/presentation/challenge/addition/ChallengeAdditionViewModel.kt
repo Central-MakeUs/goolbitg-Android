@@ -68,6 +68,11 @@ class ChallengeAdditionViewModel @Inject constructor(
                             )
                         }
                     }
+                    is DataState.Error -> {
+                        _state.value = state.value.copy(
+                            isAlreadyEnrolled = true
+                        )
+                    }
                     else -> Unit
                 }
 
