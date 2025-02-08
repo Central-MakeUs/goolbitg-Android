@@ -1,6 +1,5 @@
 package com.project.data.remote.interceptor
 
-import android.util.Log
 import com.project.data.preferences.AuthDataStore
 import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.request.auth.RefreshTokenReq
@@ -49,26 +48,24 @@ class TokenInterceptor(
 
         // 토큰 만료 시 처리
         if (response.code == 401) {
-            synchronized(lock) {
-                if (!isRefreshing) {
-                    isRefreshing = true
-                    try {
-                        val newTokenPair = refreshAccessToken()
-                        if (newTokenPair != null) {
-                            runBlocking {
-                                authDataStore.setAccessToken(newTokenPair.first)
-                                authDataStore.setRefreshToken(newTokenPair.second)
-                            }
-                            response.close() // 기존 응답 닫기
-                            val newRequest =
-                                newRequest.newBuilder()
-                                    .header("Authorization", "Bearer ${newTokenPair.first}")
-                                    .build()
-                            return chain.proceed(newRequest) // 재시도
+            if (!isRefreshing) {
+                isRefreshing = true
+                try {
+                    val newTokenPair = refreshAccessToken()
+                    if (newTokenPair != null) {
+                        runBlocking {
+                            authDataStore.setAccessToken(newTokenPair.first)
+                            authDataStore.setRefreshToken(newTokenPair.second)
                         }
-                    } finally {
-                        isRefreshing = false
+                        response.close() // 기존 응답 닫기
+                        val newRequest =
+                            newRequest.newBuilder()
+                                .header("Authorization", "Bearer ${newTokenPair.first}")
+                                .build()
+                        return chain.proceed(newRequest) // 재시도
                     }
+                } finally {
+                    isRefreshing = false
                 }
             }
         }
