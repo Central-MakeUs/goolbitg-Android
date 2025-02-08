@@ -77,6 +77,6 @@ sealed class NavItem(
         route = "challenge_addition/{isOnboarding}"
     )
     data object ChallengeDetail: NavItem(
-        route = "challenge_detail"
+        route = "challenge_detail/{challengeId}"
     )
 }
