@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.white
@@ -48,10 +49,7 @@ fun BaseBottomBtn(
                         )
                     }
                 )
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )  {
+                .noRippleClickable {
                     onClick()
                 }
                 .padding(vertical = 16.dp),

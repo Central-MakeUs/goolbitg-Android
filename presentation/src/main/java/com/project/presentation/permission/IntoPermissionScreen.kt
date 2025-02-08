@@ -47,6 +47,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.project.domain.model.user.RegisterStatus
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.login.LoginViewModel
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
@@ -200,7 +201,7 @@ fun IntroPermissionBody(
                 .background(
                     brush = Brush.horizontalGradient(listOf(main100, Color(0xFF67BF4E)))
                 )
-                .clickable {
+                .noRippleClickable {
                     requestPermission()
                 }
                 .padding(vertical = 16.dp),

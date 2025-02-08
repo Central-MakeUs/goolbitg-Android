@@ -65,6 +65,7 @@ import com.project.presentation.base.BaseDatePicker
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.BaseOutlinedTextFiled
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.challenge.addition.calculateScrimAlpha
 import com.project.presentation.challenge.addition.getScreenHeightInPixelsOnce
 import com.project.presentation.common.AgreementEnum
@@ -279,10 +280,7 @@ fun FirstOnboardingScreen(
                                             )
                                         )
                                     )
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null
-                                    ) {
+                                    .noRippleClickable {
                                         coroutineScope.launch {
                                             focusManager.clearFocus(force = true)
                                             isAgreementBottomSheet = true
@@ -304,10 +302,7 @@ fun FirstOnboardingScreen(
                                 .drawBehind {
                                     drawRect(black.copy(alpha = bottomSheetScrimAlpha))
                                 }
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) { }
+                                .noRippleClickable { }
                         )
                     }
                 }
@@ -422,10 +417,7 @@ fun InputNicknameContent(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
                         .background(white)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { onDuplicationCheck() }
+                        .noRippleClickable { onDuplicationCheck() }
                         .padding(horizontal = 16.dp, vertical = 14.5.dp),
                     text = stringResource(R.string.onboarding_first_nickname_check),
                     style = goolbitgTypography.btn3,
@@ -492,10 +484,7 @@ fun InputBirthContent(
                 .clip(RoundedCornerShape(6.dp))
                 .border(width = 1.dp, color = gray500, shape = RoundedCornerShape(6.dp))
                 .background(gray600)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onClick() }
+                .noRippleClickable { onClick() }
                 .padding(spacingMd),
             text = birthStr,
             color = if (isBirthEmpty) gray400 else white,
@@ -563,10 +552,7 @@ fun GenderButton(
         modifier = modifier
             .clip(RoundedCornerShape(roundLg))
             .background(bg)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick() }
+            .noRippleClickable { onClick() }
             .padding(16.dp),
         text = text,
         color = textColor,
@@ -665,10 +651,7 @@ fun AgreementBottomSheetContent(
                 shape = CircleShape
             )
             .background(if (isAllChecked) main20 else gray600)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
+            .noRippleClickable {
                 val newAgreementCheckList = agreementCheckList.map { !isAllChecked }
                 agreementCheckList = newAgreementCheckList
                 isAllChecked = !isAllChecked
@@ -694,10 +677,7 @@ fun AgreementBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
+                        .noRippleClickable {
                             val newAgreementCheckList = agreementCheckList
                                 .map { it }
                                 .toMutableList()
@@ -719,10 +699,7 @@ fun AgreementBottomSheetContent(
                         style = goolbitgTypography.body4
                     )
                     BaseIcon(
-                        modifier = Modifier.clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
+                        modifier = Modifier.noRippleClickable {
                             if (item.webUrl != null) {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webUrl))
                                 context.startActivity(intent)

@@ -65,6 +65,7 @@ import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
@@ -231,10 +232,7 @@ fun ChallengeAdditionScreen(
                                 .drawBehind {
                                     drawRect(black.copy(alpha = bottomSheetScrimAlpha))
                                 }
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {}
+                                .noRippleClickable {}
                         )
                     }
                 }
@@ -259,10 +257,7 @@ fun ChallengeAdditionHeader(
         if (isBackEnabled) {
             BaseIcon(
                 modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onBack() }
+                    .noRippleClickable { onBack() }
                     .padding(16.dp),
                 iconId = R.drawable.ic_arrow_back
             )
@@ -472,10 +467,7 @@ fun PopularChallengeItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onItemSelected() }
+            .noRippleClickable { onItemSelected() }
             .padding(horizontal = 8.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -566,7 +558,7 @@ fun EtcChallengeItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
+            .noRippleClickable {
                 onItemSelected()
             }
             .padding(horizontal = 8.dp, vertical = 16.dp),

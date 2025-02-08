@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray500
@@ -84,7 +85,7 @@ fun BaseFormDropdown(
         ) {
             Row(
                 modifier = Modifier
-                    .clickable {
+                    .noRippleClickable {
                         if (itemList.isNotEmpty()) {
                             expanded = !expanded
                         }
@@ -151,7 +152,7 @@ fun DropdownItem(
     Text(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .noRippleClickable { onClick() }
             .padding(horizontal = 24.dp, vertical = 12.dp), text = text, color = textColor,
         style = goolbitgTypography.body3
     )

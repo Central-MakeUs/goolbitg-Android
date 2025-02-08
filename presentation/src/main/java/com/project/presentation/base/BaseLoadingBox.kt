@@ -20,6 +20,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.project.presentation.R
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.ui.theme.black
 
 
@@ -39,10 +40,7 @@ fun BaseLoadingBox(modifier: Modifier = Modifier) {
     Box(modifier = modifier
         .fillMaxSize()
         .background(black.copy(alpha = 0.5f))
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null
-        ) {  }
+        .noRippleClickable {  }
     ) {
         LottieAnimation(
             modifier = Modifier.size(108.dp).align(Alignment.Center),

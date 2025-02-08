@@ -3,6 +3,10 @@ package com.project.presentation.base.extension
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -63,5 +67,13 @@ object ComposeExtension {
             canvas.restore()
         }
 
+    }
+
+    @Composable
+    fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier{
+        return this.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null
+        ) { onClick() }
     }
 }

@@ -47,6 +47,7 @@ import com.project.domain.model.challenge.ChallengeTripleModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseLoadingBox
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.item.ChallengeDetailCheckEnum
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -203,7 +204,7 @@ fun ChallengeDetailHeader(
             BaseIcon(
                 modifier = Modifier
                     .size(64.dp)
-                    .clickable {
+                    .noRippleClickable {
                         onBack()
                     }
                     .padding(16.dp),
@@ -224,10 +225,7 @@ fun ChallengeDetailHeader(
         }else{
             Box(modifier = Modifier.width(86.dp)
                 .fillMaxHeight()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
+                .noRippleClickable {
                     onStop()
                 }
             ){
@@ -277,10 +275,7 @@ fun CheckContentItem(
             .height(80.dp)
             .then(
                 if (checkState == ChallengeDetailCheckEnum.Enable) {
-                    Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
+                    Modifier.noRippleClickable {
                         onItemClick()
                     }
                 } else {
@@ -371,10 +366,7 @@ fun ChallengeStopPopup(
         modifier = modifier
             .fillMaxSize()
             .background(black.copy(alpha = 0.3f))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {  }
+            .noRippleClickable {  }
     ) {
         Column(
             modifier = Modifier
@@ -410,10 +402,7 @@ fun ChallengeStopPopup(
                         .weight(1f)
                         .clip(CircleShape)
                         .background(gray400)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { onDismiss() }
+                        .noRippleClickable { onDismiss() }
                         .padding(vertical = 10.dp),
                     text = stringResource(R.string.common_cancel),
                     color = white,
@@ -426,10 +415,7 @@ fun ChallengeStopPopup(
                         .weight(1f)
                         .clip(CircleShape)
                         .background(com.project.presentation.ui.theme.error)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { onStopChallenge() }
+                        .noRippleClickable { onStopChallenge() }
                         .padding(vertical = 10.dp),
                     text = stringResource(R.string.common_stop),
                     color = white,

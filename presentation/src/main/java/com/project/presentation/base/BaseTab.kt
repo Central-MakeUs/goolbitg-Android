@@ -28,9 +28,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray100
 import com.project.presentation.ui.theme.gray300
+import com.project.presentation.ui.theme.gray500
 import com.project.presentation.ui.theme.gray800
 import com.project.presentation.ui.theme.white
 
@@ -62,7 +64,7 @@ fun BaseTab(
             .onGloballyPositioned { coordinates ->
                 tabWidth = with(density) { coordinates.size.width.toDp() }
             }
-            .background(color = gray100, shape = CircleShape)
+            .background(color = gray500, shape = CircleShape)
     ) {
         MyTabIndicator(
             modifier = Modifier
@@ -123,10 +125,7 @@ private fun MyTabItem(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick() },
+            .noRippleClickable { onClick() },
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),

@@ -46,6 +46,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseTintIcon
 import com.project.presentation.base.extension.ComposeExtension.innerShadow
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.base.extension.StringExtension.priceComma
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.navigation.BaseBottomNavBar
@@ -128,10 +129,7 @@ fun HomeHeader(
         }
         Box(modifier = Modifier
             .size(31.dp, 30.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onNotification() }) {
+            .noRippleClickable { onNotification() }) {
             BaseIcon(
                 modifier = Modifier.align(Alignment.BottomStart),
                 iconId = R.drawable.ic_notification
@@ -471,10 +469,7 @@ fun TodayTodoItem(
                     Modifier.background(gray700)
                 }
             )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onItemClick() }
+            .noRippleClickable { onItemClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

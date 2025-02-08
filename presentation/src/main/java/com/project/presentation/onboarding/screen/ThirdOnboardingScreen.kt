@@ -43,6 +43,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.CheckListData
 import com.project.presentation.onboarding.OnboardingEvent
@@ -239,10 +240,7 @@ fun OnboardingCheckListItem(
             .clip(CircleShape)
             .border(width = 1.dp, shape = CircleShape, color = borderColor)
             .background(bgColor)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            )  { onItemClick() }
+            .noRippleClickable{ onItemClick() }
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         BaseIcon(iconId = if (isSelected) R.drawable.ic_checkbox_green else R.drawable.ic_checkbox_gray)

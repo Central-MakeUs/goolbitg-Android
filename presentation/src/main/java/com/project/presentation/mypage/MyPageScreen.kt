@@ -55,6 +55,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.item.MyPageUsageGuideEnum
 import com.project.presentation.navigation.BaseBottomNavBar
 import com.project.presentation.ui.theme.bg1
@@ -146,10 +147,7 @@ fun MyPageHeader(
 
         Box(modifier = Modifier
             .size(31.dp, 30.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onNotification() }) {
+            .noRippleClickable { onNotification() }) {
             BaseIcon(modifier = Modifier.align(Alignment.BottomStart), iconId = R.drawable.ic_notification)
             if (newAlarmCount != 0) {
                 Box(
@@ -532,10 +530,7 @@ fun MyPageUsageGuide(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onUsageGuideClick(item) }
+                    .noRippleClickable { onUsageGuideClick(item) }
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -578,14 +573,14 @@ fun MyPageLogoutAndWithdraw(
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            modifier = Modifier.clickable { onLogout() },
+            modifier = Modifier.noRippleClickable { onLogout() },
             text = stringResource(R.string.mypage_usage_logout),
             color = gray300,
             style = goolbitgTypography.btn3
         )
         Text(text = "・", color = gray300, style = goolbitgTypography.btn3)
         Text(
-            modifier = Modifier.clickable { onWithdraw() },
+            modifier = Modifier.noRippleClickable { onWithdraw() },
             text = stringResource(R.string.mypage_usage_withdraw),
             color = gray300,
             style = goolbitgTypography.btn3
@@ -640,10 +635,7 @@ fun MyPageLogoutPopup(
                         .weight(1f)
                         .clip(CircleShape)
                         .background(gray400)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
+                        .noRippleClickable {
                             onDismiss()
                         }
                         .padding(10.5.dp),
@@ -658,10 +650,7 @@ fun MyPageLogoutPopup(
                         .weight(1f)
                         .clip(CircleShape)
                         .background(com.project.presentation.ui.theme.error)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
+                        .noRippleClickable {
                             onConfirm()
                         }
                         .padding(10.5.dp),

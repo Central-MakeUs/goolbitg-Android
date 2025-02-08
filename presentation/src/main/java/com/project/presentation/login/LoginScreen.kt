@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.project.domain.model.user.RegisterStatus
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -124,7 +125,7 @@ fun LoginScreen(
                     .padding(horizontal = 45.dp)
                     .clip(RoundedCornerShape(6.dp))
                     .background(Color(0xFFFEE500))
-                    .clickable {
+                    .noRippleClickable {
                         loginViewModel.loginWithKakaoTalk(context = context)
                     }
                     .padding(horizontal = 14.dp, vertical = 11.dp)) {

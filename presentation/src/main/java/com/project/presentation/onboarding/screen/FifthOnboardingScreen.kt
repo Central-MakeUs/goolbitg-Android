@@ -31,6 +31,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseFormDropdown
 import com.project.presentation.base.BaseTimePicker
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingEvent
@@ -139,10 +140,7 @@ fun FifthOnboardingContent(
 
             Text(
                 modifier = Modifier
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { },
+                    .noRippleClickable { },
                 text = stringResource(R.string.common_skip),
                 style = goolbitgTypography.h3,
                 color = gray300

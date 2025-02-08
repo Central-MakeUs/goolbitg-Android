@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.project.presentation.R
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray100
 
@@ -31,10 +32,7 @@ fun BaseHeader(
         BaseIcon(
             modifier = Modifier
                 .size(64.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onBackPressed() }
+                .noRippleClickable{ onBackPressed() }
                 .padding(16.dp),
             iconId = R.drawable.ic_arrow_left
         )
