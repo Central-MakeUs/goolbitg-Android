@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +40,7 @@ import com.project.presentation.onboarding.screen.ShowConsumeTypeScreen
 import com.project.presentation.onboarding.screen.ThirdOnboardingScreenScreen
 import com.project.presentation.permission.IntroPermissionScreen
 import com.project.presentation.splash.SplashScreen
-import com.project.presentation.ui.theme.bg1
+import com.project.presentation.ui.theme.gray800
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -83,9 +82,8 @@ private fun NavigationGraph(
     val systemUiController = rememberSystemUiController()
 
     // 상태바와 내비게이션 바 색상 설정
-    systemUiController.setNavigationBarColor(color = bg1, darkIcons = false)
     systemUiController.setSystemBarsColor(
-        color = Transparent,
+        color = gray800,
         darkIcons = false  // 아이콘 색상을 밝게 표시 (흰색)
     )
 
