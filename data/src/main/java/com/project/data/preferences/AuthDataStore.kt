@@ -65,4 +65,12 @@ constructor(
             preferences[NICKNAME] = nickname
         }
     }
+
+    suspend fun deleteAccountInfo(){
+        context.datastore.edit { preferences ->
+            preferences[ACCESS_TOKEN] = ""
+            preferences[REFRESH_TOKEN] = ""
+            preferences[NICKNAME] = ""
+        }
+    }
 }

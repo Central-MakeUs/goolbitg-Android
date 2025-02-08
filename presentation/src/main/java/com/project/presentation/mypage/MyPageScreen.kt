@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +70,7 @@ import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.item.MyPageUsageGuideEnum
 import com.project.presentation.navigation.BaseBottomNavBar
+import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -91,6 +93,15 @@ fun MyPageScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     var isLogout by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    LaunchedEffect(state.value.isLogoutSuccess) {
+        if(state.value.isLogoutSuccess){
+            navHostController.navigate(NavItem.Login.route) {
+                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -147,6 +158,7 @@ fun MyPageScreen(
             MyPageLogoutPopup(
                 onConfirm = {
                     isLogout = false
+                    viewModel.onEvent(MyPageEvent.Logout)
                 },
                 onDismiss = {
                     isLogout = false
@@ -316,16 +328,6 @@ fun MyPageInfoCard(
                     color = white
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(white.copy(alpha = 0.2f))
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                text = stringResource(R.string.common_share),
-                style = goolbitgTypography.body5.copy(fontWeight = FontWeight.Bold),
-                color = white
-            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -698,6 +700,7 @@ fun MyPageLogoutPopup(
         modifier = modifier
             .fillMaxSize()
             .background(black.copy(alpha = 0.3f))
+            .noRippleClickable {  }
     ) {
         Column(
             modifier = Modifier
