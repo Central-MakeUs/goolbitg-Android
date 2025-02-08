@@ -20,15 +20,18 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.messaging.FirebaseMessaging
-import com.project.presentation.challenge.ChallengeScreen
+import com.project.presentation.challenge.main.ChallengeScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionScreen
-import com.project.presentation.challenge.ChallengeDetailScreen
+import com.project.presentation.challenge.detail.ChallengeDetailScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionEvent
 import com.project.presentation.challenge.addition.ChallengeAdditionViewModel
+import com.project.presentation.challenge.detail.ChallengeDetailEvent
+import com.project.presentation.challenge.detail.ChallengeDetailViewModel
 import com.project.presentation.home.HomeScreen
 import com.project.presentation.login.LoginScreen
 import com.project.presentation.mypage.MyPageScreen
 import com.project.presentation.navigation.NavItem
+import com.project.presentation.onboarding.OnboardingViewModel
 import com.project.presentation.onboarding.screen.AnalysisConsumeTypeScreen
 import com.project.presentation.onboarding.screen.FifthOnboardingScreen
 import com.project.presentation.onboarding.screen.FirstOnboardingScreen
@@ -103,12 +106,18 @@ private fun NavigationGraph(
             IntroPermissionScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.FirstOnboarding.route) {
-            FirstOnboardingScreen(navHostController = navHostController)
+        composable(NavItem.FirstOnboarding.route) { backStackEntry ->
+            val viewModel: OnboardingViewModel = hiltViewModel(backStackEntry)
+            FirstOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         composable(NavItem.SecondOnboarding.route) {
-            SecondOnboardingScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            SecondOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         composable(NavItem.ThirdOnboarding.route) {
@@ -154,8 +163,16 @@ private fun NavigationGraph(
             ChallengeAdditionScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
-        composable(NavItem.ChallengeDetail.route) {
-            ChallengeDetailScreen(navHostController = navHostController)
+        composable(
+            route = NavItem.ChallengeDetail.route,
+            arguments = listOf(navArgument("challengeId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val challengeId = backStackEntry.arguments?.getInt("challengeId")
+            val viewModel: ChallengeDetailViewModel = hiltViewModel()
+            if(challengeId != null){
+                viewModel.onEvent(ChallengeDetailEvent.InitChallengeId(challengeId))
+            }
+            ChallengeDetailScreen(navHostController = navHostController, viewModel = viewModel)
         }
     }
 }
