@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +57,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.item.MyPageUsageGuideEnum
 import com.project.presentation.navigation.BaseBottomNavBar
@@ -178,10 +181,49 @@ fun MyPageContent(
     onLogout: () -> Unit,
     onWithdraw: () -> Unit
 ) {
+    val listState = rememberLazyListState()
+    // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
+    val showTopFade by remember {
+        derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }
+    }
+    val showBottomFade by remember {
+        derivedStateOf {
+            (listState.layoutInfo.totalItemsCount > 0 &&
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastItem ->
+                        lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
+                                lastItem.offset + lastItem.size <= listState.layoutInfo.viewportEndOffset
+                    } ?: true).not()
+        }
+    }
+
+    val listFade by remember {
+        derivedStateOf {
+            when {
+                showTopFade && showBottomFade -> Brush.verticalGradient(
+                    0f to transparent,
+                    0.03f to white,
+                    0.97f to white,
+                    1f to transparent
+                )
+
+                showTopFade -> Brush.verticalGradient(0f to transparent, 0.03f to white)
+                showBottomFade -> Brush.verticalGradient(0.97f to white, 1f to transparent)
+                else -> null
+            }
+        }
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .then(
+                if (listFade != null) {
+                    Modifier.fadingEdge(listFade!!)
+                } else {
+                    Modifier
+                }
+            ),
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
