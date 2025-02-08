@@ -28,6 +28,7 @@ import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
+import com.project.presentation.base.BaseGifImage
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingViewModel
 import com.project.presentation.ui.theme.black
@@ -45,15 +46,34 @@ fun SecondOnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
+
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.illu_onboarding2_card)
+    )
+    val lottieAnimatable = rememberLottieAnimatable()
+    LaunchedEffect(composition) {
+        lottieAnimatable.animate(
+            composition = composition,
+            clipSpec = LottieClipSpec.Frame(0, 1200),
+            initialProgress = 0f
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(gray700)
     ) {
         Scaffold(containerColor = transparent) { innerPadding ->
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                BaseGifImage(
+                    modifier = Modifier.fillMaxSize(),
+                    rawId = R.raw.illu_onboarding2_card
+                )
+
                 SecondOnboardingContent(
                     modifier = Modifier.fillMaxSize(),
                     nickname = state.nickname.ifEmpty {
@@ -83,21 +103,12 @@ fun SecondOnboardingContent(
     nickname: String,
     modifier: Modifier = Modifier
 ) {
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.illu_onboarding2_card)
-    )
-    val lottieAnimatable = rememberLottieAnimatable()
-    LaunchedEffect(composition) {
-        lottieAnimatable.animate(
-            composition = composition,
-            clipSpec = LottieClipSpec.Frame(0, 1200),
-            initialProgress = 0f
-        )
-    }
     Column(modifier = modifier) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+        ) {
             Spacer(modifier = Modifier.height(36.dp))
             Text(
                 text = stringResource(R.string.onboarding_second_title).replace(
