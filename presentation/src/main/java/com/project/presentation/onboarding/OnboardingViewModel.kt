@@ -17,9 +17,12 @@ import com.project.presentation.common.NicknameStatus
 import com.project.presentation.util.Regex.nicknameKoreanEnglishOnlyRegex
 import com.project.presentation.util.Regex.nicknameLengthRegex
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -37,6 +40,14 @@ class OnboardingViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingState.create())
     val state get() = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _state.value = state.value.copy(
+                localNickname = authDataStore.getNickname().firstOrNull() ?: ""
+            )
+        }
+    }
 
     fun onEvent(event: OnboardingEvent) {
         when (event) {
@@ -201,18 +212,20 @@ class OnboardingViewModel @Inject constructor(
                             nickname = state.value.nickname,
                             birthday = date.format(formatter),
                             gender = state.value.gender?.value ?: GenderEnum.Male.value
-                        ).collect{ result ->
-                            when(result){
+                        ).collect{ result2 ->
+                            when(result2){
                                 is DataState.Loading -> {
                                     _state.value = _state.value.copy(
-                                        isLoading = result.isLoading
+                                        isLoading = result2.isLoading
                                     )
                                 }
                                 is DataState.Success -> {
                                     authDataStore.setNickname(nickname = state.value.nickname)
-                                    _state.value = _state.value.copy(
-                                        isFirstOnboardingSuccess = true
-                                    )
+                                    withContext(Dispatchers.Default){
+                                        _state.value = _state.value.copy(
+                                            isFirstOnboardingSuccess = true
+                                        )
+                                    }
                                 }
                                 else -> {}
                             }
