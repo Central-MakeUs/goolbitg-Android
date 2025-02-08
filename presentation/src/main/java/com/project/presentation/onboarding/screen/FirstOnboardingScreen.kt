@@ -6,11 +6,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -326,7 +324,6 @@ fun FirstOnboardingBody(
     onMaleClick: () -> Unit,
     onFemaleClick: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
     Column(modifier = modifier.padding(top = 36.dp, start = 24.dp, end = 24.dp)) {
         Text(
             text = stringResource(R.string.onboarding_first_title),
