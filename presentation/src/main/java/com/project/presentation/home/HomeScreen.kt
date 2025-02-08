@@ -7,8 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -118,7 +116,7 @@ fun HomeHeader(
         modifier = modifier
             .fillMaxWidth()
             .height(64.dp)
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
 
     ) {
@@ -173,7 +171,7 @@ fun HomeContent(
                 Image(
                     modifier = Modifier
                         .size(221.34.dp, 280.dp)
-                        .padding(top = 40.dp)
+                        .padding(top = 34.dp)
                         .align(Alignment.TopEnd)
                         .offset(x = 21.26.dp),
                     painter = painterResource(R.drawable.img_home_bg),
