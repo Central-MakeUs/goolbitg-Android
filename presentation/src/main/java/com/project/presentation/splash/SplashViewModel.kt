@@ -24,36 +24,36 @@ class SplashViewModel @Inject constructor(
     private val refreshTokenUseCase: RefreshTokenUseCase,
     private val checkRegisterStatusUseCase: CheckRegisterStatusUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _state: MutableStateFlow<SplashState> = MutableStateFlow(SplashState.create())
     val state get() = _state.asStateFlow()
 
-   init {
-       refreshToken()
-   }
+    init {
+        refreshToken()
+    }
 
-    private fun refreshToken(){
+    private fun refreshToken() {
         viewModelScope.launch {
             val refreshToken = authDataStore.getRefreshToken().firstOrNull()
-            Log.d("TAG", "refreshToken: ${refreshToken}")
-            if(refreshToken != null){
-                refreshTokenUseCase(refreshToken = refreshToken).collect{ result ->
-                    when(result){
+            if (refreshToken != null) {
+                refreshTokenUseCase(refreshToken = refreshToken).collect { result ->
+                    when (result) {
                         is DataState.Loading -> {}
                         is DataState.Success -> {
-                            if(result.data != null){
+                            if (result.data != null) {
                                 authDataStore.setAccessToken(accessToken = result.data!!.accessToken)
                                 authDataStore.setRefreshToken(refreshToken = result.data!!.refreshToken)
-                                withContext(Dispatchers.Default){
+                                withContext(Dispatchers.Default) {
                                     checkRegisterStatus()
                                 }
-                            }else{
+                            } else {
                                 _state.value = _state.value.copy(
                                     registerStatus = RegisterStatus.Login
                                 )
                             }
                         }
+
                         else -> {
                             _state.value = _state.value.copy(
                                 registerStatus = RegisterStatus.Login
@@ -61,7 +61,7 @@ class SplashViewModel @Inject constructor(
                         }
                     }
                 }
-            }else{
+            } else {
                 _state.value = _state.value.copy(
                     registerStatus = RegisterStatus.Login
                 )
@@ -69,19 +69,20 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun checkRegisterStatus(){
+    private fun checkRegisterStatus() {
         viewModelScope.launch {
-            checkRegisterStatusUseCase().collect{ result ->
-                when(result){
+            checkRegisterStatusUseCase().collect { result ->
+                when (result) {
                     is DataState.Loading -> {}
                     is DataState.Success -> {
                         getUserInfo()
-                        withContext(Dispatchers.Default){
+                        withContext(Dispatchers.Default) {
                             _state.value = _state.value.copy(
                                 registerStatus = result.data?.status
                             )
                         }
                     }
+
                     else -> {
                         _state.value = _state.value.copy(
                             registerStatus = RegisterStatus.Login
@@ -92,20 +93,18 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun getUserInfo(){
-        viewModelScope.launch {
-            getUserInfoUseCase().collect{ result ->
-                when(result){
-                    is DataState.Success -> {
-                        result.data?.let { model ->
-                            model.nickname?.let { nickname ->
-                                authDataStore.setNickname(nickname)
-                            }
-
+    private suspend fun getUserInfo() {
+        getUserInfoUseCase().collect { result ->
+            when (result) {
+                is DataState.Success -> {
+                    result.data?.let { model ->
+                        model.nickname?.let { nickname ->
+                            authDataStore.setNickname(nickname)
                         }
                     }
-                    else -> Unit
                 }
+
+                else -> Unit
             }
         }
     }

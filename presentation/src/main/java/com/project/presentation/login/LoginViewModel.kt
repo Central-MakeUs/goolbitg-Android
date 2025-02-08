@@ -92,6 +92,7 @@ class LoginViewModel @Inject constructor(
                             isLoading = result.isLoading
                         )
                     }
+
                     is DataState.Success -> {
                         if (result.data != null) {
                             authDataStore.setAccessToken(accessToken = result.data!!.accessToken)
@@ -99,11 +100,13 @@ class LoginViewModel @Inject constructor(
                             checkPermissionFlow()
                         }
                     }
+
                     is DataState.Error -> {
                         if (result.code == ErrorCode.NotRegisteredUser.code) {
                             register(idToken = idToken)
                         }
                     }
+
                     is DataState.Exception -> {
 
                     }
@@ -124,14 +127,17 @@ class LoginViewModel @Inject constructor(
                             isLoading = result.isLoading
                         )
                     }
+
                     is DataState.Success -> {
                         if (result.data == true) {
                             socialLogin(idToken = idToken)
                         }
                     }
+
                     is DataState.Error -> {
 
                     }
+
                     is DataState.Exception -> {
 
                     }
@@ -169,14 +175,16 @@ class LoginViewModel @Inject constructor(
                             isLoading = result.isLoading
                         )
                     }
+
                     is DataState.Success -> {
                         getUserInfo()
-                        withContext(Dispatchers.Default){
+                        withContext(Dispatchers.Default) {
                             _state.value = _state.value.copy(
                                 registerStatus = result.data?.status
                             )
                         }
                     }
+
                     else -> {
 
                     }
@@ -185,20 +193,19 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun getUserInfo(){
-        viewModelScope.launch {
-            getUserInfoUseCase().collect{ result ->
-                when(result){
-                    is DataState.Success -> {
-                        result.data?.let { model ->
-                            model.nickname?.let { nickname ->
-                                authDataStore.setNickname(nickname)
-                            }
-
+    private suspend fun getUserInfo() {
+        getUserInfoUseCase().collect { result ->
+            when (result) {
+                is DataState.Success -> {
+                    result.data?.let { model ->
+                        model.nickname?.let { nickname ->
+                            authDataStore.setNickname(nickname)
                         }
+
                     }
-                    else -> Unit
                 }
+
+                else -> Unit
             }
         }
     }
