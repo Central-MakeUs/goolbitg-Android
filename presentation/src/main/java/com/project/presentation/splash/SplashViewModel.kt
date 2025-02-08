@@ -11,6 +11,7 @@ import com.project.domain.usecase.user.CheckRegisterStatusUseCase
 import com.project.domain.usecase.user.GetUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,6 +29,9 @@ class SplashViewModel @Inject constructor(
 
     private val _state: MutableStateFlow<SplashState> = MutableStateFlow(SplashState.create())
     val state get() = _state.asStateFlow()
+
+    private val splashMilliSeconds = 2000L
+    private val startTime = System.currentTimeMillis()
 
     init {
         refreshToken()
@@ -77,6 +81,10 @@ class SplashViewModel @Inject constructor(
                     is DataState.Success -> {
                         getUserInfo()
                         withContext(Dispatchers.Default) {
+                            val elapsedTime = System.currentTimeMillis() - startTime
+                            if(elapsedTime < splashMilliSeconds){
+                                delay(splashMilliSeconds - elapsedTime)
+                            }
                             _state.value = _state.value.copy(
                                 registerStatus = result.data?.status
                             )
