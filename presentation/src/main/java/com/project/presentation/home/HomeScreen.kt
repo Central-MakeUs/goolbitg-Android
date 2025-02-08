@@ -49,6 +49,7 @@ import com.project.presentation.base.extension.ComposeExtension.innerShadow
 import com.project.presentation.base.extension.StringExtension.priceComma
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.navigation.BaseBottomNavBar
+import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -58,6 +59,7 @@ import com.project.presentation.ui.theme.gray500
 import com.project.presentation.ui.theme.gray700
 import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.main15
+import com.project.presentation.ui.theme.main20
 import com.project.presentation.ui.theme.main50
 import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundXs
@@ -96,7 +98,8 @@ fun HomeScreen(
                     weeklyRecordStatusModel = state.value.weeklyRecordStatusModel,
                     todayChallengeList = state.value.challengeRecordModel,
                     onChallengeSelected = {
-
+                        val route = NavItem.ChallengeDetail.route.replace("{challengeId}", "${it.challenge.id}")
+                        navHostController.navigate(route)
                     }
                 )
             }
@@ -243,7 +246,7 @@ fun RouletteNumberAnimation(
     }
 
     Text(
-        modifier = modifier.width(30.dp * digitCount),
+        modifier = modifier.width(29.dp * digitCount),
         text = formatAmount(animatable.value.toInt(), digitCount),
         style = goolbitgTypography.display,
         color = white
@@ -426,7 +429,7 @@ fun TodayTodoListContent(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.home_today_list_subtitle).replace(
                 "#VALUE#",
-                todayChallengeList.sumOf { it.challenge.reward }.priceComma()
+                todayChallengeList.filter { it.status == "WAIT" }.sumOf { it.challenge.reward }.priceComma()
             ),
             color = gray300,
             style = goolbitgTypography.body4,
@@ -459,7 +462,15 @@ fun TodayTodoItem(
             .fillMaxWidth()
             .clip(CircleShape)
             .border(width = 1.dp, color = if (isSuccess) main15 else gray500, shape = CircleShape)
-            .background(gray700)
+            .then(
+                if (isSuccess) {
+                    Modifier.background(
+                        brush = Brush.horizontalGradient(listOf(main20, main15))
+                    )
+                } else {
+                    Modifier.background(gray700)
+                }
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -487,13 +498,14 @@ fun TodayTodoItem(
 
 fun getChallengePricePhrase(context: Context, price: Int): String {
     return when (price) {
-        in (2000 until 5000) -> context.getString(R.string.home_price_phrase_0)
-        in (5000 until 10000) -> context.getString(R.string.home_price_phrase_1)
-        in (10000 until 20000) -> context.getString(R.string.home_price_phrase_2)
-        in (20000 until 30000) -> context.getString(R.string.home_price_phrase_3)
-        in (30000 until 40000) -> context.getString(R.string.home_price_phrase_4)
-        in (40000 until 50000) -> context.getString(R.string.home_price_phrase_5)
-        in (50090 until 100000) -> context.getString(R.string.home_price_phrase_6)
-        else -> context.getString(R.string.home_price_phrase_7)
+        in (0 until 2000) -> context.getString(R.string.home_price_phrase_0)
+        in (2000 until 5000) -> context.getString(R.string.home_price_phrase_1)
+        in (5000 until 10000) -> context.getString(R.string.home_price_phrase_2)
+        in (10000 until 20000) -> context.getString(R.string.home_price_phrase_3)
+        in (20000 until 30000) -> context.getString(R.string.home_price_phrase_4)
+        in (30000 until 40000) -> context.getString(R.string.home_price_phrase_5)
+        in (40000 until 50000) -> context.getString(R.string.home_price_phrase_6)
+        in (50090 until 100000) -> context.getString(R.string.home_price_phrase_7)
+        else -> context.getString(R.string.home_price_phrase_8)
     }
 }
