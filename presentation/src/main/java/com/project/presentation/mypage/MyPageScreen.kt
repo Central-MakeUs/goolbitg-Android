@@ -1,14 +1,15 @@
 package com.project.presentation.mypage
 
+import android.content.Intent
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,8 +55,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.project.data.remote.common.BaseUrl.CS_URL
+import com.project.data.remote.common.BaseUrl.PRIVACY_AND_POLICY_URL
+import com.project.data.remote.common.BaseUrl.TERMS_OF_SERVICES_URL
+import com.project.domain.model.user.UserInfoModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
@@ -76,8 +84,13 @@ import com.project.presentation.ui.theme.white
 
 @Composable
 @Preview
-fun MyPageScreen(navHostController: NavHostController = rememberNavController()) {
+fun MyPageScreen(
+    navHostController: NavHostController = rememberNavController(),
+    viewModel: MyPageViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
     var isLogout by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -102,8 +115,23 @@ fun MyPageScreen(navHostController: NavHostController = rememberNavController())
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 MyPageContent(
+                    userInfoModel = state.value.userInfoModel,
                     onUsageGuideClick = { item ->
-
+                        when(item){
+                            MyPageUsageGuideEnum.TermsAndServices -> {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_OF_SERVICES_URL))
+                                context.startActivity(intent)
+                            }
+                            MyPageUsageGuideEnum.PrivacyAndPolicy -> {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_AND_POLICY_URL))
+                                context.startActivity(intent)
+                            }
+                            MyPageUsageGuideEnum.Cs -> {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(CS_URL))
+                                context.startActivity(intent)
+                            }
+                            else -> Unit
+                        }
                     },
                     onLogout = {
                         isLogout = true
@@ -151,7 +179,10 @@ fun MyPageHeader(
         Box(modifier = Modifier
             .size(31.dp, 30.dp)
             .noRippleClickable { onNotification() }) {
-            BaseIcon(modifier = Modifier.align(Alignment.BottomStart), iconId = R.drawable.ic_notification)
+            BaseIcon(
+                modifier = Modifier.align(Alignment.BottomStart),
+                iconId = R.drawable.ic_notification
+            )
             if (newAlarmCount != 0) {
                 Box(
                     modifier = Modifier
@@ -177,6 +208,7 @@ fun MyPageHeader(
 @Composable
 fun MyPageContent(
     modifier: Modifier = Modifier,
+    userInfoModel: UserInfoModel?,
     onUsageGuideClick: (MyPageUsageGuideEnum) -> Unit,
     onLogout: () -> Unit,
     onWithdraw: () -> Unit
@@ -228,24 +260,17 @@ fun MyPageContent(
     ) {
         item {
             MyPageInfoCard(
-                type = "초딩굴비",
-                nickname = "바쁜굴비",
-                consumeScore = 10,
-                totalChallengeCount = 10,
-                postingCount = 10,
-                totalExp = 30000,
-                currExp = 12000
+                userInfoModel = userInfoModel
             )
         }
+//        item {
+//            MyPageConsumeHabit()
+//        }
         item {
-            MyPageConsumeHabit()
-        }
-        item {
-            MyPageAccountManagement(accountId = "GOOLBITG")
+            MyPageAccountManagement(accountId = userInfoModel?.id ?: "")
         }
         item {
             MyPageUsageGuide(
-                appVersion = "1.0.0(2025.01.30)",
                 onUsageGuideClick = onUsageGuideClick
             )
         }
@@ -261,14 +286,8 @@ fun MyPageContent(
 
 @Composable
 fun MyPageInfoCard(
-    type: String,
-    nickname: String,
-    consumeScore: Int,
-    totalChallengeCount: Int,
-    postingCount: Int,
-    totalExp: Int,
-    currExp: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    userInfoModel: UserInfoModel?
 ) {
     Column(
         modifier = modifier
@@ -282,10 +301,17 @@ fun MyPageInfoCard(
             BaseIcon(modifier = Modifier.size(54.dp), iconId = R.drawable.ic_mypage_profile_default)
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = type, style = goolbitgTypography.h4, color = white.copy(alpha = 0.7f))
+                Text(
+                    text = userInfoModel?.spendingType?.title ?: "",
+                    style = goolbitgTypography.h4,
+                    color = white.copy(alpha = 0.7f)
+                )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = stringResource(R.string.mypage_card_nickname).replace("#VALUE#", nickname),
+                    text = stringResource(R.string.mypage_card_nickname).replace(
+                        "#VALUE#",
+                        userInfoModel?.nickname ?: ""
+                    ),
                     style = goolbitgTypography.h1,
                     color = white
                 )
@@ -318,7 +344,7 @@ fun MyPageInfoCard(
                 Text(
                     text = stringResource(R.string.mypage_card_consume_score_value).replace(
                         "#VALUE#",
-                        consumeScore.toString()
+                        userInfoModel?.spendingHabitScore?.toString() ?: "00"
                     ),
                     style = goolbitgTypography.h3,
                     color = white
@@ -342,7 +368,7 @@ fun MyPageInfoCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = totalChallengeCount.toString(),
+                    text = userInfoModel?.challengeCount?.toString() ?: "00",
                     style = goolbitgTypography.h3,
                     color = white
                 )
@@ -365,7 +391,7 @@ fun MyPageInfoCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = postingCount.toString(),
+                    text = userInfoModel?.postCount?.toString() ?: "00",
                     style = goolbitgTypography.h3,
                     color = white
                 )
@@ -374,16 +400,18 @@ fun MyPageInfoCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(R.string.mypage_card_level_title).replace(
-                    "#VALUE#",
-                    (totalExp - currExp).toString()
-                ), style = goolbitgTypography.body4, color = white
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            val progress = currExp * 100 / totalExp
-            MyPageExpProgress(progress = progress)
+        userInfoModel?.spendingType?.goal?.let {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.mypage_card_level_title).replace(
+                        "#VALUE#",
+                        (it - userInfoModel.achievementGuage).toString()
+                    ), style = goolbitgTypography.body4, color = white
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                val progress = userInfoModel.achievementGuage * 100 / it
+                MyPageExpProgress(progress = progress)
+            }
         }
     }
 }
@@ -492,11 +520,19 @@ fun MyPageConsumeHabit(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(roundSm))
-            .border(width = 1.dp, color = white.copy(alpha = 0.2f), shape = RoundedCornerShape(roundSm))
+            .border(
+                width = 1.dp,
+                color = white.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(roundSm)
+            )
             .background(white.copy(alpha = 0.1f))
             .padding(16.dp)
     ) {
-        Text(text = stringResource(R.string.mypage_consume_habit), style = goolbitgTypography.body3, color = gray300)
+        Text(
+            text = stringResource(R.string.mypage_consume_habit),
+            style = goolbitgTypography.body3,
+            color = gray300
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
@@ -524,7 +560,11 @@ fun MyPageAccountManagement(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(roundSm))
-            .border(width = 1.dp, color = white.copy(alpha = 0.2f), shape = RoundedCornerShape(roundSm))
+            .border(
+                width = 1.dp,
+                color = white.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(roundSm)
+            )
             .background(white.copy(alpha = 0.1f))
             .padding(16.dp)
     ) {
@@ -554,7 +594,6 @@ fun MyPageAccountManagement(
 
 @Composable
 fun MyPageUsageGuide(
-    appVersion: String,
     modifier: Modifier = Modifier,
     onUsageGuideClick: (MyPageUsageGuideEnum) -> Unit
 ) {
@@ -562,11 +601,19 @@ fun MyPageUsageGuide(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(roundSm))
-            .border(width = 1.dp, color = white.copy(alpha = 0.2f), shape = RoundedCornerShape(roundSm))
+            .border(
+                width = 1.dp,
+                color = white.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(roundSm)
+            )
             .background(white.copy(alpha = 0.1f))
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
     ) {
-        Text(text = stringResource(R.string.mypage_usage_guide), style = goolbitgTypography.body3, color = gray300)
+        Text(
+            text = stringResource(R.string.mypage_usage_guide),
+            style = goolbitgTypography.body3,
+            color = gray300
+        )
         val usageList = MyPageUsageGuideEnum.entries
         usageList.forEachIndexed { idx, item ->
             Row(
@@ -586,7 +633,17 @@ fun MyPageUsageGuide(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 if (item == MyPageUsageGuideEnum.AppVersion) {
-                    Text(text = appVersion, color = gray300, style = goolbitgTypography.caption1)
+                    val packageInfo = LocalContext.current.packageManager.getPackageInfo(
+                        "com.project.goolbitg",
+                        0
+                    )
+                    val versionCode =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode
+                    Text(
+                        text = "${packageInfo.versionName}($versionCode)",
+                        color = gray300,
+                        style = goolbitgTypography.caption1
+                    )
                 } else {
                     BaseIcon(iconId = R.drawable.ic_arrow_right_16)
                 }
