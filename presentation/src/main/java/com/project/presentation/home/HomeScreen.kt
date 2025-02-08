@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,26 +88,22 @@ fun HomeScreen(
             bottomBar = {
                 BaseBottomNavBar(navController = navHostController)
             }) { innerPadding ->
-            Column(
+            HomeContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                HomeHeader(modifier = Modifier.fillMaxWidth(),
-                    newAlarmCount = 1,
-                    onNotification = {}
-                )
-
-                HomeContent(
-                    dayList = state.value.dayList,
-                    weeklyRecordStatusModel = state.value.weeklyRecordStatusModel,
-                    todayChallengeList = state.value.challengeRecordModel,
-                    onChallengeSelected = {
-                        val route = NavItem.ChallengeDetail.route.replace("{challengeId}", "${it.challenge.id}")
-                        navHostController.navigate(route)
-                    }
-                )
-            }
+                    .background(transparent)
+                    .padding(innerPadding),
+                dayList = state.value.dayList,
+                weeklyRecordStatusModel = state.value.weeklyRecordStatusModel,
+                todayChallengeList = state.value.challengeRecordModel,
+                onChallengeSelected = {
+                    val route = NavItem.ChallengeDetail.route.replace(
+                        "{challengeId}",
+                        "${it.challenge.id}"
+                    )
+                    navHostController.navigate(route)
+                }
+            )
         }
     }
 }
@@ -166,44 +166,70 @@ fun HomeContent(
 ) {
     val saving = weeklyRecordStatusModel?.saving ?: 0
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
+        modifier = modifier.fillMaxSize()
     ) {
         item {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.home_title).replace("#VALUE#", weeklyRecordStatusModel?.nickname ?: ""),
-                style = goolbitgTypography.h3, color = white
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                RouletteNumberAnimation(
-                    targetNumber = saving,
-                    digitCount = saving.toString().length
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Image(
+                    modifier = Modifier
+                        .size(221.34.dp, 280.dp)
+                        .padding(top = 40.dp)
+                        .align(Alignment.TopEnd)
+                        .offset(x = 21.26.dp),
+                    painter = painterResource(R.drawable.img_home_bg),
+                    contentDescription = null
                 )
-                Text(
-                    text = stringResource(R.string.home_sub_title),
-                    style = goolbitgTypography.h4,
-                    color = white
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    HomeHeader(modifier = Modifier.fillMaxWidth(),
+                        newAlarmCount = 1,
+                        onNotification = {}
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.home_title).replace(
+                            "#VALUE#",
+                            weeklyRecordStatusModel?.nickname ?: ""
+                        ),
+                        style = goolbitgTypography.h3, color = white
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        RouletteNumberAnimation(
+                            targetNumber = saving,
+                            digitCount = saving.toString().length
+                        )
+                        Text(
+                            text = stringResource(R.string.home_sub_title),
+                            style = goolbitgTypography.h4,
+                            color = white
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HomeChallengeDetailInfo(
+                        price = saving,
+                        continuousDay = weeklyRecordStatusModel?.continueCount ?: 0
+                    )
+
+                    HomeWeekCard(
+                        dayList = dayList,
+                        weeklyRecordStatusModel = weeklyRecordStatusModel
+                    )
+                }
             }
         }
         item {
-            Spacer(modifier = Modifier.height(8.dp))
-            HomeChallengeDetailInfo(price = saving, continuousDay = weeklyRecordStatusModel?.continueCount ?: 0)
-        }
-        item {
-            HomeWeekCard(
-                dayList = dayList,
-                weeklyRecordStatusModel = weeklyRecordStatusModel
-            )
-        }
-        item {
             TodayTodoListContent(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 todayChallengeList = todayChallengeList,
                 onChallengeSelected = onChallengeSelected
             )
@@ -427,7 +453,8 @@ fun TodayTodoListContent(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.home_today_list_subtitle).replace(
                 "#VALUE#",
-                todayChallengeList.filter { it.status == "WAIT" }.sumOf { it.challenge.reward }.priceComma()
+                todayChallengeList.filter { it.status == "WAIT" }.sumOf { it.challenge.reward }
+                    .priceComma()
             ),
             color = gray300,
             style = goolbitgTypography.body4,
