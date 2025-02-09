@@ -5,5 +5,6 @@ data class ChallengeRecordModel(
     val userId: String,
     val date: String,
     val status: String,
+    val duration: Int,
     val location: Int,
 )

@@ -8,6 +8,7 @@ data class ChallengeRecordRes(
     @SerializedName("userId") val userId: String,
     @SerializedName("date") val date: String,
     @SerializedName("status") val status: String,
+    @SerializedName("duration") val duration: Int,
     @SerializedName("location") val location: Int,
 ) {
     fun toDomainModel() = ChallengeRecordModel(
@@ -15,6 +16,7 @@ data class ChallengeRecordRes(
         userId = userId,
         date = date,
         status = status,
+        duration = duration,
         location = location,
     )
 }
