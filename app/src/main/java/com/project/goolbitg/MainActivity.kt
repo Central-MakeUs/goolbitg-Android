@@ -6,11 +6,18 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -92,24 +99,24 @@ private fun NavigationGraph(
         startDestination = NavItem.Splash.route,
         modifier = modifier
     ) {
-        composable(NavItem.Splash.route) {
+        directComposable(NavItem.Splash.route) {
             SplashScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.Login.route) {
+        directComposable(NavItem.Login.route) {
             LoginScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.IntroPermission.route) {
+        directComposable(NavItem.IntroPermission.route) {
             IntroPermissionScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.FirstOnboarding.route) { backStackEntry ->
+        addComposable(NavItem.FirstOnboarding.route) { backStackEntry ->
             val viewModel: OnboardingViewModel = hiltViewModel(backStackEntry)
             FirstOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
-        composable(NavItem.SecondOnboarding.route) {
+        addComposable(NavItem.SecondOnboarding.route) {
             val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
                 hiltViewModel(navHostController.previousBackStackEntry!!)
             }else{
@@ -118,40 +125,39 @@ private fun NavigationGraph(
             SecondOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
-        composable(NavItem.ThirdOnboarding.route) {
+        addComposable(NavItem.ThirdOnboarding.route) {
             ThirdOnboardingScreenScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.FourthOnboarding.route) {
+        addComposable(NavItem.FourthOnboarding.route) {
             FourthOnboardingScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.FifthOnboarding.route) {
+        addComposable(NavItem.FifthOnboarding.route) {
             FifthOnboardingScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.AnalysisConsumeType.route) {
+        addComposable(NavItem.AnalysisConsumeType.route) {
             AnalysisConsumeTypeScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.ShowConsumeType.route) {
+        addComposable(NavItem.ShowConsumeType.route) {
             ShowConsumeTypeScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.Challenge.route) {
-            ChallengeScreen(navHostController = navHostController)
-        }
-        composable(NavItem.Home.route) {
-            HomeScreen(
-                navHostController = navHostController,
-            )
+        directComposable(NavItem.Home.route) {
+            HomeScreen(navHostController = navHostController)
         }
 
-        composable(NavItem.MyPage.route) {
+        directComposable(NavItem.Challenge.route) {
+            ChallengeScreen(navHostController = navHostController)
+        }
+
+        directComposable(NavItem.MyPage.route) {
             MyPageScreen(navHostController = navHostController)
         }
 
-        composable(
+        addComposable(
             route = NavItem.ChallengeAddition.route,
             arguments = listOf(navArgument("isOnboarding") { type = NavType.BoolType })
         ) { backStackEntry ->
@@ -161,7 +167,7 @@ private fun NavigationGraph(
             ChallengeAdditionScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
-        composable(
+        addComposable(
             route = NavItem.ChallengeDetail.route,
             arguments = listOf(navArgument("challengeId") { type = NavType.IntType })
         ) { backStackEntry ->
@@ -173,6 +179,42 @@ private fun NavigationGraph(
             ChallengeDetailScreen(navHostController = navHostController, viewModel = viewModel)
         }
     }
+
 }
 
+fun NavGraphBuilder.directComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+){
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        enterTransition = null,
+        exitTransition = null,
+        popEnterTransition = null,
+        popExitTransition = null,
+        content = content
+    )
+}
+
+fun NavGraphBuilder.addComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+){
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500)) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(500)) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500)) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(500)) },
+        content = content
+    )
+}
 
