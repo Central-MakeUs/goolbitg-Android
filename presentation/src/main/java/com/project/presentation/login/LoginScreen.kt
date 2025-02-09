@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.project.domain.model.user.RegisterStatus
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
@@ -149,6 +150,9 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(180.dp))
             }
+        }
+        if(state.value.isLoading){
+            BaseLoadingBox()
         }
     }
 }
