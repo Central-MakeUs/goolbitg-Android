@@ -51,7 +51,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -60,6 +59,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.project.data.remote.common.BaseUrl.CS_URL
 import com.project.data.remote.common.BaseUrl.PRIVACY_AND_POLICY_URL
 import com.project.data.remote.common.BaseUrl.TERMS_OF_SERVICES_URL
@@ -96,7 +97,7 @@ fun MyPageScreen(
     val context = LocalContext.current
 
     LaunchedEffect(state.value.isLogoutSuccess) {
-        if(state.value.isLogoutSuccess){
+        if (state.value.isLogoutSuccess) {
             navHostController.navigate(NavItem.Login.route) {
                 popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                 launchSingleTop = true
@@ -129,19 +130,24 @@ fun MyPageScreen(
                 MyPageContent(
                     userInfoModel = state.value.userInfoModel,
                     onUsageGuideClick = { item ->
-                        when(item){
+                        when (item) {
                             MyPageUsageGuideEnum.TermsAndServices -> {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_OF_SERVICES_URL))
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(TERMS_OF_SERVICES_URL))
                                 context.startActivity(intent)
                             }
+
                             MyPageUsageGuideEnum.PrivacyAndPolicy -> {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_AND_POLICY_URL))
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_AND_POLICY_URL))
                                 context.startActivity(intent)
                             }
+
                             MyPageUsageGuideEnum.Cs -> {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(CS_URL))
                                 context.startActivity(intent)
                             }
+
                             else -> Unit
                         }
                     },
@@ -297,6 +303,7 @@ fun MyPageContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyPageInfoCard(
     modifier: Modifier = Modifier,
@@ -311,7 +318,18 @@ fun MyPageInfoCard(
             .padding(24.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            BaseIcon(modifier = Modifier.size(54.dp), iconId = R.drawable.ic_mypage_profile_default)
+            if (userInfoModel?.spendingType?.imgUrl.isNullOrEmpty()) {
+                BaseIcon(
+                    modifier = Modifier.size(54.dp),
+                    iconId = R.drawable.ic_mypage_profile_default
+                )
+            } else {
+                GlideImage(
+                    modifier = Modifier.size(54.dp),
+                    model = userInfoModel!!.spendingType!!.imgUrl,
+                    contentDescription = null
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -701,7 +719,7 @@ fun MyPageLogoutPopup(
         modifier = modifier
             .fillMaxSize()
             .background(black.copy(alpha = 0.3f))
-            .noRippleClickable {  }
+            .noRippleClickable { }
     ) {
         Column(
             modifier = Modifier
