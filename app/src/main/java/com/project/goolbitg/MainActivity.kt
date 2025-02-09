@@ -8,6 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +39,7 @@ import com.project.presentation.challenge.detail.ChallengeDetailViewModel
 import com.project.presentation.home.HomeScreen
 import com.project.presentation.login.LoginScreen
 import com.project.presentation.mypage.MyPageScreen
+import com.project.presentation.mypage.MyPageViewModel
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingViewModel
 import com.project.presentation.onboarding.screen.AnalysisConsumeTypeScreen
@@ -94,6 +97,8 @@ private fun NavigationGraph(
         color = gray800,
         darkIcons = false  // 아이콘 색상을 밝게 표시 (흰색)
     )
+
+    val myPageViewModel: MyPageViewModel = hiltViewModel()
 
     NavHost(
         navController = navHostController,
@@ -155,7 +160,7 @@ private fun NavigationGraph(
         }
 
         directComposable(NavItem.MyPage.route) {
-            MyPageScreen(navHostController = navHostController)
+            MyPageScreen(navHostController = navHostController, viewModel = myPageViewModel)
         }
 
         addComposable(
@@ -198,10 +203,10 @@ fun NavGraphBuilder.directComposable(
         route = route,
         arguments = arguments,
         deepLinks = deepLinks,
-        enterTransition = null,
-        exitTransition = null,
-        popEnterTransition = null,
-        popExitTransition = null,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
         content = content
     )
 }

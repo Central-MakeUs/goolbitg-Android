@@ -34,7 +34,7 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    private fun getUserInfo(){
+    fun getUserInfo(){
         viewModelScope.launch {
             getUserInfoUseCase().collect{ result ->
                 when(result){
