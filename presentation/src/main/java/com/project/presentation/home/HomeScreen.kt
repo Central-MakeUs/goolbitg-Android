@@ -25,10 +25,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -49,6 +53,7 @@ import com.project.domain.model.challenge.ChallengeRecordModel
 import com.project.domain.model.user.WeeklyRecordStatusModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.BaseTintIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.innerShadow
@@ -72,6 +77,7 @@ import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundXs
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
 @Composable
@@ -81,6 +87,27 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+
+    // 현재 화면에 해당하는 backStackEntry를 가져옴
+    val currentBackStackEntry = remember { navHostController.getBackStackEntry(NavItem.Home.route) }
+    // Lifecycle을 감지하여 ON_RESUME 이벤트에 반응
+    DisposableEffect(currentBackStackEntry) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                coroutineScope.launch {
+                    viewModel.getWeekDays()
+                    viewModel.getWeeklyRecordStatus()
+                    viewModel.fetchEnrolledChallengeList()
+                }
+            }
+        }
+        currentBackStackEntry.lifecycle.addObserver(observer)
+        onDispose {
+            currentBackStackEntry.lifecycle.removeObserver(observer)
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

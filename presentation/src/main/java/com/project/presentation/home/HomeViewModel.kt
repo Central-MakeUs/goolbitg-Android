@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
         fetchEnrolledChallengeList()
     }
 
-    private fun getWeekDays(){
+    fun getWeekDays(){
         val curr = state.value.currDate
         val currDayOfWeek = state.value.currDate.dayOfWeek.value
         val dayList = mutableListOf<Int>().apply{
@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun getWeeklyRecordStatus(){
+    fun getWeeklyRecordStatus(){
         viewModelScope.launch {
             getWeeklyRecordStatusUseCase().collect{ result ->
                 when(result){
@@ -67,7 +67,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchEnrolledChallengeList(){
+    fun fetchEnrolledChallengeList(){
         viewModelScope.launch {
             fetchEnrolledChallengeListUseCase().collect{ result ->
                 when(result){
