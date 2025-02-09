@@ -68,6 +68,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
+import com.project.presentation.base.extension.StringExtension.priceComma
 import com.project.presentation.item.MyPageUsageGuideEnum
 import com.project.presentation.navigation.BaseBottomNavBar
 import com.project.presentation.navigation.NavItem
@@ -407,7 +408,7 @@ fun MyPageInfoCard(
                 Text(
                     text = stringResource(R.string.mypage_card_level_title).replace(
                         "#VALUE#",
-                        (it - userInfoModel.achievementGuage).toString()
+                        (it - userInfoModel.achievementGuage).priceComma()
                     ), style = goolbitgTypography.body4, color = white
                 )
                 Spacer(modifier = Modifier.height(4.dp))
