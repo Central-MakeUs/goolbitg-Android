@@ -49,6 +49,7 @@ import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseLoadingBox
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.item.ChallengeDetailCheckEnum
+import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray100
@@ -69,7 +70,7 @@ fun ChallengeDetailScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     var popupState by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(bg1)) {
         Scaffold(containerColor = transparent) { innerPadding ->
             if (state.value.challengeTripleModel != null) {
                 ChallengeDetailContent(
