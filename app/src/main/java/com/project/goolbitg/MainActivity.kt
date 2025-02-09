@@ -10,6 +10,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -163,7 +164,9 @@ private fun NavigationGraph(
         ) { backStackEntry ->
             val isOnboarding = backStackEntry.arguments?.getBoolean("isOnboarding") ?: true
             val viewModel: ChallengeAdditionViewModel = hiltViewModel()
-            viewModel.onEvent(ChallengeAdditionEvent.BackPressOption(!isOnboarding))
+            LaunchedEffect(key1 = isOnboarding) {
+                viewModel.onEvent(ChallengeAdditionEvent.BackPressOption(!isOnboarding))
+            }
             ChallengeAdditionScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
@@ -173,8 +176,11 @@ private fun NavigationGraph(
         ) { backStackEntry ->
             val challengeId = backStackEntry.arguments?.getInt("challengeId")
             val viewModel: ChallengeDetailViewModel = hiltViewModel()
-            if(challengeId != null){
-                viewModel.onEvent(ChallengeDetailEvent.InitChallengeId(challengeId))
+            // challengeId가 null이 아닌 경우, 해당 값이 변경되었을 때만 실행됨
+            if (challengeId != null) {
+                LaunchedEffect(key1 = challengeId) {
+                    viewModel.onEvent(ChallengeDetailEvent.InitChallengeId(challengeId))
+                }
             }
             ChallengeDetailScreen(navHostController = navHostController, viewModel = viewModel)
         }
