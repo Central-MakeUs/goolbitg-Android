@@ -47,12 +47,12 @@ fun LoginScreen(
     val state = loginViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.value.registerStatus, state.value.isPermission) {
-        if(state.value.isPermission){
+        if (state.value.isPermission) {
             navHostController.navigate(NavItem.IntroPermission.route) {
                 popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                 launchSingleTop = true
             }
-        }else{
+        } else {
             if (state.value.registerStatus == null) return@LaunchedEffect
             when (state.value.registerStatus) {
                 RegisterStatus.FirstOnboarding -> {
@@ -61,30 +61,35 @@ fun LoginScreen(
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.TermsOfServices -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.UserInfo -> {
                     navHostController.navigate(NavItem.SecondOnboarding.route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.CheckList -> {
                     navHostController.navigate(NavItem.FourthOnboarding.route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.ConsumeHabit -> {
                     navHostController.navigate(NavItem.FifthOnboarding.route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.ConsumePattern -> {
                     val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
                     navHostController.navigate(route) {
@@ -92,12 +97,14 @@ fun LoginScreen(
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.AddChallenge -> {
                     navHostController.navigate(NavItem.Home.route) {
                         popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 else -> {}
             }
         }
@@ -128,7 +135,8 @@ fun LoginScreen(
                     .noRippleClickable {
                         loginViewModel.loginWithKakaoTalk(context = context)
                     }
-                    .padding(horizontal = 14.dp, vertical = 11.dp)) {
+                    .padding(horizontal = 14.dp, vertical = 11.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
 
                     BaseIcon(iconId = R.drawable.ic_kakao_logo)
                     Text(
