@@ -189,9 +189,9 @@ fun ChallengeScreen(
                     initDay = state.value.selectedDate.dayOfMonth.toString(),
                     yearList = (1900..state.value.todayDate.year + 1).map { it.toString() },
                     onConfirm = { selectedDate ->
-                        viewModel.onEvent(ChallengeEvent.ChangeSelectedDate(selectedDate))
                         coroutineScope.launch {
                             scaffoldState.bottomSheetState.partialExpand()
+                            viewModel.onEvent(ChallengeEvent.ChangeSelectedDate(selectedDate))
 
                             val selectedWeekStart =
                                 selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -199,8 +199,9 @@ fun ChallengeScreen(
                                 TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)
                             )
                             val weekDiff =
-                                ChronoUnit.WEEKS.between(baseWeekStart, selectedWeekStart)
-                            val targetPage = Int.MAX_VALUE / 2 + weekDiff.toInt()
+                                ChronoUnit.WEEKS.between(baseWeekStart, selectedWeekStart).toInt()
+                            val targetPage = Int.MAX_VALUE / 2 + weekDiff
+                            viewModel.onEvent((ChallengeEvent.ChangePage(offset = weekDiff.toLong(), targetDate = selectedWeekStart)))
                             pagerState.scrollToPage(targetPage)
                         }
                     }
