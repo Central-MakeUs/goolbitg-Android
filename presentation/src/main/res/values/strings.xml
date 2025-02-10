@@ -76,6 +76,10 @@
 
     <string name="challenge_individual">개인</string>
     <string name="challenge_group">그룹</string>
+    <string name="challenge_continuous_day">#VALUE#일 연속 달성</string>
+    <string name="challenge_empty_1">진행된 챌린지가 없어요!</string>
+    <string name="challenge_empty_2">진행 할 챌린지가 없어요\n우측 상단 +를 눌러 챌린지를 추가해주세요</string>
+
     <string name="home_title">#VALUE#님,\n이번주 얼마나 아끼셨나요?</string>
     <string name="home_sub_title">원 아꼈어요!</string>
     <string name="home_achieved_day">#VALUE#일째 달성중</string>
@@ -162,4 +166,6 @@
     <string name="common_saturday_2">토</string>
     <string name="common_score_value">#VALUE#점</string>
     <string name="common_person_count_value">#VALUE#명</string>
+    <string name="common_success">성공</string>
+    <string name="common_fail">실패</string>
 </resources>

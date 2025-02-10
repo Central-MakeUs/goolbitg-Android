@@ -28,78 +28,9 @@ import java.time.LocalDate
 @SuppressLint("DefaultLocale")
 @Composable
 fun BaseDatePicker(
-    year: Int,
-    month: Int,
-    day: Int,
-    yearList: List<Int>,
-    monthList: List<Int>,
-    dayList: List<Int>,
-    modifier: Modifier = Modifier,
-    onYearChanged: (String) -> Unit,
-    onMonthChanged: (String) -> Unit,
-    onDayChanged: (String) -> Unit,
-) {
-    val years = remember { (1..12).map { String.format("%02d", it) } }
-    val yearsPickerState = rememberPickerState()
-    val months = remember { (1..59).map { String.format("%02d", it) } }
-    val monthsPickerState = rememberPickerState()
-    val days = remember { listOf("AM", "PM") }
-    val daysPickerState = rememberPickerState()
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box {
-            Row(
-                modifier = Modifier
-                    .width(180.dp)
-                    .align(Alignment.Center),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BaseInfinityPicker(
-                    state = yearsPickerState,
-                    items = years,
-                    modifier = Modifier.width(80.dp),
-                    textModifier = Modifier.padding(4.dp),
-                    textStyle = goolbitgTypography.h2.copy(color = white),
-                    onItemChanged = onYearChanged
-                )
-                BaseInfinityPicker(
-                    state = monthsPickerState,
-                    items = months,
-                    modifier = Modifier.width(44.dp),
-                    textModifier = Modifier.padding(4.dp),
-                    textStyle = goolbitgTypography.h2.copy(color = white),
-                    onItemChanged = onMonthChanged
-                )
-                BaseInfinityPicker(
-                    state = daysPickerState,
-                    items = days,
-                    modifier = Modifier.width(48.dp),
-                    textModifier = Modifier.padding(4.dp),
-                    textStyle = goolbitgTypography.h2.copy(color = white),
-                    onItemChanged = onDayChanged
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(40.dp)
-                    .align(Alignment.Center)
-                    .clip(RoundedCornerShape(roundSm))
-                    .background(
-                        white.copy(alpha = 0.1f)
-                    )
-            )
-        }
-    }
-}
-
-@SuppressLint("DefaultLocale")
-@Composable
-fun BaseDatePicker(
+    initYear: String,
+    initMonth: String,
+    initDay: String,
     yearList: List<String>,
     modifier: Modifier = Modifier,
     onYearChanged: (String) -> Unit,
@@ -107,12 +38,19 @@ fun BaseDatePicker(
     onDayChanged: (String) -> Unit,
 ) {
     // Remember states for each picker
-    val yearsPickerState = rememberPickerState(yearList.last())
-    val monthsPickerState = rememberPickerState("1")
-    val daysPickerState = rememberPickerState("1")
+    val yearsPickerState = rememberPickerState(initYear)
+    val monthsPickerState = rememberPickerState(initMonth)
+    val daysPickerState = rememberPickerState(initDay)
 
     // Remember the dynamic day list based on year and month
-    var dayList by remember { mutableStateOf(generateDays(yearsPickerState.selectedItem.toInt(), monthsPickerState.selectedItem.toInt())) }
+    var dayList by remember {
+        mutableStateOf(
+            generateDays(
+                yearsPickerState.selectedItem.toInt(),
+                monthsPickerState.selectedItem.toInt()
+            )
+        )
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -121,7 +59,7 @@ fun BaseDatePicker(
         Box {
             Row(
                 modifier = Modifier
-                    .width(220.dp)
+                    .width(240.dp)
                     .align(Alignment.Center),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -135,28 +73,36 @@ fun BaseDatePicker(
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = { selectedYear ->
                         onYearChanged(selectedYear)
-                        dayList = generateDays(selectedYear.toInt(), monthsPickerState.selectedItem.toInt())
+                        dayList = generateDays(
+                            selectedYear.toInt(),
+                            monthsPickerState.selectedItem.toInt()
+                        )
                     }
                 )
                 BasePicker(
                     state = monthsPickerState,
                     items = (1..12).map { it.toString() },
-                    modifier = Modifier.width(60.dp),
+                    modifier = Modifier.width(70.dp),
                     suffixStr = "월",
-                    startIndex = (1..12).map { it.toString() }.indexOf(monthsPickerState.selectedItem),
+                    startIndex = (1..12).map { it.toString() }
+                        .indexOf(monthsPickerState.selectedItem),
                     textModifier = Modifier.padding(4.dp),
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = { selectedMonth ->
                         onMonthChanged(selectedMonth)
-                        dayList = generateDays(yearsPickerState.selectedItem.toInt(), selectedMonth.toInt())
+                        dayList = generateDays(
+                            yearsPickerState.selectedItem.toInt(),
+                            selectedMonth.toInt()
+                        )
                     }
                 )
                 BasePicker(
                     state = daysPickerState,
                     items = dayList.map { it.toString() },
-                    modifier = Modifier.width(60.dp),
+                    modifier = Modifier.width(70.dp),
                     suffixStr = "일",
-                    startIndex = dayList.map { it.toString() }.indexOf(daysPickerState.selectedItem),
+                    startIndex = dayList.map { it.toString() }
+                        .indexOf(daysPickerState.selectedItem),
                     textModifier = Modifier.padding(4.dp),
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = onDayChanged

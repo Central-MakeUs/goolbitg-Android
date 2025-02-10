@@ -174,7 +174,11 @@ fun FirstOnboardingScreen(
                                     scaffoldState.bottomSheetState.partialExpand()
                                     isAgreementBottomSheet = false
                                 }
-                                viewModel.onEvent(OnboardingEvent.RequestFirstOnboarding(isAdvertisementAgree))
+                                viewModel.onEvent(
+                                    OnboardingEvent.RequestFirstOnboarding(
+                                        isAdvertisementAgree
+                                    )
+                                )
                             }
                         )
                     } else {
@@ -576,6 +580,9 @@ fun BirthBottomSheetContent(
             .padding(top = 26.dp)
     ) {
         BaseDatePicker(
+            initYear = initYear,
+            initMonth = initMonth,
+            initDay = initDay,
             yearList = yearList,
             onYearChanged = {
                 year = it
