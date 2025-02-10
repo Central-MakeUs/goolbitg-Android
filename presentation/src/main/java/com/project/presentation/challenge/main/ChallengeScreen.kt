@@ -699,7 +699,8 @@ fun ChallengeListEmpty(
         Text(
             text = stringResource(if (!isBefore) R.string.challenge_empty_2 else R.string.challenge_empty_1),
             style = goolbitgTypography.body2,
-            color = gray300
+            color = gray300,
+            textAlign = TextAlign.Center
         )
     }
 }
