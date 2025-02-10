@@ -22,7 +22,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Goolbitg"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

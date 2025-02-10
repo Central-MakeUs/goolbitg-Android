@@ -52,6 +52,7 @@ import com.project.presentation.onboarding.screen.ThirdOnboardingScreenScreen
 import com.project.presentation.permission.IntroPermissionScreen
 import com.project.presentation.splash.SplashScreen
 import com.project.presentation.ui.theme.gray800
+import com.project.presentation.withdraw.WithdrawScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -188,6 +189,12 @@ private fun NavigationGraph(
                 }
             }
             ChallengeDetailScreen(navHostController = navHostController, viewModel = viewModel)
+        }
+
+        addComposable(
+            route = NavItem.Withdraw.route
+        ){
+            WithdrawScreen(navHostController = navHostController)
         }
     }
 

@@ -76,7 +76,12 @@ sealed class NavItem(
     data object ChallengeAddition: NavItem(
         route = "challenge_addition/{isOnboarding}"
     )
+
     data object ChallengeDetail: NavItem(
         route = "challenge_detail/{challengeId}"
+    )
+
+    data object Withdraw: NavItem(
+        route = "withdraw"
     )
 }

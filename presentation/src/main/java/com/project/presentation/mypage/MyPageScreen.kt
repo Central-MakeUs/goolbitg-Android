@@ -178,7 +178,7 @@ fun MyPageScreen(
                         isLogout = true
                     },
                     onWithdraw = {
-
+                        navHostController.navigate(NavItem.Withdraw.route)
                     }
                 )
             }
