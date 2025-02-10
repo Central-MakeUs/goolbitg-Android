@@ -3,6 +3,7 @@ package com.project.data.remote.datasource
 import com.project.data.remote.request.auth.LoginReq
 import com.project.data.remote.request.auth.RefreshTokenReq
 import com.project.data.remote.request.auth.RegisterReq
+import com.project.data.remote.request.auth.WithdrawReq
 import com.project.data.remote.response.auth.LoginRes
 import com.project.data.remote.response.auth.RefreshTokenRes
 import retrofit2.Response
@@ -34,5 +35,5 @@ interface AuthDataSource {
 
     /** 회원 탈퇴 */
     @POST("/v1/auth/unregister")
-    suspend fun withdrawAccount(): Response<Unit>
+    suspend fun withdrawAccount(@Body body: WithdrawReq): Response<Unit>
 }

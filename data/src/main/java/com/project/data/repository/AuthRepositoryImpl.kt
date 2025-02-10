@@ -5,6 +5,7 @@ import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.request.auth.LoginReq
 import com.project.data.remote.request.auth.RefreshTokenReq
 import com.project.data.remote.request.auth.RegisterReq
+import com.project.data.remote.request.auth.WithdrawReq
 import com.project.domain.model.DataState
 import com.project.domain.model.auth.LoginModel
 import com.project.domain.model.auth.RefreshTokenModel
@@ -17,7 +18,14 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     override suspend fun register(type: String, idToken: String): Flow<DataState<Boolean>> {
         return NetworkUtils.handleApi(
-            execute = { authDataSource.register(body = RegisterReq(type = type, idToken = idToken)) },
+            execute = {
+                authDataSource.register(
+                    body = RegisterReq(
+                        type = type,
+                        idToken = idToken
+                    )
+                )
+            },
             mapper = { true }
         )
     }
@@ -43,9 +51,9 @@ class AuthRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun withdrawAccount(): Flow<DataState<Boolean>> {
+    override suspend fun withdrawAccount(reason: String): Flow<DataState<Boolean>> {
         return NetworkUtils.handleApi(
-            execute = { authDataSource.withdrawAccount() },
+            execute = { authDataSource.withdrawAccount(body = WithdrawReq(reason = reason)) },
             mapper = { true }
         )
     }
