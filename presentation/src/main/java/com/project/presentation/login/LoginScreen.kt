@@ -50,7 +50,7 @@ fun LoginScreen(
     LaunchedEffect(state.value.registerStatus, state.value.isPermission) {
         if (state.value.isPermission) {
             navHostController.navigate(NavItem.IntroPermission.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         } else {
@@ -58,35 +58,35 @@ fun LoginScreen(
             when (state.value.registerStatus) {
                 RegisterStatus.FirstOnboarding -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
 
                 RegisterStatus.TermsOfServices -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
 
                 RegisterStatus.UserInfo -> {
                     navHostController.navigate(NavItem.SecondOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
 
                 RegisterStatus.CheckList -> {
                     navHostController.navigate(NavItem.FourthOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
 
                 RegisterStatus.ConsumeHabit -> {
                     navHostController.navigate(NavItem.FifthOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
@@ -94,14 +94,14 @@ fun LoginScreen(
                 RegisterStatus.ConsumePattern -> {
                     val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
                     navHostController.navigate(route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
 
                 RegisterStatus.AddChallenge -> {
                     navHostController.navigate(NavItem.Home.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }

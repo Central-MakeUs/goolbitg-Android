@@ -37,50 +37,50 @@ fun SplashScreen(
             when (state.value.registerStatus) {
                 RegisterStatus.Login -> {
                     navHostController.navigate(NavItem.Login.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.FirstOnboarding -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.TermsOfServices -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.UserInfo -> {
                     navHostController.navigate(NavItem.SecondOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.CheckList -> {
                     navHostController.navigate(NavItem.FourthOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.ConsumeHabit -> {
                     navHostController.navigate(NavItem.FifthOnboarding.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.ConsumePattern -> {
                     val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
                     navHostController.navigate(route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
                 RegisterStatus.AddChallenge -> {
                     navHostController.navigate(NavItem.Home.route) {
-                        popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }

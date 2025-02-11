@@ -259,9 +259,7 @@ fun ChallengeScreen(
                                     "false"
                                 )
                                 navHostController.navigate(route) {
-                                    popUpTo(navHostController.graph.startDestinationId) {
-                                        inclusive = true
-                                    }
+                                    popUpTo(0) { inclusive = true }
                                     launchSingleTop = true
                                 }
                             },

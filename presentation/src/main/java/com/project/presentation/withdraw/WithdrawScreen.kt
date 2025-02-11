@@ -70,7 +70,7 @@ fun WithdrawScreen(
     LaunchedEffect(state.value.isWithdrawSuccess) {
         if (state.value.isWithdrawSuccess) {
             navHostController.navigate(NavItem.Login.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

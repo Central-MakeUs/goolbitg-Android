@@ -85,11 +85,8 @@ fun BaseBottomNavBar(
                 onClick = {
                     if(!isSelected){
                         navController.navigate(item.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 },

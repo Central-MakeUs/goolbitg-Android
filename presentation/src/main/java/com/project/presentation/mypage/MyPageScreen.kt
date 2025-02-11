@@ -122,7 +122,7 @@ fun MyPageScreen(
     LaunchedEffect(state.value.isLogoutSuccess) {
         if (state.value.isLogoutSuccess) {
             navHostController.navigate(NavItem.Login.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

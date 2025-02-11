@@ -103,7 +103,7 @@ private fun NavigationGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = NavItem.Splash.route,
+        startDestination = NavItem.ShowConsumeType.route,
         modifier = modifier
     ) {
         directComposable(NavItem.Splash.route) {

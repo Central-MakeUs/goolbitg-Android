@@ -96,7 +96,7 @@ fun ChallengeAdditionScreen(
                 navHostController.popBackStack()
             } else {
                 navHostController.navigate(NavItem.Challenge.route) {
-                    popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                    popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
             }

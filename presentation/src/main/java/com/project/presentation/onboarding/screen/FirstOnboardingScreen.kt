@@ -136,7 +136,7 @@ fun FirstOnboardingScreen(
         nextBtnState = state.isFirstOnboardingCompleted()
         if (state.isFirstOnboardingSuccess) {
             navHostController.navigate(NavItem.SecondOnboarding.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

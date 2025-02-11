@@ -65,7 +65,7 @@ fun FourthOnboardingScreen(
     LaunchedEffect(state.value.isConsumeHabitSuccess) {
         if(state.value.isConsumeHabitSuccess){
             navHostController.navigate(NavItem.FifthOnboarding.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

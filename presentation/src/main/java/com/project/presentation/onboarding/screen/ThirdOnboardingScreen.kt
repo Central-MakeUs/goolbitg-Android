@@ -75,7 +75,7 @@ fun ThirdOnboardingScreenScreen(
     LaunchedEffect(state.value.isCheckListSuccess) {
         if(state.value.isCheckListSuccess){
             navHostController.navigate(NavItem.FourthOnboarding.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

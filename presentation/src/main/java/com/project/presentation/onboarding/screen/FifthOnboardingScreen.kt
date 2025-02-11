@@ -58,7 +58,7 @@ fun FifthOnboardingScreen(
     LaunchedEffect(state.value.isConsumePatternSuccess) {
         if(state.value.isConsumePatternSuccess){
             navHostController.navigate(NavItem.AnalysisConsumeType.route) {
-                popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }
