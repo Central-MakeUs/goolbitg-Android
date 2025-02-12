@@ -73,6 +73,7 @@
     <string name="show_consume_type_btn_text">나에게 맞는 소비습관 형성하기</string>
     <string name="show_consume_type_my_consume_score">나의 소비 점수</string>
     <string name="show_consume_type_same_type">같은 유형 굴비</string>
+    <string name="show_consume_depth">#VALUE#단계 굴비</string>
 
     <string name="challenge_individual">개인</string>
     <string name="challenge_group">그룹</string>

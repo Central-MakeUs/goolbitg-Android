@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
@@ -36,13 +37,21 @@ import kotlinx.coroutines.launch
 @Preview
 fun AnalysisConsumeTypeScreen(
     navHostController: NavHostController = rememberNavController(),
-    viewModel: OnboardingViewModel = hiltViewModel()
+    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            delay(3000)
-            navHostController.navigate(NavItem.ShowConsumeType.route)
+            viewModel.getUserInfo()
+        }
+    }
+
+    LaunchedEffect(state.value.isAnalysisSuccess) {
+        if(state.value.isAnalysisSuccess){
+            coroutineScope.launch {
+                navHostController.navigate(NavItem.ShowConsumeType.route)
+            }
         }
     }
 

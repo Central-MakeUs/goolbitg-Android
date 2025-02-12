@@ -379,10 +379,10 @@ class OnboardingViewModel @Inject constructor(
                             delay(3000L - elapsedTime)
                         }
                         withContext(Dispatchers.Default){
-                            result.data?.spendingType?.let{
+                            result.data?.let{
                                 _state.value = state.value.copy(
                                     isAnalysisSuccess = true,
-                                    spendingTypeModel = it
+                                    userInfoModel = it
                                 )
                             }
                         }
