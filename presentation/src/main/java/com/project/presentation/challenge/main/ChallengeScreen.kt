@@ -459,7 +459,8 @@ fun ChallengeWeeklyCalendar(
             weekDates.forEachIndexed { idx, date ->
                 val weeklyStatus = weeklyStatusList?.get(idx)
                 val progress = if (weeklyStatus != null && weeklyStatus.totalChallenges > 0) {
-                    weeklyStatus.achievedChallenges.toFloat() / weeklyStatus.totalChallenges.toFloat() * 100
+                    val pg = weeklyStatus.achievedChallenges.toFloat() / weeklyStatus.totalChallenges.toFloat() * 100
+                    if(pg > 100f) 100f else pg
                 } else {
                     0f
                 }
