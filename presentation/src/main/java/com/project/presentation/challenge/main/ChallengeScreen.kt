@@ -258,16 +258,11 @@ fun ChallengeScreen(
                                     "{isOnboarding}",
                                     "false"
                                 )
-                                navHostController.navigate(route) {
-                                    popUpTo(0) { inclusive = true }
-                                    launchSingleTop = true
-                                }
+                                navHostController.navigate(route)
                             },
                             onDateChange = { newDate ->
                                 viewModel.onEvent(
-                                    ChallengeEvent.ChangeSelectedDate(
-                                        newDate
-                                    )
+                                    ChallengeEvent.ChangeSelectedDate(newDate)
                                 )
                             },
                             onPageChanged = { offset, date ->
