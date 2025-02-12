@@ -1,6 +1,7 @@
 package com.project.presentation.onboarding
 
 import androidx.annotation.StringRes
+import com.project.domain.model.user.SpendingTypeModel
 import com.project.presentation.common.BirthStatus
 import com.project.presentation.common.DayOfWeekEnum
 import com.project.presentation.common.GenderEnum
@@ -39,10 +40,8 @@ data class OnboardingState(
     val majorExpenditureAmpm: String,
 
     // Consume Type Result
-    val consumeType: String,
-    val consumeTypeSub: String,
-    val myConsumeScore: Int,
-    val sameTypeCount: Int,
+    val isAnalysisSuccess: Boolean,
+    val spendingTypeModel: SpendingTypeModel?,
 
     val isLoading: Boolean
 ) {
@@ -101,10 +100,8 @@ data class OnboardingState(
             majorExpenditureHours = "",
             majorExpenditureAmpm = "",
             majorExpenditureMinutes = "",
-            consumeType = "",
-            consumeTypeSub = "",
-            myConsumeScore = 0,
-            sameTypeCount = 0,
+            isAnalysisSuccess = false,
+            spendingTypeModel = null,
             isLoading = false
         )
     }

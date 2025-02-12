@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.project.data.preferences.AuthDataStore
 import com.project.domain.model.DataState
 import com.project.domain.usecase.user.CheckNicknameDuplicatedUseCase
+import com.project.domain.usecase.user.GetUserInfoUseCase
 import com.project.domain.usecase.user.SetUserAgreementUseCase
 import com.project.domain.usecase.user.SetUserCheckListUseCase
 import com.project.domain.usecase.user.SetUserHabitUseCase
@@ -18,6 +19,7 @@ import com.project.presentation.util.Regex.nicknameKoreanEnglishOnlyRegex
 import com.project.presentation.util.Regex.nicknameLengthRegex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -36,7 +38,8 @@ class OnboardingViewModel @Inject constructor(
     private val setUserInfoUseCase: SetUserInfoUseCase,
     private val setUserCheckListUseCase: SetUserCheckListUseCase,
     private val setUserHabitUseCase: SetUserHabitUseCase,
-    private val setUserPatternUseCase: SetUserPatternUseCase
+    private val setUserPatternUseCase: SetUserPatternUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingState.create())
     val state get() = _state.asStateFlow()
@@ -95,6 +98,13 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingEvent.ClickCheckListItem -> {
                 _state.value = state.value.copy(
                     checkList = state.value.checkList.map { it.copy() }.apply {
+                        if(!this[event.idx].isChecked){
+                            if(event.idx != 5){
+                                this[5].isChecked = false
+                            }else{
+                                (0..4).forEach { this[it].isChecked = false }
+                            }
+                        }
                         this[event.idx].isChecked = !this[event.idx].isChecked
                     }
                 )
@@ -358,4 +368,28 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+     fun getUserInfo(){
+        viewModelScope.launch {
+            val startTime = System.currentTimeMillis()
+            getUserInfoUseCase().collect{ result ->
+                when(result){
+                    is DataState.Success -> {
+                        val elapsedTime = System.currentTimeMillis() - startTime
+                        if(elapsedTime < 3000L){
+                            delay(3000L - elapsedTime)
+                        }
+                        withContext(Dispatchers.Default){
+                            result.data?.spendingType?.let{
+                                _state.value = state.value.copy(
+                                    isAnalysisSuccess = true,
+                                    spendingTypeModel = it
+                                )
+                            }
+                        }
+                    }
+                    else -> Unit
+                 }
+            }
+        }
+    }
 }
