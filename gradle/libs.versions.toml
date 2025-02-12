@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.2"
-kotlin = "1.9.0"
+kotlin = "2.1.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -13,7 +13,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 material3 = "1.3.1"
 navigation = "2.8.3"
-hilt = "2.48"
+hilt = "2.53"
 hiltCompiler = "1.0.0"
 hiltNavigationCompose = "1.2.0"
 ksp = "2.0.0-1.0.23"
@@ -35,6 +35,7 @@ kakao = "2.20.6"
 composeMaterial3 = "1.0.0-alpha31"
 lottie = "6.6.2"
 shimmer = "1.0.5"
+haze = "1.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,8 +61,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
-androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 room = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -101,6 +100,8 @@ lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = 
 
 shimmer = { group = "com.valentinilk.shimmer", name = "compose-shimmer", version.ref = "shimmer"}
 
+haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze"}
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -111,4 +112,4 @@ google-gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

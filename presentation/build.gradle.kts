@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.compose.compiler)
 }
 
 val properties = Properties()
@@ -106,4 +107,6 @@ dependencies {
 
     // Shimmer (Skeleton UI)
     implementation(libs.shimmer)
+
+    implementation(libs.haze)
 }

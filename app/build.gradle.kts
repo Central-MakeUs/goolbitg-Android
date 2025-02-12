@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.google.gms)
     alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.compose.compiler)
 }
 
 val properties = Properties()

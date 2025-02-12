@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.google.gms) apply false
+    alias(libs.plugins.compose.compiler) apply false
 }
