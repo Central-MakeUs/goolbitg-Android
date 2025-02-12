@@ -31,6 +31,9 @@ class MyPageViewModel @Inject constructor(
             is MyPageEvent.Logout -> {
                 logout()
             }
+            is MyPageEvent.RefreshLogoutState -> {
+                _state.value = MyPageState.create()
+            }
         }
     }
 

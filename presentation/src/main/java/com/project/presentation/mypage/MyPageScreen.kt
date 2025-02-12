@@ -121,6 +121,7 @@ fun MyPageScreen(
 
     LaunchedEffect(state.value.isLogoutSuccess) {
         if (state.value.isLogoutSuccess) {
+            viewModel.onEvent(MyPageEvent.RefreshLogoutState)
             navHostController.navigate(NavItem.Login.route) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
