@@ -103,7 +103,7 @@ private fun NavigationGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = NavItem.ShowConsumeType.route,
+        startDestination = NavItem.Splash.route,
         modifier = modifier
     ) {
         directComposable(NavItem.Splash.route) {
@@ -133,23 +133,48 @@ private fun NavigationGraph(
         }
 
         addComposable(NavItem.ThirdOnboarding.route) {
-            ThirdOnboardingScreenScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            ThirdOnboardingScreenScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.FourthOnboarding.route) {
-            FourthOnboardingScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            FourthOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.FifthOnboarding.route) {
-            FifthOnboardingScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            FifthOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.AnalysisConsumeType.route) {
-            AnalysisConsumeTypeScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            AnalysisConsumeTypeScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.ShowConsumeType.route) {
-            ShowConsumeTypeScreen(navHostController = navHostController)
+            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+                hiltViewModel(navHostController.previousBackStackEntry!!)
+            }else{
+                hiltViewModel()
+            }
+            ShowConsumeTypeScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         directComposable(NavItem.Home.route) {
