@@ -137,7 +137,7 @@ class UserRepositoryImpl @Inject constructor(
                 userDataSource.setRemoteUserHabit(
                     body = UserHabitReq(
                         avgIncomePerMonth = avgIncomePerMonth,
-                        avgSpendingPerMonth = avgSpendingPerMonth
+                        avgSavingPerMonth = avgSpendingPerMonth
                     )
                 )
             },
