@@ -40,6 +40,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["KAKAO_CLIENT_KEY"] = properties["KAKAO_CLIENT_KEY"] as String
         }
     }
     compileOptions {
