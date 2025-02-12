@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,36 +42,42 @@ fun SplashScreen(
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.FirstOnboarding -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.TermsOfServices -> {
                     navHostController.navigate(NavItem.FirstOnboarding.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.UserInfo -> {
                     navHostController.navigate(NavItem.SecondOnboarding.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.CheckList -> {
                     navHostController.navigate(NavItem.FourthOnboarding.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.ConsumeHabit -> {
                     navHostController.navigate(NavItem.FifthOnboarding.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.ConsumePattern -> {
                     val route = NavItem.ChallengeAddition.route.replace("{isOnboarding}", "true")
                     navHostController.navigate(route) {
@@ -78,19 +85,22 @@ fun SplashScreen(
                         launchSingleTop = true
                     }
                 }
+
                 RegisterStatus.AddChallenge -> {
                     navHostController.navigate(NavItem.Home.route) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
+
                 else -> {}
             }
         }
-        Image(
-            modifier = Modifier.align(Alignment.Center),
-            painter = painterResource(R.drawable.ic_splash),
-            contentDescription = null
-        )
     }
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(R.drawable.img_splash),
+        contentScale = ContentScale.Crop,
+        contentDescription = null
+    )
 }
