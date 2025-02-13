@@ -201,7 +201,12 @@ fun ChallengeScreen(
                             val weekDiff =
                                 ChronoUnit.WEEKS.between(baseWeekStart, selectedWeekStart).toInt()
                             val targetPage = Int.MAX_VALUE / 2 + weekDiff
-                            viewModel.onEvent((ChallengeEvent.ChangePage(offset = weekDiff.toLong(), targetDate = selectedWeekStart)))
+                            viewModel.onEvent(
+                                (ChallengeEvent.ChangePage(
+                                    offset = weekDiff.toLong(),
+                                    targetDate = selectedWeekStart
+                                ))
+                            )
                             pagerState.scrollToPage(targetPage)
                         }
                     }
@@ -441,7 +446,9 @@ fun ChallengeWeeklyCalendar(
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }
                 .collect { page ->
-                    onPageChanged(page.toLong(), currentWeekStart)
+                    val ws = todayDate.plusDays((page - Int.MAX_VALUE / 2) * 7L)
+                    val wd = getWeekDates(ws)
+                    onPageChanged(page.toLong(), wd[0])
                 }
         }
 
@@ -454,8 +461,9 @@ fun ChallengeWeeklyCalendar(
             weekDates.forEachIndexed { idx, date ->
                 val weeklyStatus = weeklyStatusList?.get(idx)
                 val progress = if (weeklyStatus != null && weeklyStatus.totalChallenges > 0) {
-                    val pg = weeklyStatus.achievedChallenges.toFloat() / weeklyStatus.totalChallenges.toFloat() * 100
-                    if(pg > 100f) 100f else pg
+                    val pg =
+                        weeklyStatus.achievedChallenges.toFloat() / weeklyStatus.totalChallenges.toFloat() * 100
+                    if (pg > 100f) 100f else pg
                 } else {
                     0f
                 }
