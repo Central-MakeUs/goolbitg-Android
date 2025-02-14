@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.messaging.FirebaseMessaging
+import com.project.presentation.buyornot.BuyOrNotScreen
 import com.project.presentation.challenge.main.ChallengeScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionScreen
 import com.project.presentation.challenge.detail.ChallengeDetailScreen
@@ -183,6 +184,10 @@ private fun NavigationGraph(
 
         directComposable(NavItem.Challenge.route) {
             ChallengeScreen(navHostController = navHostController)
+        }
+
+        directComposable(NavItem.BuyOrNot.route){
+            BuyOrNotScreen(navHostController = navHostController)
         }
 
         directComposable(NavItem.MyPage.route) {

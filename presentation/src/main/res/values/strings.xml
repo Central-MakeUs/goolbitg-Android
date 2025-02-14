@@ -112,6 +112,9 @@
     <string name="challenge_detail_stop_title">챌린지 멈추기</string>
     <string name="challenge_detail_stop_sub_title">지금 멈추면 앞으로 기록을 못해요\n정말 멈추겠습니까?</string>
 
+    <string name="buyornot_header_title">살까말까</string>
+    <string name="buyornot_my_write">내가 작성한 글</string>
+
     <string name="mypage_header_title">마이페이지</string>
     <string name="mypage_card_nickname">#VALUE#님</string>
     <string name="mypage_card_consume_score">내 소비 점수</string>

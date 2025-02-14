@@ -41,6 +41,7 @@ fun BaseBottomNavBar(
     items: List<NavItem> = listOf(
         NavItem.Home,
         NavItem.Challenge,
+        NavItem.BuyOrNot,
         NavItem.MyPage,
     )
 ) {
