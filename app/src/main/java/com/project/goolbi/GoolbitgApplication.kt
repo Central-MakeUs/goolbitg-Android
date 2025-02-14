@@ -1,4 +1,4 @@
-package com.project.goolbitg
+package com.project.goolbi
 
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk

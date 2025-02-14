@@ -1,4 +1,4 @@
-package com.project.goolbitg
+package com.project.goolbi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
