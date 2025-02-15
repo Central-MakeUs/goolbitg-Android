@@ -14,7 +14,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BuyOrNotDataSource {
-    @GET("/v1/butOrNots")
+    @GET("/v1/buyOrNots")
     suspend fun fetchBuyOrNotPosts(
         @Query("page") page: Int,
         @Query("size") size: Int,

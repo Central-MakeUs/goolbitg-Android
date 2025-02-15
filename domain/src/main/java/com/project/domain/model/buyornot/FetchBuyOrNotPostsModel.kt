@@ -5,5 +5,5 @@ data class FetchBuyOrNotPostsModel(
     val totalPages: Int,
     val size: Int,
     val page: Int,
-    val items: BuyOrNotPostingModel
+    val items: List<BuyOrNotPostingModel>
 )

@@ -8,13 +8,13 @@ data class FetchBuyOrNotPostsRes(
     @SerializedName("totalPages") val totalPages: Int,
     @SerializedName("size") val size: Int,
     @SerializedName("page") val page: Int,
-    @SerializedName("items") val items: BuyOrNotPostingRes
+    @SerializedName("items") val items: List<BuyOrNotPostingRes>
 ) {
     fun toDomainModel() = FetchBuyOrNotPostsModel(
         totalSize = totalSize,
         totalPages = totalPages,
         size = size,
         page = page,
-        items = items.toDomainModel(),
+        items = items.map { it.toDomainModel() },
     )
 }

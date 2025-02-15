@@ -9,7 +9,7 @@ class FetchBuyOrNotPostsUseCase @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         size: Int,
-        isCreated: Boolean
+        isCreated: Boolean = false
     ) = buyOrNotRepository.fetchBuyOrNotPosts(
         page = page,
         size = size,
