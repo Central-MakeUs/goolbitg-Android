@@ -112,8 +112,14 @@
     <string name="challenge_detail_stop_title">챌린지 멈추기</string>
     <string name="challenge_detail_stop_sub_title">지금 멈추면 앞으로 기록을 못해요\n정말 멈추겠습니까?</string>
 
-    <string name="buyornot_header_title">살까말까</string>
-    <string name="buyornot_my_write">내가 작성한 글</string>
+    <string name="buyornot_header_title_1">살까말까</string>
+    <string name="buyornot_header_title_2">기록</string>
+    <string name="buyornot_report">신고하기</string>
+    <string name="buyornot_report_sub_title">신고하려는 이유를 선택해 주세요</string>
+    <string name="buyornot_report_reason_1">성적인 콘텐츠</string>
+    <string name="buyornot_report_reason_2">폭력적 또는 혐오스러운 콘텐츠</string>
+    <string name="buyornot_report_reason_3">잘못된 정보</string>
+    <string name="buyornot_report_reason_4">기타 사유</string>
 
     <string name="mypage_header_title">마이페이지</string>
     <string name="mypage_card_nickname">#VALUE#님</string>
