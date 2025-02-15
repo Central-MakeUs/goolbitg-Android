@@ -1,6 +1,7 @@
 package com.project.data.di
 
 import com.project.data.remote.datasource.AuthDataSource
+import com.project.data.remote.datasource.BuyOrNotDataSource
 import com.project.data.remote.datasource.ChallengeDataSource
 import com.project.data.remote.datasource.UserDataSource
 import dagger.Module
@@ -24,4 +25,8 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideChallengeDataSource(retrofit: Retrofit): ChallengeDataSource = retrofit.create(ChallengeDataSource::class.java)
+
+    @Provides
+    @Singleton
+    fun provideBuyOrNotDataSource(retrofit: Retrofit): BuyOrNotDataSource = retrofit.create(BuyOrNotDataSource::class.java)
 }
