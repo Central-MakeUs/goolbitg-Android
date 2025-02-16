@@ -554,6 +554,7 @@ fun TodayTodoItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
             .clip(CircleShape)
             .border(width = 1.dp, color = if (isSuccess) main15 else gray500, shape = CircleShape)
             .then(
