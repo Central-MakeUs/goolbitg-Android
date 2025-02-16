@@ -120,6 +120,8 @@
     <string name="buyornot_report_reason_2">폭력적 또는 혐오스러운 콘텐츠</string>
     <string name="buyornot_report_reason_3">잘못된 정보</string>
     <string name="buyornot_report_reason_4">기타 사유</string>
+    <string name="buyornot_my_title">내가 작성한 글</string>
+    <string name="buyornot_delete_popup_sub_title">정말 살까말까 글을\n삭제하시겠어요?</string>
 
     <string name="mypage_header_title">마이페이지</string>
     <string name="mypage_card_nickname">#VALUE#님</string>
@@ -186,7 +188,12 @@
     <string name="common_saturday_2">토</string>
     <string name="common_score_value">#VALUE#점</string>
     <string name="common_person_count_value">#VALUE#명</string>
+    <string name="common_price_value">#VALUE#원</string>
     <string name="common_success">성공</string>
     <string name="common_fail">실패</string>
     <string name="common_withdraw">탈퇴하기</string>
+    <string name="common_modify">수정하기</string>
+    <string name="common_delete">삭제하기</string>
+    <string name="common_delete_2">삭제</string>
+    <string name="common_confirm">확인</string>
 </resources>
