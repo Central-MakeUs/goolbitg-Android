@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +59,7 @@ import com.project.presentation.ui.theme.main20
 import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.spacingLg
 import com.project.presentation.ui.theme.white
+import com.valentinilk.shimmer.shimmer
 import kotlin.math.absoluteValue
 
 @Composable
@@ -71,26 +73,34 @@ fun BuyOrNotCardMainContent(
 ) {
     val pagerState = rememberPagerState { postingList.size }
     Column(modifier = modifier.fillMaxWidth()) {
-        HorizontalPager(
-            modifier = Modifier
+        if (pagerState.pageCount == 0) {
+            BuyOrNotCardSkeleton(
+                modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 30.dp)
-        ) { page ->
+                .weight(1f)
+                .padding(horizontal = 30.dp))
+        } else {
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                state = pagerState,
+                contentPadding = PaddingValues(horizontal = 30.dp)
+            ) { page ->
 
-            LaunchedEffect(page) {
-                if (!isLoading && page > pageOffset - 5) {
-                    onFetchNextPage()
+                LaunchedEffect(page) {
+                    if (!isLoading && page > pageOffset - 5) {
+                        onFetchNextPage()
+                    }
                 }
-            }
 
-            if (page < postingList.size) {
-                BuyOrNotCard(
-                    modifier = Modifier.carouselTransition(page = page, pagerState = pagerState),
-                    posting = postingList[page],
-                    onOpenReportSheet = onOpenReportSheet
-                )
+                if (page < postingList.size) {
+                    BuyOrNotCard(
+                        modifier = Modifier.carouselTransition(page = page, pagerState = pagerState),
+                        posting = postingList[page],
+                        onOpenReportSheet = onOpenReportSheet
+                    )
+                }
             }
         }
         BuyOrNotGoodOrBad(modifier = Modifier.padding(top = 24.dp, bottom = 21.dp))
@@ -202,6 +212,128 @@ fun BuyOrNotCard(
                     color = white,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BuyOrNotCardSkeleton(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(12.dp)
+                .clip(RoundedCornerShape(spacingLg))
+                .border(
+                    width = 1.dp,
+                    color = white.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(spacingLg)
+                )
+                .background(Color(0x0DFFFFFF))
+                .padding(24.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BaseTintIcon(iconId = R.drawable.ic_triangle_caution, tint = gray400)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.buyornot_report),
+                        style = goolbitgTypography.body5,
+                        color = gray400
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.2f)),
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp, 12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .size(150.dp, 16.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.2f)),
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 16.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(white.copy(alpha = 0.1f))
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .shimmer()
+                        .background(white.copy(alpha = 0.2f))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(160.dp, 12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .shimmer()
+                        .background(white.copy(alpha = 0.2f))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(160.dp, 12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
                 )
             }
         }
