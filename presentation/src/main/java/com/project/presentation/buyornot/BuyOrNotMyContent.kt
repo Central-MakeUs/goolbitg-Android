@@ -48,7 +48,9 @@ import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.main100
 import com.project.presentation.ui.theme.white
 import com.project.presentation.ui.theme.gray500
+import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
@@ -84,27 +86,90 @@ fun BuyOrNotCardMyContent(
                     }
                 }
         }
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            state = listState
-        ) {
-            itemsIndexed(items = myPostingList) { idx, item ->
-                BuyOrNotMyPosting(
-                    modifier = Modifier.fillMaxWidth(),
-                    posting = item,
-                    onMyItemClick = onMyItemClick,
-                    onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
-                    onModifyMyPosting = onModifyMyPosting
-                )
-                if (idx < myPostingList.size - 1) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(gray600)
+        if (myPostingList.isEmpty()) {
+            if (isLoading) {
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    repeat(3) { idx ->
+                        BuyOrNotMyPostingSkeleton()
+                        if (idx < myPostingList.size - 1) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                                    .background(gray600)
+                            )
+                        }
+                    }
+                }
+            } else {
+                MyPostingEmptyContent()
+            }
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                state = listState
+            ) {
+                itemsIndexed(items = myPostingList) { idx, item ->
+                    BuyOrNotMyPosting(
+                        modifier = Modifier.fillMaxWidth(),
+                        posting = item,
+                        onMyItemClick = onMyItemClick,
+                        onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
+                        onModifyMyPosting = onModifyMyPosting
                     )
+                    if (idx < myPostingList.size - 1) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(gray600)
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun MyPostingDropdown(
+    modifier: Modifier = Modifier,
+    onModify: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .width(IntrinsicSize.Max)
+            .clip(RoundedCornerShape(8.dp))
+            .border(width = 1.dp, color = gray500, shape = RoundedCornerShape(8.dp))
+            .background(gray600)
+    ) {
+        Row(
+            modifier = Modifier
+                .noRippleClickable { onModify() }
+                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BaseIcon(iconId = R.drawable.ic_dropdown_pencil)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(R.string.common_modify), color = gray200, style = goolbitgTypography.body3)
+        }
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(gray500)
+        )
+        Row(
+            modifier = Modifier
+                .noRippleClickable { onDelete() }
+                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BaseIcon(iconId = R.drawable.ic_dropdown_trash)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(R.string.common_delete), color = gray200, style = goolbitgTypography.body3)
         }
     }
 }
@@ -198,44 +263,89 @@ fun BuyOrNotMyPosting(
 }
 
 @Composable
-fun MyPostingDropdown(
+fun BuyOrNotMyPostingSkeleton(
     modifier: Modifier = Modifier,
-    onModify: () -> Unit,
-    onDelete: () -> Unit,
 ) {
-    Column(
+    Row(
         modifier = modifier
-            .width(IntrinsicSize.Max)
-            .clip(RoundedCornerShape(8.dp))
-            .border(width = 1.dp, color = gray500, shape = RoundedCornerShape(8.dp))
-            .background(gray600)
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .noRippleClickable { onModify() }
-                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BaseIcon(iconId = R.drawable.ic_dropdown_pencil)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.common_modify), color = gray200, style = goolbitgTypography.body3)
-        }
         Box(
             modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(gray500)
+                .size(80.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmer()
+                .background(white.copy(alpha = 0.1f))
         )
-        Row(
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
             modifier = Modifier
-                .noRippleClickable { onDelete() }
-                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .weight(1f)
+                .height(80.dp)
+                .padding(vertical = 4.dp)
         ) {
-            BaseIcon(iconId = R.drawable.ic_dropdown_trash)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.common_delete), color = gray200, style = goolbitgTypography.body3)
+            Box(
+                modifier = Modifier
+                    .size(121.dp, 16.dp)
+                    .clip(RoundedCornerShape(roundSm))
+                    .shimmer()
+                    .background(white.copy(alpha = 0.1f))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(48.dp, 12.dp)
+                    .clip(RoundedCornerShape(roundSm))
+                    .shimmer()
+                    .background(white.copy(alpha = 0.1f))
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(48.dp, 12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(48.dp, 12.dp)
+                        .clip(RoundedCornerShape(roundSm))
+                        .shimmer()
+                        .background(white.copy(alpha = 0.1f))
+                )
+            }
+        }
+        Box {
+            BaseIcon(
+                modifier = Modifier,
+                iconId = R.drawable.ic_vertical_menu_dots
+            )
         }
     }
+}
+
+
+@Composable
+fun MyPostingEmptyContent(modifier: Modifier = Modifier) {
+
 }
