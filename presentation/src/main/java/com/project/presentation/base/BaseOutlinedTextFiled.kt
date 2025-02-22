@@ -44,9 +44,10 @@ fun BaseOutlinedTextFiled(
         textStyle = textStyle,
         placeholder = placeholder,
         maxLines = 1,
+        singleLine = true,
         colors = colors,
         shape = shape,
         keyboardOptions = keyboardOptions,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
     )
 }

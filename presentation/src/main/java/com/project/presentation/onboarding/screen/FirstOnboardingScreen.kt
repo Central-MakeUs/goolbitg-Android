@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -51,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -233,46 +236,54 @@ fun FirstOnboardingScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(transparent)
                     ) {
-                        FirstOnboardingBody(
-                            modifier = Modifier.fillMaxSize(),
-                            state = state,
-                            onNicknameChanged = {
-                                viewModel.onEvent(
-                                    event = OnboardingEvent.ChangeNickname(it)
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            item {
+                                FirstOnboardingBody(
+                                    modifier = Modifier.fillMaxSize(),
+                                    state = state,
+                                    onNicknameChanged = {
+                                        viewModel.onEvent(
+                                            event = OnboardingEvent.ChangeNickname(it)
+                                        )
+                                    },
+                                    onDuplicationCheck = {
+                                        focusManager.clearFocus(force = true)
+                                        viewModel.onEvent(event = OnboardingEvent.DuplicationCheck)
+                                    },
+                                    onBirthClick = {
+                                        focusManager.clearFocus(force = true)
+                                        coroutineScope.launch {
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
+                                    },
+                                    onMaleClick = {
+                                        focusManager.clearFocus(force = true)
+                                        viewModel.onEvent(event = OnboardingEvent.ClickMale)
+                                    },
+                                    onFemaleClick = {
+                                        focusManager.clearFocus(force = true)
+                                        viewModel.onEvent(event = OnboardingEvent.ClickFemale)
+                                    }
                                 )
-                            },
-                            onDuplicationCheck = {
-                                focusManager.clearFocus(force = true)
-                                viewModel.onEvent(event = OnboardingEvent.DuplicationCheck)
-                            },
-                            onBirthClick = {
-                                focusManager.clearFocus(force = true)
-                                coroutineScope.launch {
-                                    scaffoldState.bottomSheetState.expand()
-                                }
-                            },
-                            onMaleClick = {
-                                focusManager.clearFocus(force = true)
-                                viewModel.onEvent(event = OnboardingEvent.ClickMale)
-                            },
-                            onFemaleClick = {
-                                focusManager.clearFocus(force = true)
-                                viewModel.onEvent(event = OnboardingEvent.ClickFemale)
                             }
-                        )
+                        }
 
                         AnimatedVisibility(
                             modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                                .fillMaxWidth()
+                                .background(transparent)
                                 .align(Alignment.BottomCenter),
                             visible = nextBtnState,
-                            enter = fadeIn()
+                            enter = fadeIn(),
+                            exit = fadeOut()
                         ) {
                             Text(
                                 modifier = Modifier
+                                    .background(transparent)
                                     .fillMaxWidth()
-                                    .padding(bottom = spacingMd)
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                                     .clip(CircleShape)
                                     .background(
                                         brush = Brush.horizontalGradient(
@@ -363,6 +374,7 @@ fun FirstOnboardingBody(
             onMaleClick = onMaleClick,
             onFemaleClick = onFemaleClick
         )
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
@@ -392,14 +404,15 @@ fun InputNicknameContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BaseOutlinedTextFiled(
-                modifier = Modifier
-                    .widthIn(max = 238.dp),
+                modifier = Modifier.weight(1f),
                 value = nickname,
                 textStyle = goolbitgTypography.caption2,
                 placeholder = {
                     Text(
                         text = stringResource(R.string.onboarding_first_nickname_placeholder),
                         style = goolbitgTypography.caption2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         color = gray500
                     )
                 },
@@ -702,15 +715,19 @@ fun AgreementBottomSheetContent(
                         color = gray300,
                         style = goolbitgTypography.body4
                     )
-                    BaseIcon(
-                        modifier = Modifier.noRippleClickable {
-                            if (item.webUrl != null) {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webUrl))
-                                context.startActivity(intent)
-                            }
-                        },
-                        iconId = R.drawable.ic_arrow_right_over
-                    )
+                    if(item != AgreementEnum.AgeFourteen){
+                        BaseIcon(
+                            modifier = Modifier.noRippleClickable {
+                                if (item.webUrl != null) {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webUrl))
+                                    context.startActivity(intent)
+                                }
+                            },
+                            iconId = R.drawable.ic_arrow_right_over
+                        )
+                    }else{
+                        Spacer(modifier = Modifier.size(24.dp, 25.dp))
+                    }
                 }
             }
         }
