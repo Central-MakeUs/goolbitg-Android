@@ -91,6 +91,12 @@ fun FifthOnboardingScreen(
                     },
                     onAmpmChanged = {
                         viewModel.onEvent(OnboardingEvent.ChangeMajorExpenditureAmpm(it))
+                    },
+                    onSkip = {
+                        navHostController.navigate(NavItem.AnalysisConsumeType.route) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 )
                 BaseBottomBtn(
@@ -117,7 +123,8 @@ fun FifthOnboardingContent(
     onDayOfWeekSelected: (DayOfWeekEnum) -> Unit,
     onHourChanged: (String) -> Unit,
     onMinuteChanged: (String) -> Unit,
-    onAmpmChanged: (String) -> Unit
+    onAmpmChanged: (String) -> Unit,
+    onSkip: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -140,7 +147,9 @@ fun FifthOnboardingContent(
 
             Text(
                 modifier = Modifier
-                    .noRippleClickable { },
+                    .noRippleClickable {
+                        onSkip()
+                    },
                 text = stringResource(R.string.common_skip),
                 style = goolbitgTypography.h3,
                 color = gray300
