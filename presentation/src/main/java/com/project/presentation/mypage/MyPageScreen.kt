@@ -200,7 +200,7 @@ fun MyPageScreen(
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 MyPageHeader(
-                    newAlarmCount = 1,
+                    newAlarmCount = 0,
                     onNotification = {
                         // TODO: 알림 목록 화면 이동
                     }

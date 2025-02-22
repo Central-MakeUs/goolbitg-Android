@@ -312,7 +312,7 @@ fun HomeContent(
                         .padding(horizontal = 16.dp)
                 ) {
                     HomeHeader(modifier = Modifier.fillMaxWidth(),
-                        newAlarmCount = 1,
+                        newAlarmCount = 0,
                         onNotification = {}
                     )
 
