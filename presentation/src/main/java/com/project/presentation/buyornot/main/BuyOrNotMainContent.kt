@@ -1,6 +1,5 @@
 package com.project.presentation.buyornot.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -66,7 +65,6 @@ import kotlin.math.absoluteValue
 fun BuyOrNotCardMainContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    currMainPage: Int,
     isLoading: Boolean,
     pageOffset: Int,
     postingList: List<BuyOrNotPostingModel>,
@@ -106,15 +104,12 @@ fun BuyOrNotCardMainContent(
                 }
             }
         }
-        if (postingList.isNotEmpty()) {
-            Log.d("TAG", "BuyOrNotCardMainContent: ${currMainPage}")
-            Log.d("TAG", "BuyOrNotCardMainContent: ${postingList[currMainPage]}")
-            BuyOrNotGoodOrBad(
-                modifier = Modifier.padding(top = 24.dp, bottom = 21.dp),
-                item = postingList[pagerState.currentPage],
-                onVote = onVote
-            )
-        }
+        val posting = if (postingList.isNotEmpty()) postingList[pagerState.currentPage] else null
+        BuyOrNotGoodOrBad(
+            modifier = Modifier.padding(top = 24.dp, bottom = 21.dp),
+            item = posting,
+            onVote = onVote
+        )
     }
 }
 
@@ -354,7 +349,7 @@ fun BuyOrNotCardSkeleton(modifier: Modifier = Modifier) {
 @Composable
 fun BuyOrNotGoodOrBad(
     modifier: Modifier = Modifier,
-    item: BuyOrNotPostingModel,
+    item: BuyOrNotPostingModel?,
     onVote: (Int, Boolean) -> Unit
 ) {
     Row(
@@ -368,11 +363,15 @@ fun BuyOrNotGoodOrBad(
             BaseIcon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .clickable { onVote(item.id, true) },
+                    .clickable {
+                        if (item != null) {
+                            onVote(item.id, true)
+                        }
+                    },
                 iconId = R.drawable.ic_thumbs_up
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = item.goodVoteCount.toString(), style = goolbitgTypography.caption2, color = gray400)
+            Text(text = item?.goodVoteCount?.toString() ?: "", style = goolbitgTypography.caption2, color = gray400)
         }
         Spacer(modifier = Modifier.width(40.dp))
         Column(
@@ -382,11 +381,15 @@ fun BuyOrNotGoodOrBad(
             BaseIcon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .clickable { onVote(item.id, false) },
+                    .clickable {
+                        if (item != null) {
+                            onVote(item.id, true)
+                        }
+                    },
                 iconId = R.drawable.ic_thumbs_down
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = item.badVoteCount.toString(), style = goolbitgTypography.caption2, color = gray400)
+            Text(text = item?.badVoteCount?.toString() ?: "", style = goolbitgTypography.caption2, color = gray400)
         }
     }
 }
@@ -462,7 +465,7 @@ fun ReportBottomSheetContent(
             text = stringResource(R.string.buyornot_report),
             enabled = reason != null,
             onClick = {
-                if(reason != null){
+                if (reason != null) {
                     onReport(reason)
                 }
             }

@@ -274,7 +274,6 @@ fun BuyOrNotScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
-                        currMainPage = state.value.currMainPage,
                         selectedTabIdx = state.value.tabIdx,
                         mainPostingList = state.value.mainPostList,
                         myPostingList = state.value.myPostList,
@@ -357,7 +356,6 @@ fun BuyOrNotScreen(
 @Composable
 fun BuyOrNotContent(
     modifier: Modifier = Modifier,
-    currMainPage: Int,
     selectedTabIdx: Int,
     mainPostingList: List<BuyOrNotPostingModel>,
     myPostingList: List<BuyOrNotPostingModel>,
@@ -388,7 +386,6 @@ fun BuyOrNotContent(
                 BuyOrNotCardMainContent(
                     modifier = Modifier.weight(1f),
                     pagerState = pagerState,
-                    currMainPage = currMainPage,
                     postingList = mainPostingList,
                     isLoading = isMainLoading,
                     pageOffset = mainPageOffset,
