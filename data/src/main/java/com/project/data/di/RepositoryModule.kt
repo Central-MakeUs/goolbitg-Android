@@ -4,6 +4,7 @@ import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.datasource.BuyOrNotDataSource
 import com.project.data.remote.datasource.ChallengeDataSource
 import com.project.data.remote.datasource.UserDataSource
+import com.project.data.remote.datasource.UtilDataSource
 import com.project.data.repository.AuthRepositoryImpl
 import com.project.data.repository.BuyOrNotRepositoryImpl
 import com.project.data.repository.ChallengeRepositoryImpl
@@ -41,7 +42,10 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideBuyOrNotRepository(buyOrNotDataSource: BuyOrNotDataSource): BuyOrNotRepository {
-        return BuyOrNotRepositoryImpl(buyOrNotDataSource = buyOrNotDataSource)
+    fun provideBuyOrNotRepository(
+        buyOrNotDataSource: BuyOrNotDataSource,
+        utilDataSource: UtilDataSource
+    ): BuyOrNotRepository {
+        return BuyOrNotRepositoryImpl(buyOrNotDataSource = buyOrNotDataSource, utilDataSource = utilDataSource)
     }
 }

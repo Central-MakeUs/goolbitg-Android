@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path name="images" path="images/" />
+    <!-- 또는 내부 저장소 사용 시 -->
+    <!-- <files-path name="images" path="images/" /> -->
+</paths>

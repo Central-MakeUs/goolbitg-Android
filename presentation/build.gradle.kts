@@ -49,6 +49,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+    viewBinding{
+        enable = true
+    }
 }
 
 dependencies {
@@ -68,6 +71,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.material)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.firebase.messaging.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -109,4 +113,7 @@ dependencies {
     implementation(libs.shimmer)
 
     implementation(libs.haze)
+
+    //crop
+    implementation(libs.cropper)
 }

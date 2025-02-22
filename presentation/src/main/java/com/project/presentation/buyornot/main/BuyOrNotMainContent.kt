@@ -1,7 +1,9 @@
-package com.project.presentation.buyornot
+package com.project.presentation.buyornot.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.wear.compose.foundation.pager.HorizontalPager
@@ -65,20 +66,23 @@ import kotlin.math.absoluteValue
 @Composable
 fun BuyOrNotCardMainContent(
     modifier: Modifier = Modifier,
+    currMainPage: Int,
     isLoading: Boolean,
     pageOffset: Int,
     postingList: List<BuyOrNotPostingModel>,
-    onOpenReportSheet: () -> Unit,
-    onFetchNextPage: () -> Unit
+    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
+    onFetchNextPage: () -> Unit,
+    onVote: (Int, Boolean) -> Unit
 ) {
     val pagerState = rememberPagerState { postingList.size }
     Column(modifier = modifier.fillMaxWidth()) {
         if (pagerState.pageCount == 0) {
             BuyOrNotCardSkeleton(
                 modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(horizontal = 30.dp))
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 30.dp)
+            )
         } else {
             HorizontalPager(
                 modifier = Modifier
@@ -103,7 +107,15 @@ fun BuyOrNotCardMainContent(
                 }
             }
         }
-        BuyOrNotGoodOrBad(modifier = Modifier.padding(top = 24.dp, bottom = 21.dp))
+        if (postingList.isNotEmpty()) {
+            Log.d("TAG", "BuyOrNotCardMainContent: ${currMainPage}")
+            Log.d("TAG", "BuyOrNotCardMainContent: ${postingList[currMainPage]}")
+            BuyOrNotGoodOrBad(
+                modifier = Modifier.padding(top = 24.dp, bottom = 21.dp),
+                item = postingList[pagerState.currentPage],
+                onVote = onVote
+            )
+        }
     }
 }
 
@@ -112,7 +124,7 @@ fun BuyOrNotCardMainContent(
 fun BuyOrNotCard(
     modifier: Modifier = Modifier,
     posting: BuyOrNotPostingModel,
-    onOpenReportSheet: () -> Unit
+    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -137,7 +149,7 @@ fun BuyOrNotCard(
             ) {
                 Row(
                     modifier = Modifier.noRippleClickable {
-                        onOpenReportSheet()
+                        onOpenReportSheet(posting)
                     },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -341,26 +353,41 @@ fun BuyOrNotCardSkeleton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-@Preview
-fun BuyOrNotGoodOrBad(modifier: Modifier = Modifier) {
+fun BuyOrNotGoodOrBad(
+    modifier: Modifier = Modifier,
+    item: BuyOrNotPostingModel,
+    onVote: (Int, Boolean) -> Unit
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         Column(
+            modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BaseIcon(iconId = R.drawable.ic_thumbs_up)
+            BaseIcon(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onVote(item.id, true) },
+                iconId = R.drawable.ic_thumbs_up
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "??", style = goolbitgTypography.caption2, color = gray400)
+            Text(text = item.goodVoteCount.toString(), style = goolbitgTypography.caption2, color = gray400)
         }
         Spacer(modifier = Modifier.width(40.dp))
         Column(
+            modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BaseIcon(iconId = R.drawable.ic_thumbs_down)
+            BaseIcon(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onVote(item.id, false) },
+                iconId = R.drawable.ic_thumbs_down
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "??", style = goolbitgTypography.caption2, color = gray400)
+            Text(text = item.badVoteCount.toString(), style = goolbitgTypography.caption2, color = gray400)
         }
     }
 }
@@ -370,7 +397,7 @@ fun ReportBottomSheetContent(
     modifier: Modifier = Modifier,
     reasonList: List<ReportReason>,
     onItemClick: (Int) -> Unit,
-    onReport: () -> Unit
+    onReport: (String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -425,12 +452,21 @@ fun ReportBottomSheetContent(
                 .height(1.dp)
                 .background(gray500)
         )
+
+        val reason = reasonList.findLast { it.isSelected }?.reasonEnum?.let {
+            stringResource(it.strId)
+        }
         BaseBottomBtn(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             text = stringResource(R.string.buyornot_report),
-            onClick = onReport
+            enabled = reason != null,
+            onClick = {
+                if(reason != null){
+                    onReport(reason)
+                }
+            }
         )
 
         // 이거 안해주면 시스템 네비게이션바랑 겹침

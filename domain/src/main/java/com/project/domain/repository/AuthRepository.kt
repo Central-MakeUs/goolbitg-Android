@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     suspend fun register(type: String, idToken: String): Flow<DataState<Boolean>>
-    suspend fun login(type: String, idToken: String): Flow<DataState<LoginModel>>
+    suspend fun login(type: String, idToken: String, fcmToken: String?): Flow<DataState<LoginModel>>
     suspend fun refreshToken(refreshToken: String): Flow<DataState<RefreshTokenModel>>
     suspend fun logout(): Flow<DataState<Boolean>>
     suspend fun withdrawAccount(reason: String): Flow<DataState<Boolean>>

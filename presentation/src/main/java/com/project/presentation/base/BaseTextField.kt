@@ -31,6 +31,7 @@ fun BaseTextField(
     onTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     prefixValue: String? = null,
+    maxLength: Int? = null,
     textStyle: TextStyle = goolbitgTypography.caption2,
     textColor: Color = white,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -38,7 +39,7 @@ fun BaseTextField(
     placeHolderColor: Color = gray300,
     containerColor: Color = gray600,
     cursorColor: Color = white,
-    visualTransformation: VisualTransformation
+    visualTransformation: VisualTransformation? = null
 ) {
     Box(modifier = modifier
         .clip(shape)
@@ -56,7 +57,11 @@ fun BaseTextField(
                 )
             },
             textStyle = textStyle,
-            onValueChange = onTextChanged,
+            onValueChange = {
+                if(maxLength == null || it.length <= maxLength){
+                    onTextChanged(it)
+                }
+            },
             prefix = {
                 if (prefixValue != null) {
                     Text(
@@ -66,7 +71,7 @@ fun BaseTextField(
                     )
                 }
             },
-            visualTransformation = visualTransformation,
+            visualTransformation = visualTransformation ?: VisualTransformation.None,
             colors = TextFieldDefaults.colors(
                 focusedTextColor = textColor,
                 unfocusedTextColor = textColor,

@@ -23,12 +23,17 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Goolbitg"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.project.presentation.buyornot.add.CropActivity"
+            android:exported="false">
         </activity>
 
         <activity
@@ -63,6 +68,16 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/white" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.project.goolbi.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

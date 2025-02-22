@@ -32,5 +32,7 @@ interface BuyOrNotRepository {
 
     suspend fun getBuyOrNotPostingDetail(postId: Int): Flow<DataState<BuyOrNotPostingModel>>
     suspend fun deleteBuyOrNotPosting(postId: Int): Flow<DataState<Boolean>>
+    suspend fun reportPosting(postId: Int, reason: String): Flow<DataState<Boolean>>
     suspend fun votePosting(postId: Int, vote: String): Flow<DataState<VotePostingModel>>
+    suspend fun uploadImage(byteArray: ByteArray): Flow<DataState<String>>
 }

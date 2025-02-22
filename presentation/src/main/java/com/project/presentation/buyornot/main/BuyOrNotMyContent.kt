@@ -1,4 +1,4 @@
-package com.project.presentation.buyornot
+package com.project.presentation.buyornot.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +21,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +40,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.project.domain.model.buyornot.BuyOrNotPostingModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.base.extension.StringExtension.priceComma
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -72,20 +75,6 @@ fun BuyOrNotCardMyContent(
             color = gray50
         )
 
-        val listState = rememberLazyListState()
-        LaunchedEffect(listState, pageOffset, isLoading) {
-            snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-                .distinctUntilChanged()
-                .collect { visibleItems ->
-                    val lastVisibleItem = visibleItems.lastOrNull()
-                    // 로드된 브랜드 목록이 있고, 현재 불러오고 있지 않은 경우에만 수행
-                    if (myPostingList.isNotEmpty() && !isLoading) {
-                        if (lastVisibleItem != null && lastVisibleItem.index > pageOffset - 5) {
-                            onFetchNextPage()
-                        }
-                    }
-                }
-        }
         if (myPostingList.isEmpty()) {
             if (isLoading) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -105,7 +94,59 @@ fun BuyOrNotCardMyContent(
                 MyPostingEmptyContent()
             }
         } else {
+            val listState = rememberLazyListState()
+            // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
+            val showTopFade by remember {
+                derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }
+            }
+            val showBottomFade by remember {
+                derivedStateOf {
+                    (listState.layoutInfo.totalItemsCount > 0 &&
+                            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastItem ->
+                                lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
+                                        lastItem.offset + lastItem.size <= listState.layoutInfo.viewportEndOffset
+                            } ?: true).not()
+                }
+            }
+
+            val listFade by remember {
+                derivedStateOf {
+                    when {
+                        showTopFade && showBottomFade -> Brush.verticalGradient(
+                            0f to transparent,
+                            0.03f to white
+                        )
+                        showTopFade -> Brush.verticalGradient(0f to transparent, 0.03f to white)
+                        else -> null
+                    }
+                }
+            }
+
+
+            LaunchedEffect(listState, pageOffset, isLoading) {
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+                    .distinctUntilChanged()
+                    .collect { visibleItems ->
+                        val lastVisibleItem = visibleItems.lastOrNull()
+                        // 로드된 브랜드 목록이 있고, 현재 불러오고 있지 않은 경우에만 수행
+                        if (myPostingList.isNotEmpty() && !isLoading) {
+                            if (lastVisibleItem != null && lastVisibleItem.index > pageOffset - 5) {
+                                onFetchNextPage()
+                            }
+                        }
+                    }
+            }
+
             LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .then(
+                        if (listFade != null) {
+                            Modifier.fadingEdge(listFade!!)
+                        } else {
+                            Modifier
+                        }
+                    ),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 state = listState
             ) {

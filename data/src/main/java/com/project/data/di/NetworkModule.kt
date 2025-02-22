@@ -2,6 +2,7 @@ package com.project.data.di
 
 import com.project.data.BuildConfig
 import com.project.data.remote.common.BaseUrl.BASE_DOMAIN_URL
+import com.project.data.remote.common.BaseUrl.BASE_DOMAIN_URL_DEV
 import com.project.data.remote.interceptor.TokenInterceptor
 import dagger.Module
 import dagger.Provides
@@ -43,8 +44,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val url = if(BuildConfig.DEBUG) BASE_DOMAIN_URL_DEV else BASE_DOMAIN_URL
         return Retrofit.Builder()
-            .baseUrl(BASE_DOMAIN_URL)
+            .baseUrl(url)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

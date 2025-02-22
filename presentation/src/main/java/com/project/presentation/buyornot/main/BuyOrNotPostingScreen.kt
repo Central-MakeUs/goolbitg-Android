@@ -1,4 +1,4 @@
-package com.project.presentation.buyornot
+package com.project.presentation.buyornot.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

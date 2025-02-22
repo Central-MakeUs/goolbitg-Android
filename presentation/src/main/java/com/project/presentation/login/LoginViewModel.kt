@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -84,31 +85,39 @@ class LoginViewModel @Inject constructor(
      * 소셜 로그인을 수행한다.
      */
     private fun socialLogin(idToken: String) {
-        viewModelScope.launch {
-            loginUseCase(type = state.value.loginType, idToken = idToken).collect { result ->
-                when (result) {
-                    is DataState.Loading -> {
-                        _state.value = _state.value.copy(
-                            isLoading = result.isLoading
-                        )
-                    }
-
-                    is DataState.Success -> {
-                        if (result.data != null) {
-                            authDataStore.setAccessToken(accessToken = result.data!!.accessToken)
-                            authDataStore.setRefreshToken(refreshToken = result.data!!.refreshToken)
-                            checkPermissionFlow()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) return@addOnCompleteListener
+            val fcmToken = if (task.isSuccessful) task.result else null
+            viewModelScope.launch {
+                loginUseCase(
+                    type = state.value.loginType,
+                    idToken = idToken,
+                    fcmToken = fcmToken
+                ).collect { result ->
+                    when (result) {
+                        is DataState.Loading -> {
+                            _state.value = _state.value.copy(
+                                isLoading = result.isLoading
+                            )
                         }
-                    }
 
-                    is DataState.Error -> {
-                        if (result.code == ErrorCode.NotRegisteredUser.code) {
-                            register(idToken = idToken)
+                        is DataState.Success -> {
+                            if (result.data != null) {
+                                authDataStore.setAccessToken(accessToken = result.data!!.accessToken)
+                                authDataStore.setRefreshToken(refreshToken = result.data!!.refreshToken)
+                                checkPermissionFlow()
+                            }
                         }
-                    }
 
-                    is DataState.Exception -> {
+                        is DataState.Error -> {
+                            if (result.code == ErrorCode.NotRegisteredUser.code) {
+                                register(idToken = idToken)
+                            }
+                        }
 
+                        is DataState.Exception -> {
+
+                        }
                     }
                 }
             }
@@ -204,7 +213,6 @@ class LoginViewModel @Inject constructor(
 
                     }
                 }
-
                 else -> Unit
             }
         }

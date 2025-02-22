@@ -85,7 +85,12 @@ fun BaseBottomNavBar(
                 },
                 onClick = {
                     if(!isSelected){
-                        navController.navigate(item.route) {
+                        val route = if(item == NavItem.BuyOrNot){
+                            item.route.replace("{tabIdx}", "0")
+                        }else{
+                            item.route
+                        }
+                        navController.navigate(route) {
                             popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }

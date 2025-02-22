@@ -2,7 +2,6 @@ package com.project.goolbi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,8 +27,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.messaging.FirebaseMessaging
-import com.project.presentation.buyornot.BuyOrNotScreen
+import com.project.presentation.buyornot.add.BuyOrNotAddEvent
+import com.project.presentation.buyornot.add.BuyOrNotAddScreen
+import com.project.presentation.buyornot.add.BuyOrNotAddViewModel
+import com.project.presentation.buyornot.main.BuyOrNotScreen
+import com.project.presentation.buyornot.main.BuyOrNotViewModel
 import com.project.presentation.challenge.main.ChallengeScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionScreen
 import com.project.presentation.challenge.detail.ChallengeDetailScreen
@@ -55,6 +57,8 @@ import com.project.presentation.splash.SplashScreen
 import com.project.presentation.ui.theme.gray800
 import com.project.presentation.withdraw.WithdrawScreen
 import dagger.hilt.android.AndroidEntryPoint
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -68,22 +72,12 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
             controller.isAppearanceLightStatusBars = false // 상태바 아이콘 색상 설정
         }
-        initFcmToken()
+
         enableEdgeToEdge()
         setContent {
             val navHostController = rememberNavController()
             NavigationGraph(navHostController = navHostController)
         }
-    }
-}
-
-private fun initFcmToken() {
-    // 로그인 하지 않은 경우 제외
-    // 로그인 상태인데 유효한 토큰이 설정된 적이 없는 경우 Firebase 에서 등록된 FcmToken 을 가져오고 서버로 전송한다.
-    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-        if (!task.isSuccessful) return@addOnCompleteListener
-        val fcmToken = task.result
-        Log.d("TAG", "initFcmToken: ${fcmToken}")
     }
 }
 
@@ -125,54 +119,54 @@ private fun NavigationGraph(
         }
 
         addComposable(NavItem.SecondOnboarding.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             SecondOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.ThirdOnboarding.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             ThirdOnboardingScreenScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.FourthOnboarding.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             FourthOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.FifthOnboarding.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             FifthOnboardingScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.AnalysisConsumeType.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             AnalysisConsumeTypeScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         addComposable(NavItem.ShowConsumeType.route) {
-            val viewModel: OnboardingViewModel = if(navHostController.previousBackStackEntry != null){
+            val viewModel: OnboardingViewModel = if (navHostController.previousBackStackEntry != null) {
                 hiltViewModel(navHostController.previousBackStackEntry!!)
-            }else{
+            } else {
                 hiltViewModel()
             }
             ShowConsumeTypeScreen(navHostController = navHostController, viewModel = viewModel)
@@ -186,8 +180,14 @@ private fun NavigationGraph(
             ChallengeScreen(navHostController = navHostController)
         }
 
-        directComposable(NavItem.BuyOrNot.route){
-            BuyOrNotScreen(navHostController = navHostController)
+        directComposable(
+            route = NavItem.BuyOrNot.route,
+            arguments = listOf(navArgument("tabIdx") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val tabIdx = backStackEntry.arguments?.getInt("tabIdx") ?: 0
+            val viewModel: BuyOrNotViewModel = hiltViewModel()
+            viewModel.setTabIdx(tabIdx)
+            BuyOrNotScreen(navHostController = navHostController, viewModel = viewModel)
         }
 
         directComposable(NavItem.MyPage.route) {
@@ -223,11 +223,53 @@ private fun NavigationGraph(
 
         addComposable(
             route = NavItem.Withdraw.route
-        ){
+        ) {
             WithdrawScreen(navHostController = navHostController)
         }
-    }
 
+        addComposable(
+            route = NavItem.BuyOrNotModifyPosting.route,
+            arguments = listOf(
+                navArgument("postId") { type = NavType.IntType },
+                navArgument("productName") { type = NavType.StringType },
+                navArgument("price") { type = NavType.StringType },
+                navArgument("imgUrl") { type = NavType.StringType },
+                navArgument("goodReason") { type = NavType.StringType },
+                navArgument("badReason") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getInt("postId")
+            val buyOrNotAddViewModel: BuyOrNotAddViewModel = hiltViewModel()
+            buyOrNotAddViewModel.apply {
+                val encodingImgUrl = backStackEntry.arguments?.getString("imgUrl") ?: ""
+                val imgUrl = URLDecoder.decode(encodingImgUrl, StandardCharsets.UTF_8.toString())
+                onEvent(BuyOrNotAddEvent.ChangeImgUrl(imgUrl))
+                onEvent(BuyOrNotAddEvent.ChangePostId(postId))
+                onEvent(
+                    BuyOrNotAddEvent.ChangeProductName(
+                        backStackEntry.arguments?.getString("productName") ?: ""
+                    )
+                )
+                onEvent(BuyOrNotAddEvent.ChangePrice(backStackEntry.arguments?.getString("price") ?: ""))
+                onEvent(BuyOrNotAddEvent.ChangeGoodReason(backStackEntry.arguments?.getString("goodReason") ?: ""))
+                onEvent(BuyOrNotAddEvent.ChangeBadReason(backStackEntry.arguments?.getString("badReason") ?: ""))
+            }
+            BuyOrNotAddScreen(navHostController = navHostController, viewModel = buyOrNotAddViewModel)
+        }
+
+        addComposable(
+            route = NavItem.BuyOrNotAddPosting.route,
+            arguments = listOf(
+                navArgument("tabIdx") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val tabIdx = backStackEntry.arguments?.getInt("tabIdx") ?: 0
+            val viewModel: BuyOrNotAddViewModel = hiltViewModel()
+            viewModel.setTabIdx(tabIdx)
+            BuyOrNotAddScreen(navHostController = navHostController, viewModel = viewModel)
+        }
+
+    }
 }
 
 fun NavGraphBuilder.directComposable(
@@ -235,7 +277,7 @@ fun NavGraphBuilder.directComposable(
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-){
+) {
     composable(
         route = route,
         arguments = arguments,
@@ -253,7 +295,7 @@ fun NavGraphBuilder.addComposable(
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-){
+) {
     composable(
         route = route,
         arguments = arguments,

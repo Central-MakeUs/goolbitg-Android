@@ -1,5 +1,6 @@
-package com.project.presentation.buyornot
+package com.project.presentation.buyornot.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -8,8 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,10 +24,13 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -46,11 +54,13 @@ import androidx.navigation.compose.rememberNavController
 import com.project.domain.model.buyornot.BuyOrNotPostingModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseSnackBar
 import com.project.presentation.base.BaseTwoButtonPopup
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.challenge.addition.calculateScrimAlpha
 import com.project.presentation.challenge.addition.getScreenHeightInPixelsOnce
 import com.project.presentation.navigation.BaseBottomNavBar
+import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
@@ -58,7 +68,12 @@ import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,9 +82,27 @@ fun BuyOrNotScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: BuyOrNotViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
-    var deleteMyPostingTarget: BuyOrNotPostingModel? by remember { mutableStateOf(null) }
-
+    LaunchedEffect(navHostController.currentBackStackEntry?.savedStateHandle) {
+        val savedStateHandle = navHostController.currentBackStackEntry?.savedStateHandle
+        val postId = savedStateHandle?.get<Int>("postId")
+        if (postId != null) {
+            val imgUrl = savedStateHandle.get<String>("imgUrl") ?: ""
+            val productName = savedStateHandle.get<String>("productName") ?: ""
+            val price = savedStateHandle.get<Int>("price") ?: 0
+            val goodReason = savedStateHandle.get<String>("goodReason") ?: ""
+            val badReason = savedStateHandle.get<String>("badReason") ?: ""
+            viewModel.onEvent(
+                BuyOrNotEvent.ModifyLocalPosting(
+                    postId = postId,
+                    productName = productName,
+                    imgUrl = imgUrl,
+                    price = price,
+                    goodReason = goodReason,
+                    badReason = badReason
+                )
+            )
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +114,6 @@ fun BuyOrNotScreen(
                 skipHiddenState = false
             )
         )
-        val coroutineScope = rememberCoroutineScope()
         var bottomSheetScrimAlpha by remember {
             mutableFloatStateOf(0f)
         }
@@ -99,6 +131,45 @@ fun BuyOrNotScreen(
             mutableFloatStateOf(29f)
         }
 
+
+        val state = viewModel.state.collectAsStateWithLifecycle()
+        val coroutineScope = rememberCoroutineScope()
+        val snackBarHostState = remember { SnackbarHostState() }
+
+        var deleteMyPostingTarget: BuyOrNotPostingModel? by remember { mutableStateOf(null) }
+
+        LaunchedEffect(state.value.reportResult) {
+            if (!state.value.reportResult.isNullOrEmpty()) {
+                coroutineScope.launch {
+                    val job =
+                        launch {
+                            snackBarHostState.showSnackbar(
+                                message = state.value.reportResult!!,
+                                withDismissAction = true,
+                            )
+                        }
+                    delay(3000L)
+                    job.cancel()
+                }
+                withContext(Dispatchers.Main) {
+                    viewModel.initReportResult()
+                }
+            }
+        }
+
+        var reportPosting by remember { mutableStateOf<BuyOrNotPostingModel?>(null) }
+
+        BackHandler {
+            if (reportPosting != null) {
+                coroutineScope.launch {
+                    scaffoldState.bottomSheetState.partialExpand()
+                    reportPosting = null
+                    viewModel.initReportList()
+                }
+            } else {
+
+            }
+        }
         BottomSheetScaffold(
             modifier = Modifier
                 .drawBehind {
@@ -126,6 +197,8 @@ fun BuyOrNotScreen(
                     onReport = {
                         coroutineScope.launch {
                             scaffoldState.bottomSheetState.partialExpand()
+                            viewModel.onEvent(BuyOrNotEvent.ReportPosting(postId = reportPosting!!.id, reason = it))
+                            reportPosting = null
                         }
                     }
                 )
@@ -142,6 +215,8 @@ fun BuyOrNotScreen(
                                     // 드래그 이동 처리
                                     coroutineScope.launch {
                                         scaffoldState.bottomSheetState.partialExpand()
+                                        viewModel.initReportList()
+                                        reportPosting = null
                                     }
                                 }
                             }
@@ -163,12 +238,31 @@ fun BuyOrNotScreen(
                 Scaffold(containerColor = transparent,
                     bottomBar = {
                         BaseBottomNavBar(navController = navHostController)
+                    },
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            snackbar = {
+                                BaseSnackBar(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    snackBarData = it,
+                                )
+                            },
+                            modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .consumeWindowInsets(WindowInsets.navigationBars)
+                                .imePadding()
+                                .padding(bottom = 66.dp),
+                        )
                     }
                 ) { innerPadding ->
                     BuyOrNotContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
+                        currMainPage = state.value.currMainPage,
+                        selectedTabIdx = state.value.tabIdx,
                         mainPostingList = state.value.mainPostList,
                         myPostingList = state.value.myPostList,
                         isMainLoading = state.value.isMainPostsLoading,
@@ -177,6 +271,7 @@ fun BuyOrNotScreen(
                         myPageOffset = state.value.myPostPage * state.value.myPostSize,
                         onOpenReportSheet = {
                             coroutineScope.launch {
+                                reportPosting = it
                                 scaffoldState.bottomSheetState.expand()
                             }
                         },
@@ -190,7 +285,30 @@ fun BuyOrNotScreen(
                             deleteMyPostingTarget = it
                         },
                         onModifyMyPosting = {
-
+                            val route = NavItem.BuyOrNotModifyPosting.route
+                                .replace("{postId}", it.id.toString())
+                                .replace("{productName}", it.productName)
+                                .replace("{price}", it.productPrice.toString())
+                                .replace(
+                                    "{imgUrl}", URLEncoder.encode(
+                                        it.productImageUrl,
+                                        StandardCharsets.UTF_8.toString()
+                                    )
+                                )
+                                .replace("{goodReason}", it.goodReason)
+                                .replace("{badReason}", it.badReason)
+                            navHostController.navigate(route)
+                        },
+                        onWritePosting = {
+                            val route = NavItem.BuyOrNotAddPosting.route
+                                .replace("{tabIdx}", state.value.tabIdx.toString())
+                            navHostController.navigate(route)
+                        },
+                        onVote = { postId, isGood ->
+                            viewModel.onEvent(BuyOrNotEvent.VotePosting(postId, isGood))
+                        },
+                        onTabChanged = {
+                            viewModel.setTabIdx(it)
                         }
                     )
                 }
@@ -207,7 +325,7 @@ fun BuyOrNotScreen(
             }
         )
 
-        if(deleteMyPostingTarget != null){
+        if (deleteMyPostingTarget != null) {
             BaseTwoButtonPopup(
                 title = stringResource(R.string.common_delete),
                 subTitle = stringResource(R.string.buyornot_delete_popup_sub_title),
@@ -226,39 +344,40 @@ fun BuyOrNotScreen(
 @Composable
 fun BuyOrNotContent(
     modifier: Modifier = Modifier,
+    currMainPage: Int,
+    selectedTabIdx: Int,
     mainPostingList: List<BuyOrNotPostingModel>,
     myPostingList: List<BuyOrNotPostingModel>,
     isMainLoading: Boolean,
     isMyLoading: Boolean,
     mainPageOffset: Int,
     myPageOffset: Int,
-    onOpenReportSheet: () -> Unit,
+    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
     onFetchMainNextPage: () -> Unit,
     onFetchMyNextPage: () -> Unit,
     onActiveDeleteMyPostingPopup: (BuyOrNotPostingModel) -> Unit,
-    onModifyMyPosting: (BuyOrNotPostingModel) -> Unit
+    onModifyMyPosting: (BuyOrNotPostingModel) -> Unit,
+    onWritePosting: () -> Unit,
+    onVote: (Int, Boolean) -> Unit,
+    onTabChanged: (Int) -> Unit
 ) {
-    var selectedTabIdx by rememberSaveable { mutableIntStateOf(0) }
-
     Column(modifier = modifier) {
         BuyOrNotHeader(
             selectedTabIdx = selectedTabIdx,
-            onTabChanged = { idx ->
-                selectedTabIdx = idx
-            },
-            onWritePosting = {
-
-            }
+            onTabChanged = onTabChanged,
+            onWritePosting = onWritePosting
         )
-        when(selectedTabIdx){
+        when (selectedTabIdx) {
             0 -> {
                 BuyOrNotCardMainContent(
                     modifier = Modifier.weight(1f),
+                    currMainPage = currMainPage,
                     postingList = mainPostingList,
                     isLoading = isMainLoading,
                     pageOffset = mainPageOffset,
                     onOpenReportSheet = onOpenReportSheet,
-                    onFetchNextPage = onFetchMainNextPage
+                    onFetchNextPage = onFetchMainNextPage,
+                    onVote = onVote
                 )
             }
             1 -> {
@@ -293,19 +412,19 @@ fun BuyOrNotHeader(
     ) {
         Row(modifier = Modifier.weight(1f)) {
             Text(
-                modifier = Modifier.noRippleClickable { if(selectedTabIdx != 0) onTabChanged(0) },
+                modifier = Modifier.noRippleClickable { if (selectedTabIdx != 0) onTabChanged(0) },
                 text = stringResource(R.string.buyornot_header_title_1),
                 style = goolbitgTypography.h1,
-                color = if(selectedTabIdx == 0) white else gray400
+                color = if (selectedTabIdx == 0) white else gray400
             )
 
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                modifier = Modifier.noRippleClickable { if(selectedTabIdx != 1) onTabChanged(1) },
+                modifier = Modifier.noRippleClickable { if (selectedTabIdx != 1) onTabChanged(1) },
                 text = stringResource(R.string.buyornot_header_title_2),
                 style = goolbitgTypography.h1,
-                color = if(selectedTabIdx == 1) white else gray400
+                color = if (selectedTabIdx == 1) white else gray400
             )
         }
 

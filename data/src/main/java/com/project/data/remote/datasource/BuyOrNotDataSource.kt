@@ -1,5 +1,6 @@
 package com.project.data.remote.datasource
 
+import com.project.data.remote.request.buyornot.ReportPostingReq
 import com.project.data.remote.request.buyornot.UpsertBuyOrNotPostingReq
 import com.project.data.remote.request.buyornot.VotePostingReq
 import com.project.data.remote.response.buyornot.FetchBuyOrNotPostsRes
@@ -10,6 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,7 +28,7 @@ interface BuyOrNotDataSource {
         @Body body: UpsertBuyOrNotPostingReq
     ): Response<BuyOrNotPostingRes>
 
-    @POST("/v1/buyOrNots/{postId}")
+    @PUT("/v1/buyOrNots/{postId}")
     suspend fun modifyBuyOrNotPosting(
         @Path("postId") postId: Int,
         @Body body: UpsertBuyOrNotPostingReq
@@ -40,6 +42,12 @@ interface BuyOrNotDataSource {
     @DELETE("/v1/buyOrNots/{postId}")
     suspend fun deleteBuyOrNotPosting(
         @Path("postId") postId: Int,
+    ): Response<Unit>
+
+    @POST("/v1/buyOrNots/{postId}/report")
+    suspend fun reportPosting(
+        @Path("postId") postId: Int,
+        @Body body: ReportPostingReq
     ): Response<Unit>
 
     @POST("/v1/buyOrNots/{postId}/vote")
