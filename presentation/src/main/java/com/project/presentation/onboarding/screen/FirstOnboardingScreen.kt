@@ -265,6 +265,11 @@ fun FirstOnboardingScreen(
                                     onFemaleClick = {
                                         focusManager.clearFocus(force = true)
                                         viewModel.onEvent(event = OnboardingEvent.ClickFemale)
+                                    },
+                                    onDeleteBirth = {
+                                        viewModel.onEvent(event = OnboardingEvent.ChangeYear(""))
+                                        viewModel.onEvent(event = OnboardingEvent.ChangeMonth(""))
+                                        viewModel.onEvent(event = OnboardingEvent.ChangeDay(""))
                                     }
                                 )
                             }
@@ -337,7 +342,8 @@ fun FirstOnboardingBody(
     onDuplicationCheck: () -> Unit,
     onBirthClick: () -> Unit,
     onMaleClick: () -> Unit,
-    onFemaleClick: () -> Unit
+    onFemaleClick: () -> Unit,
+    onDeleteBirth: () -> Unit
 ) {
     Column(modifier = modifier.padding(top = 36.dp, start = 24.dp, end = 24.dp)) {
         Text(
@@ -353,7 +359,7 @@ fun FirstOnboardingBody(
         )
         Spacer(modifier = Modifier.height(spacingXxl))
         InputNicknameContent(
-            modifier = Modifier.widthIn(max = 400.dp),
+            modifier = Modifier.fillMaxWidth(),
             nickname = state.nickname,
             nicknameStatus = state.nicknameStatus,
             onNicknameChanged = onNicknameChanged,
@@ -361,15 +367,16 @@ fun FirstOnboardingBody(
         )
         Spacer(modifier = Modifier.height(spacingLg))
         InputBirthContent(
-            modifier = Modifier.widthIn(max = 400.dp),
+            modifier = Modifier.fillMaxWidth(),
             year = state.year,
             month = state.month,
             day = state.day,
-            onClick = onBirthClick
+            onClick = onBirthClick,
+            onDeleteBirth = onDeleteBirth
         )
         Spacer(modifier = Modifier.height(spacingLg))
         SelectGenderContent(
-            modifier = Modifier.widthIn(max = 400.dp),
+            modifier = Modifier.fillMaxWidth(),
             gender = state.gender,
             onMaleClick = onMaleClick,
             onFemaleClick = onFemaleClick
@@ -473,6 +480,7 @@ fun InputBirthContent(
     day: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    onDeleteBirth: () -> Unit
 ) {
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -481,7 +489,6 @@ fun InputBirthContent(
                 style = goolbitgTypography.caption1,
                 color = white
             )
-            Text(text = " *", style = goolbitgTypography.caption1, color = error)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -492,18 +499,34 @@ fun InputBirthContent(
         } else {
             "${year}년 ${month.padStart(2, '0')}월 ${day.padStart(2, '0')}일"
         }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(6.dp))
-                .border(width = 1.dp, color = gray500, shape = RoundedCornerShape(6.dp))
-                .background(gray600)
-                .noRippleClickable { onClick() }
-                .padding(spacingMd),
-            text = birthStr,
-            color = if (isBirthEmpty) gray400 else white,
-            style = goolbitgTypography.caption2
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(6.dp))
+                    .border(width = 1.dp, color = gray500, shape = RoundedCornerShape(6.dp))
+                    .background(gray600)
+                    .noRippleClickable { onClick() }
+                    .padding(spacingMd),
+                text = birthStr,
+                color = if (isBirthEmpty) gray400 else white,
+                style = goolbitgTypography.caption2
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(white)
+                    .noRippleClickable { onDeleteBirth() }
+                    .padding(horizontal = 30.dp, vertical = 14.5.dp),
+                text = stringResource(R.string.common_delete_2),
+                style = goolbitgTypography.btn3,
+                color = black
+            )
+        }
 
     }
 }
@@ -522,7 +545,6 @@ fun SelectGenderContent(
                 style = goolbitgTypography.caption1,
                 color = white
             )
-            Text(text = " *", style = goolbitgTypography.caption1, color = error)
         }
 
         Spacer(modifier = Modifier.height(8.dp))

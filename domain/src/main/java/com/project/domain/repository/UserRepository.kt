@@ -21,8 +21,8 @@ interface UserRepository {
     ): Flow<DataState<Boolean>>
     suspend fun setRemoteUserInfo(
         nickname: String,
-        birthday: String,
-        gender: String
+        birthday: String?,
+        gender: String?
     ): Flow<DataState<Boolean>>
     suspend fun setRemoteUserCheckList(
         check1: Boolean,

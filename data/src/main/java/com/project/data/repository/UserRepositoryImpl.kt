@@ -86,8 +86,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun setRemoteUserInfo(
         nickname: String,
-        birthday: String,
-        gender: String
+        birthday: String?,
+        gender: String?
     ): Flow<DataState<Boolean>> {
         return NetworkUtils.handleApi(
             execute = {

@@ -8,8 +8,8 @@ class SetUserInfoUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         nickname: String,
-        birthday: String,
-        gender: String
+        birthday: String?,
+        gender: String?
     ) = userRepository.setRemoteUserInfo(
         nickname = nickname,
         birthday = birthday,

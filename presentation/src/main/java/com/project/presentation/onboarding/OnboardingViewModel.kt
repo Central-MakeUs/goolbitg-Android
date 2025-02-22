@@ -84,6 +84,10 @@ class OnboardingViewModel @Inject constructor(
                     _state.value = state.value.copy(
                         gender = GenderEnum.Male
                     )
+                }else{
+                    _state.value = state.value.copy(
+                        gender = null
+                    )
                 }
             }
 
@@ -91,6 +95,10 @@ class OnboardingViewModel @Inject constructor(
                 if (state.value.gender != GenderEnum.Female) {
                     _state.value = state.value.copy(
                         gender = GenderEnum.Female
+                    )
+                }else{
+                    _state.value = state.value.copy(
+                        gender = null
                     )
                 }
             }
@@ -217,11 +225,16 @@ class OnboardingViewModel @Inject constructor(
                     }
                     is DataState.Success -> {
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                        val date = LocalDate.of(state.value.year.toInt(), state.value.month.toInt(), state.value.day.toInt())
+                        val dateStr = if(state.value.isBirthFullFilled()){
+                            val date = LocalDate.of(state.value.year.toInt(), state.value.month.toInt(), state.value.day.toInt())
+                            date.format(formatter)
+                        }else{
+                            null
+                        }
                         setUserInfoUseCase(
                             nickname = state.value.nickname,
-                            birthday = date.format(formatter),
-                            gender = state.value.gender?.value ?: GenderEnum.Male.value
+                            birthday = dateStr,
+                            gender = state.value.gender?.value
                         ).collect{ result2 ->
                             when(result2){
                                 is DataState.Loading -> {

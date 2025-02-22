@@ -51,8 +51,13 @@ data class OnboardingState(
      */
     fun isFirstOnboardingCompleted(): Boolean {
         return nicknameStatus == NicknameStatus.Completed
-                && birthStatus == BirthStatus.Completed
-                && gender != null
+    }
+
+    /**
+     * 생년월일 전부 채워졌는지 확인
+     */
+    fun isBirthFullFilled(): Boolean {
+        return year.isNotEmpty() && month.isNotEmpty() && day.isNotEmpty()
     }
 
     /**

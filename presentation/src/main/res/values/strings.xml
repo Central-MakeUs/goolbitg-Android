@@ -20,12 +20,12 @@
     <string name="onboarding_first_nickname_err_2">닉네임은 한글, 영문 대소문자만 입력할 수 있어요</string>
     <string name="onboarding_first_nickname_err_3">이미 사용중인 닉네임입니다</string>
     <string name="onboarding_first_nickname_completed">사용 가능한 닉네임입니다</string>
-    <string name="onboarding_first_birth_title">생년월일</string>
+    <string name="onboarding_first_birth_title">생년월일 (선택)</string>
     <string name="onboarding_first_birth_placeholder">생년월일을 선택해주세요</string>
     <string name="onboarding_first_birth_year_placeholder">YY</string>
     <string name="onboarding_first_birth_month_placeholder">MM</string>
     <string name="onboarding_first_birth_day_placeholder">DD</string>
-    <string name="onboarding_first_gender_title">성별</string>
+    <string name="onboarding_first_gender_title">성별 (선택)</string>
     <string name="onboarding_first_gender_male">남성</string>
     <string name="onboarding_first_gender_female">여성</string>
     <string name="onboarding_first_agreement_title">굴비잇기에 오신 걸 환영해요</string>
