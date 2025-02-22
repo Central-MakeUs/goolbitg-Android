@@ -586,7 +586,6 @@ fun CalendarItem(
     val dayOfWeekStr = stringResource(DayOfWeekEnum.entries[dayOfWeek - 1].strId2)
     Column(
         modifier = modifier
-            .noRippleClickable { onClick() }
     ) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -622,7 +621,7 @@ fun CalendarItem(
                                 Modifier
                             }
                         }
-                    )
+                    ).noRippleClickable { onClick() }
             ) {
                 Text(
                     modifier = Modifier
