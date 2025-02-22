@@ -51,6 +51,10 @@ class SplashViewModel @Inject constructor(
                                     checkRegisterStatus()
                                 }
                             } else {
+                                val elapsedTime = System.currentTimeMillis() - startTime
+                                if(elapsedTime < splashMilliSeconds){
+                                    delay(splashMilliSeconds - elapsedTime)
+                                }
                                 _state.value = _state.value.copy(
                                     registerStatus = RegisterStatus.Login
                                 )
@@ -58,6 +62,10 @@ class SplashViewModel @Inject constructor(
                         }
 
                         else -> {
+                            val elapsedTime = System.currentTimeMillis() - startTime
+                            if(elapsedTime < splashMilliSeconds){
+                                delay(splashMilliSeconds - elapsedTime)
+                            }
                             _state.value = _state.value.copy(
                                 registerStatus = RegisterStatus.Login
                             )
@@ -65,6 +73,10 @@ class SplashViewModel @Inject constructor(
                     }
                 }
             } else {
+                val elapsedTime = System.currentTimeMillis() - startTime
+                if(elapsedTime < splashMilliSeconds){
+                    delay(splashMilliSeconds - elapsedTime)
+                }
                 _state.value = _state.value.copy(
                     registerStatus = RegisterStatus.Login
                 )
