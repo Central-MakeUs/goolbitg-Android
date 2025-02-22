@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.white
@@ -21,13 +22,14 @@ import com.project.presentation.ui.theme.white
 fun BaseSnackBar(
     snackBarData: SnackbarData,
     modifier: Modifier = Modifier,
+    bgColor: Color = white.copy(alpha = 0.2f)
 ) {
     Box(modifier = modifier.padding(bottom = 24.dp)) {
         Row(
             modifier =
             Modifier
                 .clip(CircleShape)
-                .background(white.copy(alpha = 0.2f))
+                .background(bgColor)
                 .padding(start = 12.dp, end = 14.dp, top = 12.dp, bottom = 12.dp)
                 .align(Alignment.Center),
         ) {

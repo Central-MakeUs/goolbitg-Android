@@ -1,11 +1,14 @@
 package com.project.presentation.mypage
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,9 +18,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +33,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -71,6 +80,7 @@ import com.project.data.remote.common.BaseUrl.TERMS_OF_SERVICES_URL
 import com.project.domain.model.user.UserInfoModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseSnackBar
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.base.extension.StringExtension.priceComma
@@ -81,6 +91,7 @@ import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray100
+import com.project.presentation.ui.theme.gray200
 import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray500
@@ -89,6 +100,7 @@ import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -119,6 +131,31 @@ fun MyPageScreen(
         }
     }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler {
+        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+            // 앱 종료
+            (context as Activity).finish()
+        } else {
+            backPressedState = true
+            coroutineScope.launch {
+                val job =
+                    launch {
+                        snackBarHostState.showSnackbar(
+                            message = "종료하시려면 한 번 더 눌러주세요.",
+                            withDismissAction = true,
+                        )
+                    }
+                delay(3000L)
+                job.cancel()
+            }
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
+
     LaunchedEffect(state.value.isLogoutSuccess) {
         if (state.value.isLogoutSuccess) {
             viewModel.onEvent(MyPageEvent.RefreshLogoutState)
@@ -142,7 +179,25 @@ fun MyPageScreen(
         Scaffold(containerColor = transparent,
             bottomBar = {
                 BaseBottomNavBar(navController = navHostController)
-            }) { innerPadding ->
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    snackbar = {
+                        BaseSnackBar(
+                            modifier = Modifier.fillMaxWidth(),
+                            bgColor = gray400,
+                            snackBarData = it,
+                        )
+                    },
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .consumeWindowInsets(WindowInsets.navigationBars)
+                        .imePadding(),
+                )
+            }
+        ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 MyPageHeader(
                     newAlarmCount = 1,

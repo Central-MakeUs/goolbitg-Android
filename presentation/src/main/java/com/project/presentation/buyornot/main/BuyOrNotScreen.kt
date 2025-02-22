@@ -1,5 +1,7 @@
 package com.project.presentation.buyornot.main
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -44,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,6 +67,7 @@ import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
+import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.transparent
@@ -131,7 +135,6 @@ fun BuyOrNotScreen(
             mutableFloatStateOf(29f)
         }
 
-
         val state = viewModel.state.collectAsStateWithLifecycle()
         val coroutineScope = rememberCoroutineScope()
         val snackBarHostState = remember { SnackbarHostState() }
@@ -158,17 +161,29 @@ fun BuyOrNotScreen(
         }
 
         var reportPosting by remember { mutableStateOf<BuyOrNotPostingModel?>(null) }
+        val context = LocalContext.current
+        var backPressedState by remember { mutableStateOf(true) }
+        var backPressedTime = 0L
 
         BackHandler {
-            if (reportPosting != null) {
-                coroutineScope.launch {
-                    scaffoldState.bottomSheetState.partialExpand()
-                    reportPosting = null
-                    viewModel.initReportList()
-                }
+            if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+                // 앱 종료
+                (context as Activity).finish()
             } else {
-
+                backPressedState = true
+                coroutineScope.launch {
+                    val job =
+                        launch {
+                            snackBarHostState.showSnackbar(
+                                message = "종료하시려면 한 번 더 눌러주세요.",
+                                withDismissAction = true,
+                            )
+                        }
+                    delay(3000L)
+                    job.cancel()
+                }
             }
+            backPressedTime = System.currentTimeMillis()
         }
         BottomSheetScaffold(
             modifier = Modifier
@@ -245,6 +260,7 @@ fun BuyOrNotScreen(
                             snackbar = {
                                 BaseSnackBar(
                                     modifier = Modifier.fillMaxWidth(),
+                                    bgColor = gray400,
                                     snackBarData = it,
                                 )
                             },
@@ -253,7 +269,6 @@ fun BuyOrNotScreen(
                                 .fillMaxWidth()
                                 .consumeWindowInsets(WindowInsets.navigationBars)
                                 .imePadding()
-                                .padding(bottom = 66.dp),
                         )
                     }
                 ) { innerPadding ->
