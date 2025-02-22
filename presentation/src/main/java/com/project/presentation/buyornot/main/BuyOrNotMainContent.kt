@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.PagerState
-import androidx.wear.compose.foundation.pager.rememberPagerState
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.project.domain.model.buyornot.BuyOrNotPostingModel
@@ -66,6 +65,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun BuyOrNotCardMainContent(
     modifier: Modifier = Modifier,
+    pagerState: PagerState,
     currMainPage: Int,
     isLoading: Boolean,
     pageOffset: Int,
@@ -74,7 +74,6 @@ fun BuyOrNotCardMainContent(
     onFetchNextPage: () -> Unit,
     onVote: (Int, Boolean) -> Unit
 ) {
-    val pagerState = rememberPagerState { postingList.size }
     Column(modifier = modifier.fillMaxWidth()) {
         if (pagerState.pageCount == 0) {
             BuyOrNotCardSkeleton(

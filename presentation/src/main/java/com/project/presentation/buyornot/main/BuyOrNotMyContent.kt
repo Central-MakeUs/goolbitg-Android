@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
@@ -47,18 +47,19 @@ import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray200
 import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray50
+import com.project.presentation.ui.theme.gray500
 import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.main100
-import com.project.presentation.ui.theme.white
-import com.project.presentation.ui.theme.gray500
 import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
+import com.project.presentation.ui.theme.white
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun BuyOrNotCardMyContent(
     modifier: Modifier = Modifier,
+    listState: LazyListState,
     myPostingList: List<BuyOrNotPostingModel>,
     isLoading: Boolean,
     pageOffset: Int,
@@ -94,7 +95,6 @@ fun BuyOrNotCardMyContent(
                 MyPostingEmptyContent()
             }
         } else {
-            val listState = rememberLazyListState()
             // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
             val showTopFade by remember {
                 derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }

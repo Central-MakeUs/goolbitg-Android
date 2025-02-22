@@ -1,7 +1,6 @@
 package com.project.presentation.buyornot.main
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -36,11 +36,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.wear.compose.foundation.pager.rememberPagerState
 import com.project.domain.model.buyornot.BuyOrNotPostingModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
@@ -67,7 +66,6 @@ import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
-import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray600
 import com.project.presentation.ui.theme.transparent
@@ -382,10 +380,14 @@ fun BuyOrNotContent(
             onTabChanged = onTabChanged,
             onWritePosting = onWritePosting
         )
+        val pagerState = rememberPagerState { mainPostingList.size }
+        val listState = rememberLazyListState()
+
         when (selectedTabIdx) {
             0 -> {
                 BuyOrNotCardMainContent(
                     modifier = Modifier.weight(1f),
+                    pagerState = pagerState,
                     currMainPage = currMainPage,
                     postingList = mainPostingList,
                     isLoading = isMainLoading,
@@ -398,6 +400,7 @@ fun BuyOrNotContent(
             1 -> {
                 BuyOrNotCardMyContent(
                     modifier = Modifier.weight(1f),
+                    listState = listState,
                     myPostingList = myPostingList,
                     isLoading = isMyLoading,
                     pageOffset = myPageOffset,
