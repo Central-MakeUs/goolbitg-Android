@@ -30,7 +30,7 @@ fun BaseSnackBar(
             Modifier
                 .clip(CircleShape)
                 .background(bgColor)
-                .padding(start = 12.dp, end = 14.dp, top = 12.dp, bottom = 12.dp)
+                .padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = 12.dp)
                 .align(Alignment.Center),
         ) {
             Text(
