@@ -1,7 +1,6 @@
 package com.project.presentation.challenge.main
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,7 +58,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -489,6 +489,8 @@ fun ChallengeWeeklyCalendar(
     onDateChange: (LocalDate) -> Unit,
     onPageChanged: (Long, LocalDate) -> Unit
 ) {
+    val density = LocalDensity.current
+
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
@@ -507,11 +509,9 @@ fun ChallengeWeeklyCalendar(
                     onPageChanged(page.toLong(), wd[0])
                 }
         }
-
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
-            modifier = Modifier
-                .height(100.dp)
-                .padding(horizontal = 10.dp),
+            modifier = Modifier.padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
             weekDates.forEachIndexed { idx, date ->
@@ -523,6 +523,7 @@ fun ChallengeWeeklyCalendar(
                 } else {
                     0f
                 }
+                var itemHeight by remember { mutableStateOf(0.dp) }
                 if (idx != 0) {
                     val prevWeeklyStatus = weeklyStatusList?.get(idx - 1)
                     val isPrevProgressFulled = if (prevWeeklyStatus != null) {
@@ -531,24 +532,30 @@ fun ChallengeWeeklyCalendar(
                     } else {
                         false
                     }
-                    Box(
-                        modifier = Modifier
-                            .width(16.dp)
-                            .fillMaxHeight()
-                    ) {
-                        if (isPrevProgressFulled && progress > 0f) {
-                            BaseIcon(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .align(Alignment.BottomCenter),
-                                iconId = R.drawable.img_challenge_continuous
-                            )
+                    Column(modifier = Modifier.height(itemHeight)) {
+                        Spacer(modifier = Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier.size(16.dp)
+                        ) {
+                            if (isPrevProgressFulled && progress > 0f) {
+                                BaseIcon(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .align(Alignment.BottomCenter),
+                                    iconId = R.drawable.img_challenge_continuous
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
 
                 }
                 CalendarItem(
-                    modifier = Modifier.weight(40f),
+                    modifier = Modifier.weight(1f).onGloballyPositioned {
+                        with(density){
+                            itemHeight = it.size.height.toDp()
+                        }
+                    },
                     dayOfWeek = date.dayOfWeek.value,
                     day = date.dayOfMonth.toString(),
                     progress = progress,
@@ -575,35 +582,30 @@ fun CalendarItem(
     isAfter: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    val ratio = 40f / 111f
     // 요일 문자열은 기존 리소스 사용
     val dayOfWeekStr = stringResource(DayOfWeekEnum.entries[dayOfWeek - 1].strId2)
     Column(
         modifier = modifier
-            .aspectRatio(ratio)
             .noRippleClickable { onClick() }
     ) {
-        Spacer(modifier = Modifier.weight(20f))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(19f),
+                .fillMaxWidth(),
             text = dayOfWeekStr,
             textAlign = TextAlign.Center,
             style = goolbitgTypography.caption1,
             color = gray200
         )
-        Spacer(modifier = Modifier.weight(4f))
+        Spacer(modifier = Modifier.height(4.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(60f)
         ) {
-            Spacer(modifier = Modifier.weight(8f))
+            Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(36f)
                     .aspectRatio(1f)
                     .then(
                         if (isSelected) {
@@ -632,7 +634,7 @@ fun CalendarItem(
                     color = if (isSelected || !isAfter) white else gray500
                 )
             }
-            Box(modifier = Modifier.weight(16f)) {
+            Box(modifier = Modifier.height(16.dp)) {
                 BaseBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -642,7 +644,7 @@ fun CalendarItem(
                 )
             }
         }
-        Spacer(modifier = Modifier.weight(8f))
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
