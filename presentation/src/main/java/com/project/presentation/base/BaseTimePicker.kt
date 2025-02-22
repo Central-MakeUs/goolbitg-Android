@@ -62,7 +62,7 @@ fun BaseTimePicker(
                     textStyle = goolbitgTypography.h2.copy(color = white),
                     onItemChanged = onMinuteChanged
                 )
-                BaseInfinityPicker(
+                BasePicker (
                     state = ampmPickerState,
                     items = ampm,
                     visibleItemsCount = 3,

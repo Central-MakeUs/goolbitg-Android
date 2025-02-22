@@ -306,7 +306,7 @@ class OnboardingViewModel @Inject constructor(
                     state.value.majorExpenditureHours.toInt()
                 }
                 val time = LocalTime.of(hour, state.value.majorExpenditureMinutes.toInt(), 0)
-                val timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss")
+                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
                 val timeStr = time.format(timeFormatter)
 
                 setUserPatternUseCase(
