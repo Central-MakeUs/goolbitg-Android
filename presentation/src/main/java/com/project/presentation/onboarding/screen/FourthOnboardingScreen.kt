@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,9 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.presentation.R
-import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseKeyboardBottomBtn
 import com.project.presentation.base.BaseTextField
+import com.project.presentation.base.keyboardAsState
 import com.project.presentation.base.transformation.Transformation
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingEvent
@@ -56,14 +60,20 @@ fun FourthOnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val isNextBtnVisible by remember(state.value) {
+    val isNextBtnEnabled by remember(state.value) {
         derivedStateOf {
             state.value.isFourthOnboardingCompleted()
         }
     }
 
+    val isSavingValidated by remember(state.value) {
+        derivedStateOf {
+            state.value.isFourthOnboardingNumberValidated()
+        }
+    }
+
     LaunchedEffect(state.value.isConsumeHabitSuccess) {
-        if(state.value.isConsumeHabitSuccess){
+        if (state.value.isConsumeHabitSuccess) {
             navHostController.navigate(NavItem.FifthOnboarding.route) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
@@ -75,11 +85,18 @@ fun FourthOnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(bg1)
+            .imePadding()
     ) {
         Scaffold(containerColor = transparent) { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
                 FourthOnboardingContent(
+                    modifier = Modifier.weight(1f),
                     state = state,
+                    isValidate = isSavingValidated,
                     onAvgIncomeChanged = {
                         viewModel.onEvent(OnboardingEvent.ChangeMonthAvgIncome(it))
                     },
@@ -88,14 +105,17 @@ fun FourthOnboardingScreen(
                     }
                 )
 
-                BaseBottomBtn(
+                val keyboardState by keyboardAsState()
+                val focusManager = LocalFocusManager.current
+
+                BaseKeyboardBottomBtn(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .align(Alignment.BottomCenter),
+                        .fillMaxWidth(),
                     text = stringResource(R.string.common_next),
-                    visible = isNextBtnVisible,
+                    enabled = isNextBtnEnabled,
+                    isKeyboard = keyboardState,
                     onClick = {
+                        focusManager.clearFocus()
                         viewModel.onEvent(OnboardingEvent.RequestSetUserHabit)
                     },
                 )
@@ -107,6 +127,7 @@ fun FourthOnboardingScreen(
 @Composable
 fun FourthOnboardingContent(
     state: State<OnboardingState>,
+    isValidate: Boolean,
     modifier: Modifier = Modifier,
     onAvgIncomeChanged: (String) -> Unit,
     onAvgSavingChanged: (String) -> Unit,
@@ -116,55 +137,66 @@ fun FourthOnboardingContent(
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+                FourthOnboardingTitleContent()
 
-        Column(
-            modifier = modifier.fillMaxWidth()
-        ) {
-            FourthOnboardingTitleContent()
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_fourth_sub_title),
+                    style = goolbitgTypography.body1,
+                    color = gray300
+                )
+                Spacer(modifier = Modifier.height(40.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.onboarding_fourth_sub_title),
-                style = goolbitgTypography.body1,
-                color = gray300
-            )
-            Spacer(modifier = Modifier.height(40.dp))
+                MonthAvgTextFiledLabel(
+                    text = stringResource(R.string.onboarding_fourth_month_avg_income),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                BaseTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.value.monthAvgIncome,
+                    prefixValue = "₩ ",
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    maxLength = 9,
+                    placeHolderValue = stringResource(R.string.onboarding_fourth_month_avg_income_placeholder),
+                    onTextChanged = onAvgIncomeChanged,
+                    visualTransformation = Transformation.thousandSeparatorTransformation()
+                )
 
-            MonthAvgTextFiledLabel(
-                text = stringResource(R.string.onboarding_fourth_month_avg_income),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            BaseTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.value.monthAvgIncome,
-                prefixValue = "₩ ",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                placeHolderValue = stringResource(R.string.onboarding_fourth_month_avg_income_placeholder),
-                onTextChanged = onAvgIncomeChanged,
-                visualTransformation = Transformation.thousandSeparatorTransformation()
-            )
+                Spacer(modifier = Modifier.height(40.dp))
 
-            Spacer(modifier = Modifier.height(40.dp))
-
-            MonthAvgTextFiledLabel(
-                text = stringResource(R.string.onboarding_fourth_month_avg_saving),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            BaseTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.value.monthAvgSaving,
-                prefixValue = "₩ ",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                placeHolderValue = stringResource(R.string.onboarding_fourth_month_avg_saving_placeholder),
-                onTextChanged = onAvgSavingChanged,
-                visualTransformation = Transformation.thousandSeparatorTransformation()
-            )
+                MonthAvgTextFiledLabel(
+                    text = stringResource(R.string.onboarding_fourth_month_avg_saving),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                BaseTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.value.monthAvgSaving,
+                    prefixValue = "₩ ",
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    maxLength = 9,
+                    placeHolderValue = stringResource(R.string.onboarding_fourth_month_avg_saving_placeholder),
+                    onTextChanged = onAvgSavingChanged,
+                    visualTransformation = Transformation.thousandSeparatorTransformation()
+                )
+                if (!isValidate) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        text = stringResource(R.string.onboarding_fourth_month_avg_saving_error),
+                        color = com.project.presentation.ui.theme.error,
+                        style = goolbitgTypography.caption2
+                    )
+                }
+            }
         }
     }
 }
@@ -174,7 +206,7 @@ fun FourthOnboardingContent(
 fun FourthOnboardingTitleContent(
     modifier: Modifier = Modifier,
 ) {
-    class CustomPopupPositionProvider: PopupPositionProvider{
+    class CustomPopupPositionProvider : PopupPositionProvider {
         override fun calculatePosition(
             anchorBounds: IntRect,
             windowSize: IntSize,

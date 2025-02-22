@@ -56,6 +56,7 @@
     <string name="onboarding_fourth_month_avg_income_placeholder">월 평균 수입 금액을 작성해 주세요</string>
     <string name="onboarding_fourth_month_avg_saving">월 평균 저축</string>
     <string name="onboarding_fourth_month_avg_saving_placeholder">월 평균 저축 금액을 작성해 주세요</string>
+    <string name="onboarding_fourth_month_avg_saving_error">월 평균 수입보다 큰 금액을 작성할 수 없습니다</string>
     <string name="onboarding_fourth_tooltip_description">평균 수입에 대한 평균 저축률을 기반으로\n소비 점수를 계산해주고 있어요</string>
 
     <string name="onboarding_fifth_title">지출 요일/시간 입력</string>

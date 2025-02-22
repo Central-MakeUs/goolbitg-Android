@@ -70,7 +70,17 @@ data class OnboardingState(
      * 온보딩 네번째 과정에서 모든 월 평균 값들을 입력한 경우
      */
     fun isFourthOnboardingCompleted(): Boolean {
-        return monthAvgIncome.isNotEmpty() && monthAvgSaving.isNotEmpty()
+        return monthAvgIncome.isNotEmpty() && monthAvgSaving.isNotEmpty() &&
+                monthAvgIncome.toInt() >= monthAvgSaving.toInt()
+    }
+
+    fun isFourthOnboardingNumberValidated(): Boolean {
+        return if(monthAvgIncome.isNotEmpty() && monthAvgSaving.isNotEmpty()){
+            monthAvgSaving.toInt() <= monthAvgIncome.toInt()
+            }else{
+                true
+            }
+
     }
 
     companion object {
