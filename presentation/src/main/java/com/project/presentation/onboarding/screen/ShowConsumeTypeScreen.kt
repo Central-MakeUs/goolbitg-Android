@@ -171,7 +171,8 @@ fun ConsumeTypeCard(
                 .background(transparent)
                 .align(Alignment.Center)
         ) {
-            Text(text = subTypeName, style = goolbitgTypography.h4, color = white)
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = subTypeName, style = goolbitgTypography.body3, color = white)
             Text(text = typeName, style = goolbitgTypography.h1, color = white)
             Spacer(modifier = Modifier.height(30.dp))
             if (imgUrl.isNullOrEmpty()) {
@@ -266,7 +267,7 @@ fun ConsumeTypeCard(
                     blur = 4.dp,
                     spread = 0.dp
                 )
-                .background(white.copy(alpha = 0.2f))
+                .background(gray300.copy(alpha = 0.4f))
                 .hazeSource(hazeState)
                 .hazeEffect(
                     state = hazeState,
