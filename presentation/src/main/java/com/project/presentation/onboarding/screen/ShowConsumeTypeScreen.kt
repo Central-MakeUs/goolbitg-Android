@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,9 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,11 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieClipSpec
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieAnimatable
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.project.presentation.R
@@ -55,6 +49,7 @@ import com.project.presentation.ui.theme.white
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 @Preview(widthDp = 600)
@@ -97,8 +92,7 @@ fun ShowConsumeTypeContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(36.dp))
@@ -109,7 +103,9 @@ fun ShowConsumeTypeContent(
             .replace("#NICKNAME#", nickname)
             .replace("#TYPE#", state.value.userInfoModel?.spendingType?.title ?: "")
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
             text = title,
             style = goolbitgTypography.h1,
             color = white
@@ -118,13 +114,15 @@ fun ShowConsumeTypeContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
             text = stringResource(R.string.show_consume_type_sub_title),
             style = goolbitgTypography.body1,
             color = gray300
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         ConsumeTypeCard(
             modifier = Modifier.weight(1f),
@@ -138,7 +136,7 @@ fun ShowConsumeTypeContent(
         )
 
         BaseBottomBtn(
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             text = stringResource(R.string.show_consume_type_btn_text),
             onClick = { onNext() }
         )
@@ -155,37 +153,23 @@ fun ConsumeTypeCard(
     sameTypeCount: Int,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxWidth()) {
-        val composition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(R.raw.illu_show_comsume_type)
-        )
-        val lottieAnimatable = rememberLottieAnimatable()
-
-        LaunchedEffect(composition) {
-            lottieAnimatable.animate(
-                composition = composition,
-                clipSpec = LottieClipSpec.Frame(0, 1200),
-                initialProgress = 0f
-            )
-        }
-        LottieAnimation(
-            modifier = Modifier.fillMaxSize(),
-            composition = composition,
-            iterations = Int.MAX_VALUE
-        )
-
+    Box(modifier = modifier.fillMaxSize()) {
         val hazeState = remember { HazeState() }
+
+        BaseIcon(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 14.dp, end = 40.dp)
+                .aspectRatio(336f/432f),
+            iconId = R.drawable.img_consume_type_card
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(310.dp, 393.dp)
-                .background(transparent)
                 .padding(24.dp)
+                .aspectRatio(310f / 393f)
+                .background(transparent)
                 .align(Alignment.Center)
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeStyle.Unspecified.copy(blurRadius = 40.dp)
-                )
         ) {
             Text(text = subTypeName, style = goolbitgTypography.h4, color = white)
             Text(text = typeName, style = goolbitgTypography.h1, color = white)
@@ -282,7 +266,12 @@ fun ConsumeTypeCard(
                     blur = 4.dp,
                     spread = 0.dp
                 )
-                .background(white.copy(alpha = 0.1f))
+                .background(white.copy(alpha = 0.2f))
+                .hazeSource(hazeState)
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeStyle.Unspecified.copy(blurRadius = 40.dp)
+                )
                 .padding(24.dp)
                 .align(Alignment.Center)
         )
