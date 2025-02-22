@@ -1,12 +1,16 @@
 package com.project.data.di
 
 import com.project.data.remote.datasource.AuthDataSource
+import com.project.data.remote.datasource.BuyOrNotDataSource
 import com.project.data.remote.datasource.ChallengeDataSource
 import com.project.data.remote.datasource.UserDataSource
+import com.project.data.remote.datasource.UtilDataSource
 import com.project.data.repository.AuthRepositoryImpl
+import com.project.data.repository.BuyOrNotRepositoryImpl
 import com.project.data.repository.ChallengeRepositoryImpl
 import com.project.data.repository.UserRepositoryImpl
 import com.project.domain.repository.AuthRepository
+import com.project.domain.repository.BuyOrNotRepository
 import com.project.domain.repository.ChallengeRepository
 import com.project.domain.repository.UserRepository
 import dagger.Module
@@ -36,5 +40,12 @@ object RepositoryModule {
         return ChallengeRepositoryImpl(challengeDataSource = challengeDataSource)
     }
 
-
+    @Provides
+    @Singleton
+    fun provideBuyOrNotRepository(
+        buyOrNotDataSource: BuyOrNotDataSource,
+        utilDataSource: UtilDataSource
+    ): BuyOrNotRepository {
+        return BuyOrNotRepositoryImpl(buyOrNotDataSource = buyOrNotDataSource, utilDataSource = utilDataSource)
+    }
 }

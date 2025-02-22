@@ -1,5 +1,8 @@
 package com.project.presentation.challenge.main
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
@@ -10,11 +13,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +37,8 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -51,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -70,6 +80,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseBar
 import com.project.presentation.base.BaseDatePickerBottomSheetContent
 import com.project.presentation.base.BaseIcon
+import com.project.presentation.base.BaseSnackBar
 import com.project.presentation.base.BaseTab
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
@@ -93,6 +104,7 @@ import com.project.presentation.ui.theme.main15
 import com.project.presentation.ui.theme.main60
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -133,6 +145,32 @@ fun ChallengeScreen(
         }
     }
 
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler {
+        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+            // 앱 종료
+            (context as Activity).finish()
+        } else {
+            backPressedState = true
+            coroutineScope.launch {
+                val job =
+                    launch {
+                        snackBarHostState.showSnackbar(
+                            message = "종료하시려면 한 번 더 눌러주세요.",
+                            withDismissAction = true,
+                        )
+                    }
+                delay(3000L)
+                job.cancel()
+            }
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
+
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
@@ -159,6 +197,7 @@ fun ChallengeScreen(
         initialPage = Int.MAX_VALUE / 2,
         pageCount = { Int.MAX_VALUE }
     )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -245,6 +284,23 @@ fun ChallengeScreen(
                 Scaffold(containerColor = transparent,
                     bottomBar = {
                         BaseBottomNavBar(navController = navHostController)
+                    },
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            snackbar = {
+                                BaseSnackBar(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    bgColor = gray400,
+                                    snackBarData = it,
+                                )
+                            },
+                            modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .consumeWindowInsets(WindowInsets.navigationBars)
+                                .imePadding(),
+                        )
                     }
                 ) { innerPadding ->
                     Box(

@@ -30,9 +30,21 @@ class AuthRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun login(type: String, idToken: String): Flow<DataState<LoginModel>> {
+    override suspend fun login(
+        type: String,
+        idToken: String,
+        fcmToken: String?
+    ): Flow<DataState<LoginModel>> {
         return NetworkUtils.handleApi(
-            execute = { authDataSource.login(body = LoginReq(type = type, idToken = idToken)) },
+            execute = {
+                authDataSource.login(
+                    body = LoginReq(
+                        type = type,
+                        idToken = idToken,
+                        registrationToken = fcmToken
+                    )
+                )
+            },
             mapper = { it?.toDomainModel() }
         )
     }

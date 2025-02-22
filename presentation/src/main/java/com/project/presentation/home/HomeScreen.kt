@@ -1,6 +1,9 @@
 package com.project.presentation.home
 
+import android.app.Activity
 import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -11,9 +14,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,14 +30,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +65,7 @@ import com.project.domain.model.user.WeeklyRecordStatusModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseLoadingBox
+import com.project.presentation.base.BaseSnackBar
 import com.project.presentation.base.BaseTintIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.innerShadow
@@ -65,6 +77,7 @@ import com.project.presentation.navigation.NavItem
 import com.project.presentation.ui.theme.bg1
 import com.project.presentation.ui.theme.black
 import com.project.presentation.ui.theme.goolbitgTypography
+import com.project.presentation.ui.theme.gray200
 import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray500
@@ -77,6 +90,7 @@ import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundXs
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
@@ -108,6 +122,32 @@ fun HomeScreen(
         }
     }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler {
+        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+            // 앱 종료
+            (context as Activity).finish()
+        } else {
+            backPressedState = true
+            coroutineScope.launch {
+                val job =
+                    launch {
+                        snackBarHostState.showSnackbar(
+                            message = "종료하시려면 한 번 더 눌러주세요.",
+                            withDismissAction = true,
+                        )
+                    }
+                delay(3000L)
+                job.cancel()
+            }
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -116,7 +156,25 @@ fun HomeScreen(
         Scaffold(containerColor = transparent,
             bottomBar = {
                 BaseBottomNavBar(navController = navHostController)
-            }) { innerPadding ->
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    snackbar = {
+                        BaseSnackBar(
+                            modifier = Modifier.fillMaxWidth(),
+                            bgColor = gray400,
+                            snackBarData = it,
+                        )
+                    },
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .consumeWindowInsets(WindowInsets.navigationBars)
+                        .imePadding(),
+                )
+            }
+        ) { innerPadding ->
             HomeContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -554,6 +612,7 @@ fun TodayTodoItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
             .clip(CircleShape)
             .border(width = 1.dp, color = if (isSuccess) main15 else gray500, shape = CircleShape)
             .then(

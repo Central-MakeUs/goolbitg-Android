@@ -9,79 +9,87 @@ sealed class NavItem(
     @DrawableRes val iconId: Int? = null,
     @StringRes val strId: Int? = null
 ) {
-    data object Splash: NavItem(
+    data object Splash : NavItem(
         route = "splash"
     )
 
-    data object IntroPermission: NavItem(
+    data object IntroPermission : NavItem(
         route = "intro_permission"
     )
 
-    data object Login: NavItem(
+    data object Login : NavItem(
         route = "login"
     )
 
-    data object FirstOnboarding: NavItem(
+    data object FirstOnboarding : NavItem(
         route = "first_onboarding"
     )
 
-    data object SecondOnboarding: NavItem(
+    data object SecondOnboarding : NavItem(
         route = "Second_onboarding"
     )
 
-    data object ThirdOnboarding: NavItem(
+    data object ThirdOnboarding : NavItem(
         route = "third_onboarding"
     )
 
-    data object FourthOnboarding: NavItem(
+    data object FourthOnboarding : NavItem(
         route = "fourth_onboarding"
     )
 
-    data object FifthOnboarding: NavItem(
+    data object FifthOnboarding : NavItem(
         route = "fifth_onboarding"
     )
 
-    data object AnalysisConsumeType: NavItem(
+    data object AnalysisConsumeType : NavItem(
         route = "analysis_consume_type"
     )
 
-    data object ShowConsumeType: NavItem(
+    data object ShowConsumeType : NavItem(
         route = "show_consume_type"
     )
 
-    data object Home: NavItem(
+    data object Home : NavItem(
         route = "home",
         iconId = R.drawable.ic_nav_home,
         strId = R.string.nav_item_home
     )
 
-    data object Challenge: NavItem(
+    data object Challenge : NavItem(
         route = "challenge",
         iconId = R.drawable.ic_nav_challenge,
         strId = R.string.nav_item_challenge
     )
 
-    data object BuyOrNot: NavItem(
-        route = "buy_or_not",
+    data object BuyOrNot : NavItem(
+        route = "buy_or_not/{tabIdx}",
         iconId = R.drawable.ic_nav_buy_or_not,
         strId = R.string.nav_item_buy_or_not
     )
 
-    data object MyPage: NavItem(
+    data object MyPage : NavItem(
         route = "my_page",
         iconId = R.drawable.ic_nav_mypage,
         strId = R.string.nav_item_my_page
     )
 
-    data object ChallengeAddition: NavItem(
+    data object ChallengeAddition : NavItem(
         route = "challenge_addition/{isOnboarding}"
     )
 
-    data object ChallengeDetail: NavItem(
+    data object ChallengeDetail : NavItem(
         route = "challenge_detail/{challengeId}"
     )
 
-    data object Withdraw: NavItem(
+    data object BuyOrNotAddPosting : NavItem(
+        route = "buy_or_not_add_posting/{tabIdx}"
+    )
+
+    data object BuyOrNotModifyPosting : NavItem(
+        route = "buy_or_not_modify_posting/{postId}/{productName}/{price}/{imgUrl}/{goodReason}/{badReason}"
+    )
+
+    data object Withdraw : NavItem(
         route = "withdraw"
     )
 }
