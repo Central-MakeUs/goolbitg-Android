@@ -383,7 +383,7 @@ fun BuyOrNotGoodOrBad(
                     .clip(CircleShape)
                     .clickable {
                         if (item != null) {
-                            onVote(item.id, true)
+                            onVote(item.id, false)
                         }
                     },
                 iconId = R.drawable.ic_thumbs_down
