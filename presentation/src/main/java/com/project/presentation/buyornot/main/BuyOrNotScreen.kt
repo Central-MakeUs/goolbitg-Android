@@ -164,7 +164,7 @@ fun BuyOrNotScreen(
         var backPressedTime = 0L
 
         BackHandler {
-            if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+            if (System.currentTimeMillis() - backPressedTime <= 1000L) {
                 // 앱 종료
                 (context as Activity).finish()
             } else {
@@ -357,8 +357,8 @@ fun BuyOrNotScreen(
 fun BuyOrNotContent(
     modifier: Modifier = Modifier,
     selectedTabIdx: Int,
-    mainPostingList: List<BuyOrNotPostingModel>,
-    myPostingList: List<BuyOrNotPostingModel>,
+    mainPostingList: List<BuyOrNotPostingModel>?,
+    myPostingList: List<BuyOrNotPostingModel>?,
     isMainLoading: Boolean,
     isMyLoading: Boolean,
     mainPageOffset: Int,
@@ -378,7 +378,7 @@ fun BuyOrNotContent(
             onTabChanged = onTabChanged,
             onWritePosting = onWritePosting
         )
-        val pagerState = rememberPagerState { mainPostingList.size }
+        val pagerState = rememberPagerState { mainPostingList?.size ?: 0 }
         val listState = rememberLazyListState()
 
         when (selectedTabIdx) {
@@ -404,7 +404,8 @@ fun BuyOrNotContent(
                     onMyItemClick = {},
                     onFetchNextPage = onFetchMyNextPage,
                     onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
-                    onModifyMyPosting = onModifyMyPosting
+                    onModifyMyPosting = onModifyMyPosting,
+                    onAddPosting = onWritePosting
                 )
             }
             else -> Unit

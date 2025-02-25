@@ -122,6 +122,8 @@
     <string name="buyornot_report_reason_3">잘못된 정보</string>
     <string name="buyornot_report_reason_4">기타 사유</string>
     <string name="buyornot_my_title">내가 작성한 글</string>
+    <string name="buyornot_my_posting_empty">아직 작성된 글이 없어요</string>
+    <string name="buyornot_my_posting_write">살까말까 글 작성하기</string>
     <string name="buyornot_delete_popup_sub_title">정말 살까말까 글을\n삭제하시겠어요?</string>
 
     <string name="buyornot_add_header_title">살까말까 글 작성하기</string>

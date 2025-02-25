@@ -67,13 +67,13 @@ fun BuyOrNotCardMainContent(
     pagerState: PagerState,
     isLoading: Boolean,
     pageOffset: Int,
-    postingList: List<BuyOrNotPostingModel>,
+    postingList: List<BuyOrNotPostingModel>?,
     onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
     onFetchNextPage: () -> Unit,
     onVote: (Int, Boolean) -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        if (pagerState.pageCount == 0) {
+        if (postingList.isNullOrEmpty()) {
             BuyOrNotCardSkeleton(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,7 +104,7 @@ fun BuyOrNotCardMainContent(
                 }
             }
         }
-        val posting = if (postingList.isNotEmpty()) postingList[pagerState.currentPage] else null
+        val posting = if (postingList.isNullOrEmpty()) null else postingList[pagerState.currentPage]
         BuyOrNotGoodOrBad(
             modifier = Modifier.padding(top = 24.dp, bottom = 21.dp),
             item = posting,

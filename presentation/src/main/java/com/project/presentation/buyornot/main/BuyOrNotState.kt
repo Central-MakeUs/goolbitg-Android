@@ -6,10 +6,10 @@ import com.project.presentation.item.ReportReasonEnum
 
 data class BuyOrNotState(
     val tabIdx: Int = 0,
-    val mainPostList: List<BuyOrNotPostingModel> = listOf(),
+    val mainPostList: List<BuyOrNotPostingModel>? = null,
     val mainPostPage: Int = 0,
     val mainPostSize: Int = 10,
-    val myPostList: List<BuyOrNotPostingModel> = listOf(),
+    val myPostList: List<BuyOrNotPostingModel>? = null,
     val myPostPage: Int = 0,
     val myPostSize: Int = 10,
 

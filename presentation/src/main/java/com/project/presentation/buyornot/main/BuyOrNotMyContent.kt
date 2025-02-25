@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
@@ -31,9 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -60,27 +65,102 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun BuyOrNotCardMyContent(
     modifier: Modifier = Modifier,
     listState: LazyListState,
-    myPostingList: List<BuyOrNotPostingModel>,
+    myPostingList: List<BuyOrNotPostingModel>?,
     isLoading: Boolean,
     pageOffset: Int,
     onFetchNextPage: () -> Unit,
     onMyItemClick: (BuyOrNotPostingModel) -> Unit,
     onActiveDeleteMyPostingPopup: (BuyOrNotPostingModel) -> Unit,
     onModifyMyPosting: (BuyOrNotPostingModel) -> Unit,
+    onAddPosting: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-            text = stringResource(R.string.buyornot_my_title),
-            style = goolbitgTypography.body3,
-            color = gray50
-        )
+        if (myPostingList == null || isLoading) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                repeat(3) { idx ->
+                    BuyOrNotMyPostingSkeleton()
+                    if (idx < 2) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(gray600)
+                        )
+                    }
+                }
+            }
+        } else {
+            if (myPostingList.isEmpty()) {
+                MyPostingEmptyContent(modifier = Modifier.fillMaxSize(), onAddPosting = onAddPosting)
+            } else {
+                // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
+                val showTopFade by remember {
+                    derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }
+                }
+                val showBottomFade by remember {
+                    derivedStateOf {
+                        (listState.layoutInfo.totalItemsCount > 0 &&
+                                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastItem ->
+                                    lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
+                                            lastItem.offset + lastItem.size <= listState.layoutInfo.viewportEndOffset
+                                } ?: true).not()
+                    }
+                }
 
-        if (myPostingList.isEmpty()) {
-            if (isLoading) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    repeat(3) { idx ->
-                        BuyOrNotMyPostingSkeleton()
+                val listFade by remember {
+                    derivedStateOf {
+                        when {
+                            showTopFade && showBottomFade -> Brush.verticalGradient(
+                                0f to transparent,
+                                0.03f to white
+                            )
+                            showTopFade -> Brush.verticalGradient(0f to transparent, 0.03f to white)
+                            else -> null
+                        }
+                    }
+                }
+
+
+                LaunchedEffect(listState, pageOffset, isLoading) {
+                    snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+                        .distinctUntilChanged()
+                        .collect { visibleItems ->
+                            val lastVisibleItem = visibleItems.lastOrNull()
+                            // 로드된 브랜드 목록이 있고, 현재 불러오고 있지 않은 경우에만 수행
+                            if (myPostingList.isNotEmpty() && !isLoading) {
+                                if (lastVisibleItem != null && lastVisibleItem.index > pageOffset - 5) {
+                                    onFetchNextPage()
+                                }
+                            }
+                        }
+                }
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                    text = stringResource(R.string.buyornot_my_title),
+                    style = goolbitgTypography.body3,
+                    color = gray50
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(
+                            if (listFade != null) {
+                                Modifier.fadingEdge(listFade!!)
+                            } else {
+                                Modifier
+                            }
+                        ),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    state = listState
+                ) {
+                    itemsIndexed(items = myPostingList) { idx, item ->
+                        BuyOrNotMyPosting(
+                            modifier = Modifier.fillMaxWidth(),
+                            posting = item,
+                            onMyItemClick = onMyItemClick,
+                            onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
+                            onModifyMyPosting = onModifyMyPosting
+                        )
                         if (idx < myPostingList.size - 1) {
                             Box(
                                 modifier = Modifier
@@ -89,82 +169,6 @@ fun BuyOrNotCardMyContent(
                                     .background(gray600)
                             )
                         }
-                    }
-                }
-            } else {
-                MyPostingEmptyContent()
-            }
-        } else {
-            // 첫 번째 아이템과 마지막 아이템 가시성을 추적하는 상태
-            val showTopFade by remember {
-                derivedStateOf { listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0 }
-            }
-            val showBottomFade by remember {
-                derivedStateOf {
-                    (listState.layoutInfo.totalItemsCount > 0 &&
-                            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastItem ->
-                                lastItem.index == listState.layoutInfo.totalItemsCount - 1 &&
-                                        lastItem.offset + lastItem.size <= listState.layoutInfo.viewportEndOffset
-                            } ?: true).not()
-                }
-            }
-
-            val listFade by remember {
-                derivedStateOf {
-                    when {
-                        showTopFade && showBottomFade -> Brush.verticalGradient(
-                            0f to transparent,
-                            0.03f to white
-                        )
-                        showTopFade -> Brush.verticalGradient(0f to transparent, 0.03f to white)
-                        else -> null
-                    }
-                }
-            }
-
-
-            LaunchedEffect(listState, pageOffset, isLoading) {
-                snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-                    .distinctUntilChanged()
-                    .collect { visibleItems ->
-                        val lastVisibleItem = visibleItems.lastOrNull()
-                        // 로드된 브랜드 목록이 있고, 현재 불러오고 있지 않은 경우에만 수행
-                        if (myPostingList.isNotEmpty() && !isLoading) {
-                            if (lastVisibleItem != null && lastVisibleItem.index > pageOffset - 5) {
-                                onFetchNextPage()
-                            }
-                        }
-                    }
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .then(
-                        if (listFade != null) {
-                            Modifier.fadingEdge(listFade!!)
-                        } else {
-                            Modifier
-                        }
-                    ),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                state = listState
-            ) {
-                itemsIndexed(items = myPostingList) { idx, item ->
-                    BuyOrNotMyPosting(
-                        modifier = Modifier.fillMaxWidth(),
-                        posting = item,
-                        onMyItemClick = onMyItemClick,
-                        onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
-                        onModifyMyPosting = onModifyMyPosting
-                    )
-                    if (idx < myPostingList.size - 1) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .background(gray600)
-                        )
                     }
                 }
             }
@@ -387,6 +391,40 @@ fun BuyOrNotMyPostingSkeleton(
 
 
 @Composable
-fun MyPostingEmptyContent(modifier: Modifier = Modifier) {
+fun MyPostingEmptyContent(modifier: Modifier = Modifier, onAddPosting: () -> Unit) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(100.dp))
+        BaseIcon(modifier = Modifier.size(160.dp), iconId = R.drawable.ic_empty_challenge)
+        Text(
+            text = stringResource(R.string.buyornot_my_posting_empty),
+            style = goolbitgTypography.body2,
+            color = gray300
+        )
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(
+                    brush = Brush.horizontalGradient(listOf(main100, Color(0xFF67BF4E)))
+                )
+                .noRippleClickable {
+                    onAddPosting()
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            text = stringResource(R.string.buyornot_my_posting_write),
+            textAlign = TextAlign.Center,
+            style = goolbitgTypography.btn1,
+            color = white
+        )
+    }
+}
 
+
+@Preview
+@Composable
+fun PreviewMyPostingEmptyContent() {
+    MyPostingEmptyContent(modifier = Modifier.fillMaxSize(), onAddPosting = {})
 }

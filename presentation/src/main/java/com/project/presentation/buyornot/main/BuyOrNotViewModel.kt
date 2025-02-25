@@ -57,7 +57,7 @@ class BuyOrNotViewModel @Inject constructor(
             }
             is BuyOrNotEvent.ModifyLocalPosting -> {
                 _state.value = state.value.copy(
-                    mainPostList = state.value.mainPostList.map {
+                    mainPostList = state.value.mainPostList?.map {
                         if (it.id == event.postId) {
                             it.copy(
                                 productName = event.productName,
@@ -70,7 +70,7 @@ class BuyOrNotViewModel @Inject constructor(
                             it
                         }
                     },
-                    myPostList = state.value.myPostList.map {
+                    myPostList = state.value.myPostList?.map {
                         if (it.id == event.postId) {
                             it.copy(
                                 productName = event.productName,
@@ -125,7 +125,7 @@ class BuyOrNotViewModel @Inject constructor(
                         result.data?.let {
                             _state.value = state.value.copy(
                                 mainPostPage = state.value.mainPostPage + 1,
-                                mainPostList = state.value.mainPostList.plus(it.items).map { it }
+                                mainPostList = state.value.mainPostList?.plus(it.items)?.map { it } ?: it.items
                             )
                         }
                     }
@@ -152,7 +152,7 @@ class BuyOrNotViewModel @Inject constructor(
                         result.data?.let {
                             _state.value = state.value.copy(
                                 myPostPage = state.value.myPostPage + 1,
-                                myPostList = state.value.myPostList.plus(it.items).map { it }
+                                myPostList = state.value.myPostList?.plus(it.items)?.map { it } ?: it.items
                             )
                         }
                     }
@@ -177,11 +177,11 @@ class BuyOrNotViewModel @Inject constructor(
                         )
                     }
                     is DataState.Success -> {
-                        val target = state.value.myPostList.find { it.id == postId }
+                        val target = state.value.myPostList?.find { it.id == postId }
                         if (target != null) {
                             _state.value = state.value.copy(
-                                myPostList = state.value.myPostList.toMutableList().apply {
-                                    this.removeIf { it.id == postId }
+                                myPostList = state.value.myPostList?.toMutableList().apply {
+                                    this?.removeIf { it.id == postId }
                                 }
                             )
                         }
@@ -211,7 +211,7 @@ class BuyOrNotViewModel @Inject constructor(
                     is DataState.Success -> {
                         result.data?.let { voteResult ->
                             _state.value = state.value.copy(
-                                mainPostList = state.value.mainPostList.map {
+                                mainPostList = state.value.mainPostList?.map {
                                     if (it.id == postId) {
                                         it.copy(
                                             goodVoteCount = voteResult.goodVoteCount,
@@ -221,7 +221,7 @@ class BuyOrNotViewModel @Inject constructor(
                                         it
                                     }
                                 },
-                                myPostList = state.value.myPostList.map {
+                                myPostList = state.value.myPostList?.map {
                                     if (it.id == postId) {
                                         it.copy(
                                             goodVoteCount = voteResult.goodVoteCount,
