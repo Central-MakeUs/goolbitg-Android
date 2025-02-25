@@ -158,7 +158,7 @@ class BuyOrNotViewModel @Inject constructor(
                     }
                     is DataState.Loading -> {
                         _state.value = state.value.copy(
-                            isMyPostsLoading = result.isLoading
+                            isMyPostsSkeletonLoading = result.isLoading
                         )
                     }
                     else -> Unit
@@ -186,12 +186,7 @@ class BuyOrNotViewModel @Inject constructor(
                             )
                         }
                     }
-                    is DataState.Exception -> {
-                        Log.d("TAG", "deleteMyPosting: ${result.e.stackTrace}")
-                    }
-                    else -> {
-                        Log.d("TAG", "deleteMyPosting: ${result.code}")
-                    }
+                    else -> Unit
                 }
             }
         }

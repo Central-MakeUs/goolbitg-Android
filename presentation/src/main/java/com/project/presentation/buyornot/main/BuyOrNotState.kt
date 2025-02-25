@@ -17,5 +17,6 @@ data class BuyOrNotState(
     val reportResult: String? = null,
 
     val isMainPostsLoading: Boolean = false,
-    val isMyPostsLoading: Boolean = false
+    val isMyPostsLoading: Boolean = false,
+    val isMyPostsSkeletonLoading: Boolean = false
 )

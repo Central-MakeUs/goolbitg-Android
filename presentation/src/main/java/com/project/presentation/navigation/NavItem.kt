@@ -61,8 +61,14 @@ sealed class NavItem(
         strId = R.string.nav_item_challenge
     )
 
-    data object BuyOrNot : NavItem(
-        route = "buy_or_not/{tabIdx}",
+    data object BuyOrNotMain : NavItem(
+        route = "buy_or_not_main",
+        iconId = R.drawable.ic_nav_buy_or_not,
+        strId = R.string.nav_item_buy_or_not
+    )
+
+    data object BuyOrNotMy : NavItem(
+        route = "buy_or_not_my",
         iconId = R.drawable.ic_nav_buy_or_not,
         strId = R.string.nav_item_buy_or_not
     )
@@ -82,7 +88,7 @@ sealed class NavItem(
     )
 
     data object BuyOrNotAddPosting : NavItem(
-        route = "buy_or_not_add_posting/{tabIdx}"
+        route = "buy_or_not_add_posting"
     )
 
     data object BuyOrNotModifyPosting : NavItem(

@@ -30,7 +30,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.project.presentation.buyornot.add.BuyOrNotAddEvent
 import com.project.presentation.buyornot.add.BuyOrNotAddScreen
 import com.project.presentation.buyornot.add.BuyOrNotAddViewModel
-import com.project.presentation.buyornot.main.BuyOrNotScreen
+import com.project.presentation.buyornot.main.BuyOrNotMainScreen
+import com.project.presentation.buyornot.main.BuyOrNotMyScreen
 import com.project.presentation.buyornot.main.BuyOrNotViewModel
 import com.project.presentation.challenge.main.ChallengeScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionScreen
@@ -180,14 +181,12 @@ private fun NavigationGraph(
             ChallengeScreen(navHostController = navHostController)
         }
 
-        directComposable(
-            route = NavItem.BuyOrNot.route,
-            arguments = listOf(navArgument("tabIdx") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val tabIdx = backStackEntry.arguments?.getInt("tabIdx") ?: 0
-            val viewModel: BuyOrNotViewModel = hiltViewModel()
-            viewModel.setTabIdx(tabIdx)
-            BuyOrNotScreen(navHostController = navHostController, viewModel = viewModel)
+        directComposable(NavItem.BuyOrNotMain.route) {
+            BuyOrNotMainScreen(navHostController = navHostController)
+        }
+
+        directComposable(NavItem.BuyOrNotMy.route) {
+            BuyOrNotMyScreen(navHostController = navHostController)
         }
 
         directComposable(NavItem.MyPage.route) {
@@ -258,15 +257,9 @@ private fun NavigationGraph(
         }
 
         addComposable(
-            route = NavItem.BuyOrNotAddPosting.route,
-            arguments = listOf(
-                navArgument("tabIdx") { type = NavType.IntType },
-            )
-        ) { backStackEntry ->
-            val tabIdx = backStackEntry.arguments?.getInt("tabIdx") ?: 0
-            val viewModel: BuyOrNotAddViewModel = hiltViewModel()
-            viewModel.setTabIdx(tabIdx)
-            BuyOrNotAddScreen(navHostController = navHostController, viewModel = viewModel)
+            route = NavItem.BuyOrNotAddPosting.route
+        ) {
+            BuyOrNotAddScreen(navHostController = navHostController)
         }
 
     }

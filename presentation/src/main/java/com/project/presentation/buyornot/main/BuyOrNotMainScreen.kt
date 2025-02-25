@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -74,13 +73,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(widthDp = 400, heightDp = 800)
-fun BuyOrNotScreen(
+fun BuyOrNotMainScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: BuyOrNotViewModel = hiltViewModel()
 ) {
@@ -270,59 +267,46 @@ fun BuyOrNotScreen(
                         )
                     }
                 ) { innerPadding ->
-                    BuyOrNotContent(
+
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(innerPadding),
-                        selectedTabIdx = state.value.tabIdx,
-                        mainPostingList = state.value.mainPostList,
-                        myPostingList = state.value.myPostList,
-                        isMainLoading = state.value.isMainPostsLoading,
-                        isMyLoading = state.value.isMyPostsLoading,
-                        mainPageOffset = state.value.mainPostPage * state.value.mainPostSize,
-                        myPageOffset = state.value.myPostPage * state.value.myPostSize,
-                        onOpenReportSheet = {
-                            coroutineScope.launch {
-                                reportPosting = it
-                                scaffoldState.bottomSheetState.expand()
+                            .padding(innerPadding)
+                    ) {
+                        BuyOrNotMainHeader(
+                            selectedTabIdx = 0,
+                            onTabChanged = {
+                                navHostController.navigate(NavItem.BuyOrNotMy.route) {
+                                    popUpTo(0) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            },
+                            onWritePosting = {
+                                navHostController.navigate(NavItem.BuyOrNotAddPosting.route)
                             }
-                        },
-                        onFetchMainNextPage = {
-                            viewModel.onEvent(BuyOrNotEvent.FetchMainNextPage)
-                        },
-                        onFetchMyNextPage = {
-                            viewModel.onEvent(BuyOrNotEvent.FetchMyNextPage)
-                        },
-                        onActiveDeleteMyPostingPopup = {
-                            deleteMyPostingTarget = it
-                        },
-                        onModifyMyPosting = {
-                            val route = NavItem.BuyOrNotModifyPosting.route
-                                .replace("{postId}", it.id.toString())
-                                .replace("{productName}", it.productName)
-                                .replace("{price}", it.productPrice.toString())
-                                .replace(
-                                    "{imgUrl}", URLEncoder.encode(
-                                        it.productImageUrl,
-                                        StandardCharsets.UTF_8.toString()
-                                    )
-                                )
-                                .replace("{goodReason}", it.goodReason)
-                                .replace("{badReason}", it.badReason)
-                            navHostController.navigate(route)
-                        },
-                        onWritePosting = {
-                            val route = NavItem.BuyOrNotAddPosting.route
-                                .replace("{tabIdx}", state.value.tabIdx.toString())
-                            navHostController.navigate(route)
-                        },
-                        onVote = { postId, isGood ->
-                            viewModel.onEvent(BuyOrNotEvent.VotePosting(postId, isGood))
-                        },
-                        onTabChanged = {
-                            viewModel.setTabIdx(it)
-                        }
-                    )
+                        )
+                        val pagerState = rememberPagerState { state.value.mainPostList?.size ?: 0 }
+
+                        BuyOrNotCardMainContent(
+                            modifier = Modifier.weight(1f),
+                            pagerState = pagerState,
+                            postingList = state.value.mainPostList,
+                            isLoading = state.value.isMainPostsLoading,
+                            pageOffset = state.value.mainPostPage * state.value.mainPostSize,
+                            onOpenReportSheet = {
+                                coroutineScope.launch {
+                                    reportPosting = it
+                                    scaffoldState.bottomSheetState.expand()
+                                }
+                            },
+                            onFetchNextPage = {
+                                viewModel.onEvent(BuyOrNotEvent.FetchMainNextPage)
+                            },
+                            onVote = { postId, isGood ->
+                                viewModel.onEvent(BuyOrNotEvent.VotePosting(postId, isGood))
+                            }
+                        )
+                    }
                 }
                 if (isBottomSheetScrimVisible) {
                     Box(
@@ -354,67 +338,7 @@ fun BuyOrNotScreen(
 }
 
 @Composable
-fun BuyOrNotContent(
-    modifier: Modifier = Modifier,
-    selectedTabIdx: Int,
-    mainPostingList: List<BuyOrNotPostingModel>?,
-    myPostingList: List<BuyOrNotPostingModel>?,
-    isMainLoading: Boolean,
-    isMyLoading: Boolean,
-    mainPageOffset: Int,
-    myPageOffset: Int,
-    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
-    onFetchMainNextPage: () -> Unit,
-    onFetchMyNextPage: () -> Unit,
-    onActiveDeleteMyPostingPopup: (BuyOrNotPostingModel) -> Unit,
-    onModifyMyPosting: (BuyOrNotPostingModel) -> Unit,
-    onWritePosting: () -> Unit,
-    onVote: (Int, Boolean) -> Unit,
-    onTabChanged: (Int) -> Unit
-) {
-    Column(modifier = modifier) {
-        BuyOrNotHeader(
-            selectedTabIdx = selectedTabIdx,
-            onTabChanged = onTabChanged,
-            onWritePosting = onWritePosting
-        )
-        val pagerState = rememberPagerState { mainPostingList?.size ?: 0 }
-        val listState = rememberLazyListState()
-
-        when (selectedTabIdx) {
-            0 -> {
-                BuyOrNotCardMainContent(
-                    modifier = Modifier.weight(1f),
-                    pagerState = pagerState,
-                    postingList = mainPostingList,
-                    isLoading = isMainLoading,
-                    pageOffset = mainPageOffset,
-                    onOpenReportSheet = onOpenReportSheet,
-                    onFetchNextPage = onFetchMainNextPage,
-                    onVote = onVote
-                )
-            }
-            1 -> {
-                BuyOrNotCardMyContent(
-                    modifier = Modifier.weight(1f),
-                    listState = listState,
-                    myPostingList = myPostingList,
-                    isLoading = isMyLoading,
-                    pageOffset = myPageOffset,
-                    onMyItemClick = {},
-                    onFetchNextPage = onFetchMyNextPage,
-                    onActiveDeleteMyPostingPopup = onActiveDeleteMyPostingPopup,
-                    onModifyMyPosting = onModifyMyPosting,
-                    onAddPosting = onWritePosting
-                )
-            }
-            else -> Unit
-        }
-    }
-}
-
-@Composable
-fun BuyOrNotHeader(
+fun BuyOrNotMainHeader(
     modifier: Modifier = Modifier,
     selectedTabIdx: Int,
     onTabChanged: (Int) -> Unit,

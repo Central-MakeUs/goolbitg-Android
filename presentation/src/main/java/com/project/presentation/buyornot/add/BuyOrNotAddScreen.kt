@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
@@ -144,10 +143,19 @@ fun BuyOrNotAddScreen(
                 }
                 navHostController.popBackStack()
             }else{
-                val route = NavItem.BuyOrNot.route.replace("{tabIdx}", (viewModel.state.value.tabIdx?:0).toString())
-                navHostController.navigate(route){
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
+                when(val prevRoute = navHostController.previousBackStackEntry?.destination?.route){
+                    NavItem.BuyOrNotMain.route -> {
+                        navHostController.navigate(prevRoute){
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                    NavItem.BuyOrNotMy.route -> {
+                        navHostController.navigate(prevRoute){
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
                 }
             }
         }

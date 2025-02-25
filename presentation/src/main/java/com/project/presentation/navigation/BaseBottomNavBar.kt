@@ -18,11 +18,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.project.presentation.base.BaseIcon
 import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.gray600
@@ -41,7 +39,7 @@ fun BaseBottomNavBar(
     items: List<NavItem> = listOf(
         NavItem.Home,
         NavItem.Challenge,
-        NavItem.BuyOrNot,
+        NavItem.BuyOrNotMain,
         NavItem.MyPage,
     )
 ) {
@@ -57,6 +55,8 @@ fun BaseBottomNavBar(
         val currentDestination = navBackStackEntry?.destination
         items.forEach { item ->
             val isSelected = currentDestination?.route == item.route
+                    || (currentDestination?.route == NavItem.BuyOrNotMain.route && item.route == NavItem.BuyOrNotMy.route)
+                    || (currentDestination?.route == NavItem.BuyOrNotMy.route && item.route == NavItem.BuyOrNotMain.route)
             NavigationBarItem(
                 selected = isSelected,
                 icon = {
@@ -85,7 +85,7 @@ fun BaseBottomNavBar(
                 },
                 onClick = {
                     if(!isSelected){
-                        val route = if(item == NavItem.BuyOrNot){
+                        val route = if(item == NavItem.BuyOrNotMain){
                             item.route.replace("{tabIdx}", "0")
                         }else{
                             item.route

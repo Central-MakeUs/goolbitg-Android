@@ -76,6 +76,12 @@ fun BuyOrNotCardMyContent(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         if (myPostingList == null || isLoading) {
+            Text(
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                text = stringResource(R.string.buyornot_my_title),
+                style = goolbitgTypography.body3,
+                color = gray50
+            )
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 repeat(3) { idx ->
                     BuyOrNotMyPostingSkeleton()
