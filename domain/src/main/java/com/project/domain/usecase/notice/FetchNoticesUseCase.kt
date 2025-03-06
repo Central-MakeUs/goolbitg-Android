@@ -9,7 +9,7 @@ class FetchNoticesUseCase @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         size: Int,
-        type: String
+        type: String?
     ) = noticeRepository.fetchNotices(
         page = page,
         size = size,

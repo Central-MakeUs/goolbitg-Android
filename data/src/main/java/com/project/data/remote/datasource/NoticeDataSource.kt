@@ -12,7 +12,7 @@ interface NoticeDataSource {
     suspend fun fetchNotices(
         @Query("pages") pages: Int,
         @Query("size") size: Int,
-        @Query("type") type: String
+        @Query("type") type: String? = null
     ): Response<FetchNoticesRes>
 
     @POST("/v1/notices/{noticeId}")

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class NoticeRepositoryImpl @Inject constructor(
     private val noticeDataSource: NoticeDataSource
 ): NoticeRepository {
-    override suspend fun fetchNotices(page: Int, size: Int, type: String): Flow<DataState<FetchNoticesModel>> {
+    override suspend fun fetchNotices(page: Int, size: Int, type: String?): Flow<DataState<FetchNoticesModel>> {
         return NetworkUtils.handleApi(
             execute = {
                 noticeDataSource.fetchNotices(pages = page, size = size, type = type)
