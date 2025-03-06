@@ -12,10 +12,8 @@ data class BuyOrNotState(
     val myPostList: List<BuyOrNotPostingModel>? = null,
     val myPostPage: Int = 0,
     val myPostSize: Int = 10,
-
     val reportList: List<ReportReason> = ReportReasonEnum.entries.map { ReportReason(reasonEnum = it) },
     val reportResult: String? = null,
-
     val isMainPostsLoading: Boolean = false,
     val isMyPostsLoading: Boolean = false,
     val isMyPostsSkeletonLoading: Boolean = false

@@ -1,6 +1,5 @@
 package com.project.presentation.buyornot.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.domain.common.ErrorCode
@@ -92,14 +91,6 @@ class BuyOrNotViewModel @Inject constructor(
         }
     }
 
-    fun setTabIdx(idx: Int){
-        viewModelScope.launch {
-            _state.value = state.value.copy(
-                tabIdx = idx
-            )
-        }
-    }
-
     fun initReportResult(){
         viewModelScope.launch {
             _state.value = state.value.copy(
@@ -155,11 +146,6 @@ class BuyOrNotViewModel @Inject constructor(
                                 myPostList = state.value.myPostList?.plus(it.items)?.map { it } ?: it.items
                             )
                         }
-                    }
-                    is DataState.Loading -> {
-                        _state.value = state.value.copy(
-                            isMyPostsSkeletonLoading = result.isLoading
-                        )
                     }
                     else -> Unit
                 }
