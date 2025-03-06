@@ -34,4 +34,8 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideUtilDataSource(retrofit: Retrofit): UtilDataSource = retrofit.create(UtilDataSource::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoticeDataSource(retrofit: Retrofit): UtilDataSource = retrofit.create(NoticeDataSource::class.java)
 }
