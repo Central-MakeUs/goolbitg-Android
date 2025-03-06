@@ -3,6 +3,7 @@ package com.project.data.di
 import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.datasource.BuyOrNotDataSource
 import com.project.data.remote.datasource.ChallengeDataSource
+import com.project.data.remote.datasource.NoticeDataSource
 import com.project.data.remote.datasource.UserDataSource
 import com.project.data.remote.datasource.UtilDataSource
 import dagger.Module
@@ -37,5 +38,5 @@ object DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideNoticeDataSource(retrofit: Retrofit): UtilDataSource = retrofit.create(NoticeDataSource::class.java)
+    fun provideNoticeDataSource(retrofit: Retrofit): NoticeDataSource = retrofit.create(NoticeDataSource::class.java)
 }
