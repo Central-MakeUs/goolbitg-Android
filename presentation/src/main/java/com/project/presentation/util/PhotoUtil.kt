@@ -15,6 +15,7 @@ import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -24,7 +25,9 @@ import android.util.Base64
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
-import java.io.BufferedInputStream
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
@@ -517,5 +520,43 @@ object PhotoUtil {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun shareImage(context: Context, imageUrl: String) {
+        // Glide를 이용하여 비트맵으로 이미지 로드
+        Glide.with(context)
+            .asBitmap()
+            .load(imageUrl)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    // 비트맵을 캐시 디렉토리에 임시 파일로 저장
+                    val cachePath = File(context.cacheDir, "images")
+                    cachePath.mkdirs()
+                    val file = File(cachePath, "shared_image.png")
+                    FileOutputStream(file).use { out ->
+                        resource.compress(Bitmap.CompressFormat.PNG, 100, out)
+                    }
+                    // FileProvider를 이용해 공유 가능한 URI 생성 (여기서 "com.your.package.fileprovider"는 실제 패키지명으로 변경)
+                    val uri = FileProvider.getUriForFile(
+                        context,
+                        "com.project.goolbi.fileprovider",
+                        file
+                    )
+                    // 공유 인텐트 생성
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        type = "image/png"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "이미지 공유"))
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // 필요 시 처리
+                }
+            })
     }
 }

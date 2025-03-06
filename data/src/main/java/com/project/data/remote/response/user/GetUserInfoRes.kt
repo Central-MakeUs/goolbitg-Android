@@ -72,6 +72,7 @@ data class SpendingTypeRes(
     @SerializedName("title") val title: String?,
     @SerializedName("imageUrl") val imageUrl: String?,
     @SerializedName("profileUrl") val profileUrl: String?,
+    @SerializedName("onboardingResultUrl") val onboardingResultUrl: String?,
     @SerializedName("goal") val goal: Int?,
     @SerializedName("peopleCount") val peopleCount: Int?,
 ) {
@@ -80,6 +81,7 @@ data class SpendingTypeRes(
         title = title,
         imgUrl = imageUrl,
         profileUrl = profileUrl,
+        onboardingResultUrl = onboardingResultUrl,
         goal = goal,
         peopleCount = peopleCount,
     )

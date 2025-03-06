@@ -62,6 +62,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -100,6 +101,7 @@ import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import com.project.presentation.util.PhotoUtil.shareImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -388,6 +390,8 @@ fun MyPageInfoCard(
     modifier: Modifier = Modifier,
     userInfoModel: UserInfoModel?
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(roundSm))
@@ -426,6 +430,20 @@ fun MyPageInfoCard(
                     color = white
                 )
             }
+            Text(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(white.copy(alpha = 0.2f))
+                    .noRippleClickable {
+                        userInfoModel?.spendingType?.onboardingResultUrl?.let {
+                            shareImage(context = context, imageUrl = it)
+                        }
+                    }
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                text = stringResource(R.string.common_share),
+                style = goolbitgTypography.body5.copy(fontWeight = FontWeight.Bold),
+                color = white
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))

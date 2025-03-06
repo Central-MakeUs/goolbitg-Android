@@ -27,6 +27,7 @@ data class SpendingTypeModel(
     val title: String?,
     val imgUrl: String?,
     val profileUrl: String?,
+    val onboardingResultUrl: String?,
     val goal: Int?,
     val peopleCount: Int?
 )

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +39,7 @@ import com.project.presentation.R
 import com.project.presentation.base.BaseBottomBtn
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.extension.ComposeExtension.innerShadow
+import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.navigation.NavItem
 import com.project.presentation.onboarding.OnboardingState
 import com.project.presentation.onboarding.OnboardingViewModel
@@ -46,6 +50,7 @@ import com.project.presentation.ui.theme.gray300
 import com.project.presentation.ui.theme.roundLg
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
+import com.project.presentation.util.PhotoUtil.shareImage
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
@@ -57,7 +62,6 @@ fun ShowConsumeTypeScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
-
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     Box(
@@ -131,6 +135,7 @@ fun ShowConsumeTypeContent(
             } ?: "",
             typeName = state.value.userInfoModel?.spendingType?.title ?: "",
             imgUrl = state.value.userInfoModel?.spendingType?.imgUrl,
+            shareImgUrl = state.value.userInfoModel?.spendingType?.onboardingResultUrl,
             myConsumeScore = state.value.userInfoModel?.spendingHabitScore ?: 0,
             sameTypeCount = state.value.userInfoModel?.spendingType?.peopleCount ?: 0,
         )
@@ -149,10 +154,13 @@ fun ConsumeTypeCard(
     subTypeName: String,
     typeName: String,
     imgUrl: String?,
+    shareImgUrl: String?,
     myConsumeScore: Int,
     sameTypeCount: Int,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Box(modifier = modifier.fillMaxSize()) {
         val hazeState = remember { HazeState() }
 
@@ -160,31 +168,31 @@ fun ConsumeTypeCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 14.dp, end = 40.dp)
-                .aspectRatio(336f/432f),
+                .aspectRatio(336f / 432f),
             iconId = R.drawable.img_consume_type_card
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(24.dp)
+                .padding(start = 40.dp, end = 40.dp, top = 24.dp)
                 .aspectRatio(310f / 393f)
                 .background(transparent)
-                .align(Alignment.Center)
+                .padding(24.dp)
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(text = subTypeName, style = goolbitgTypography.body3, color = white)
             Text(text = typeName, style = goolbitgTypography.h1, color = white)
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             if (imgUrl.isNullOrEmpty()) {
-                BaseIcon(modifier = Modifier.size(160.dp), iconId = R.drawable.ic_card_logo)
+                BaseIcon(modifier = Modifier.size(132.dp), iconId = R.drawable.ic_card_logo)
             } else {
                 GlideImage(
-                    modifier = Modifier.size(160.dp),
+                    modifier = Modifier.size(132.dp),
                     model = imgUrl,
                     contentDescription = null
                 )
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -233,14 +241,28 @@ fun ConsumeTypeCard(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(38.dp))
-
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CircleShape)
+                    .background(white)
+                    .noRippleClickable {
+                        shareImgUrl?.let {
+                            shareImage(context = context, imageUrl = it)
+                        }
+                    }
+                    .padding(12.dp),
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.show_consume_type_share),
+                style = goolbitgTypography.h4,
+                color = black
+            )
         }
-
         Box(
             modifier = Modifier
-                .size(310.dp, 393.dp)
+                .padding(start = 40.dp, end = 40.dp, top = 24.dp)
+                .aspectRatio(310f / 393f)
                 .clip(RoundedCornerShape(roundLg))
                 .border(
                     width = 2.dp,
@@ -267,14 +289,12 @@ fun ConsumeTypeCard(
                     blur = 4.dp,
                     spread = 0.dp
                 )
-                .background(gray300.copy(alpha = 0.4f))
+                .background(gray300.copy(alpha = 0.3f))
                 .hazeSource(hazeState)
                 .hazeEffect(
                     state = hazeState,
                     style = HazeStyle.Unspecified.copy(blurRadius = 40.dp)
                 )
-                .padding(24.dp)
-                .align(Alignment.Center)
         )
     }
 }
