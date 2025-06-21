@@ -16,41 +16,41 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BuyOrNotDataSource {
-    @GET("/v1/buyOrNots")
+    @GET("/api/v1/buyOrNots")
     suspend fun fetchBuyOrNotPosts(
         @Query("page") page: Int,
         @Query("size") size: Int,
         @Query("created") isCreated: Boolean
     ): Response<FetchBuyOrNotPostsRes>
 
-    @POST("/v1/buyOrNots")
+    @POST("/api/v1/buyOrNots")
     suspend fun postBuyOrNotPosting(
         @Body body: UpsertBuyOrNotPostingReq
     ): Response<BuyOrNotPostingRes>
 
-    @PUT("/v1/buyOrNots/{postId}")
+    @PUT("/api/v1/buyOrNots/{postId}")
     suspend fun modifyBuyOrNotPosting(
         @Path("postId") postId: Int,
         @Body body: UpsertBuyOrNotPostingReq
     ): Response<BuyOrNotPostingRes>
 
-    @GET("/v1/buyOrNots/{postId}")
+    @GET("/api/v1/buyOrNots/{postId}")
     suspend fun getBuyOrNotPostingDetail(
         @Path("postId") postId: Int,
     ): Response<BuyOrNotPostingRes>
 
-    @DELETE("/v1/buyOrNots/{postId}")
+    @DELETE("/api/v1/buyOrNots/{postId}")
     suspend fun deleteBuyOrNotPosting(
         @Path("postId") postId: Int,
     ): Response<Unit>
 
-    @POST("/v1/buyOrNots/{postId}/report")
+    @POST("/api/v1/buyOrNots/{postId}/report")
     suspend fun reportPosting(
         @Path("postId") postId: Int,
         @Body body: ReportPostingReq
     ): Response<Unit>
 
-    @POST("/v1/buyOrNots/{postId}/vote")
+    @POST("/api/v1/buyOrNots/{postId}/vote")
     suspend fun votePosting(
         @Path("postId") postId: Int,
         @Body body: VotePostingReq

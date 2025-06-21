@@ -12,28 +12,28 @@ import retrofit2.http.POST
 
 interface AuthDataSource {
     /** 회원가입 */
-    @POST("/v1/auth/register")
+    @POST("/api/v1/auth/register")
     suspend fun register(
         @Body body: RegisterReq
     ): Response<Unit>
 
     /** 로그인 요청 */
-    @POST("/v1/auth/login")
+    @POST("/api/v1/auth/login")
     suspend fun login(
         @Body body: LoginReq
     ): Response<LoginRes>
 
     /** 토큰 재발급 */
-    @POST("/v1/auth/refresh")
+    @POST("/api/v1/auth/refresh")
     suspend fun refreshToken(
         @Body body: RefreshTokenReq,
     ): Response<RefreshTokenRes>
 
     /** 로그아웃 */
-    @POST("/v1/auth/logout")
+    @POST("/api/v1/auth/logout")
     suspend fun logout(): Response<Unit>
 
     /** 회원 탈퇴 */
-    @POST("/v1/auth/unregister")
+    @POST("/api/v1/auth/unregister")
     suspend fun withdrawAccount(@Body body: WithdrawReq): Response<Unit>
 }

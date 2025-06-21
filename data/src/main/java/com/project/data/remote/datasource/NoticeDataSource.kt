@@ -8,14 +8,14 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface NoticeDataSource {
-    @GET("/v1/notices")
+    @GET("/api/v1/notices")
     suspend fun fetchNotices(
         @Query("pages") pages: Int,
         @Query("size") size: Int,
         @Query("type") type: String? = null
     ): Response<FetchNoticesRes>
 
-    @POST("/v1/notices/{noticeId}")
+    @POST("/api/v1/notices/{noticeId}")
     suspend fun postReadPost(
         @Path("noticeId") noticeId: Int
     ): Response<Unit>

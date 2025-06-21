@@ -9,7 +9,7 @@ import retrofit2.http.Part
 
 interface UtilDataSource {
     @Multipart
-    @POST("/v1/images")
+    @POST("/api/v1/images")
     suspend fun uploadImg(
         @Part image: MultipartBody.Part
     ): Response<UploadImgRes>

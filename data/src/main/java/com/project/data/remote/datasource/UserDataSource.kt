@@ -17,33 +17,33 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserDataSource {
-    @GET("/v1/users/me")
+    @GET("/api/v1/users/me")
     suspend fun getRemoteUserInfo(): Response<GetUserInfoRes>
 
-    @GET("/v1/users/me/registerStatus")
+    @GET("/api/v1/users/me/registerStatus")
     suspend fun checkRegisterStatus(): Response<CheckRegisterStatusRes>
 
-    @GET("/v1/users/me/weeklyStatus")
+    @GET("/api/v1/users/me/weeklyStatus")
     suspend fun getWeeklyRecordStatus(@Query("date") date: String? = null): Response<GetWeeklyRecordStatusRes>
 
-    @POST("/v1/users/nickname/check")
+    @POST("/api/v1/users/nickname/check")
     suspend fun checkNicknameDuplicated(@Body body: CheckNicknameDuplicatedReq): Response<CheckNicknameDuplicatedRes>
 
-    @POST("/v1/users/me/agreePushNotification")
+    @POST("/api/v1/users/me/agreePushNotification")
     suspend fun agreePushNotification(): Response<Unit>
 
-    @POST("/v1/users/me/agreement")
+    @POST("/api/v1/users/me/agreement")
     suspend fun setRemoteUserAgreement(@Body body: UserAgreementReq): Response<Unit>
 
-    @POST("/v1/users/me/info")
+    @POST("/api/v1/users/me/info")
     suspend fun setRemoteUserInfo(@Body body: UserInfoReq): Response<Unit>
 
-    @POST("/v1/users/me/checklist")
+    @POST("/api/v1/users/me/checklist")
     suspend fun setRemoteUserCheckList(@Body body: UserCheckListReq): Response<Unit>
 
-    @POST("/v1/users/me/habit")
+    @POST("/api/v1/users/me/habit")
     suspend fun setRemoteUserHabit(@Body body: UserHabitReq): Response<Unit>
 
-    @POST("/v1/users/me/pattern")
+    @POST("/api/v1/users/me/pattern")
     suspend fun setRemoteUserPattern(@Body body: UserPatternReq): Response<Unit>
 }
