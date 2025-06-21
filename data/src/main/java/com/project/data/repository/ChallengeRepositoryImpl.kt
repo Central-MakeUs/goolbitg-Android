@@ -3,6 +3,7 @@ package com.project.data.repository
 import com.project.data.remote.common.NetworkUtils
 import com.project.data.remote.datasource.ChallengeDataSource
 import com.project.domain.model.DataState
+import com.project.domain.model.challenge.ChallengeGroupItemModel
 import com.project.domain.model.challenge.ChallengeInfoModel
 import com.project.domain.model.challenge.ChallengeListModel
 import com.project.domain.model.challenge.ChallengeRecordListModel
@@ -115,4 +116,16 @@ class ChallengeRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun fetchChallengeGroups(
+        search: String?,
+        created: Boolean
+    ): Flow<DataState<List<ChallengeGroupItemModel>>> {
+        return NetworkUtils.handleApi(
+            execute = { challengeDataSource.fetchChallengeGroups(
+                search = search,
+                created = created
+            ) },
+            mapper = { it?.items?.map { item -> item.toDomainModel() } ?: emptyList() }
+        )
+    }
 }

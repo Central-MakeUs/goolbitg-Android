@@ -6,6 +6,7 @@ import com.project.data.remote.response.challenge.ChallengeRecordListRes
 import com.project.data.remote.response.challenge.ChallengeRecordRes
 import com.project.data.remote.response.challenge.ChallengeStatRes
 import com.project.data.remote.response.challenge.ChallengeTripleRes
+import com.project.data.remote.response.challenge.FetchChallengeGroupsRes
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -60,4 +61,13 @@ interface ChallengeDataSource {
     suspend fun fetchChallengeTriple(
         @Path("challengeId") challengeId: Int,
     ): Response<ChallengeTripleRes>
+
+    @GET("/api/v1/challengeGroups")
+    suspend fun fetchChallengeGroups(
+        @Query("page") page: Int = 0,
+        @Query("size") size: Int = 10,
+        @Query("search") search: String? = null,
+        @Query("created") created: Boolean = false,
+        @Query("participating") participating: Boolean = false
+    ): Response<FetchChallengeGroupsRes>
 }

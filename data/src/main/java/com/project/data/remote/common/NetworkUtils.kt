@@ -1,6 +1,5 @@
 package com.project.data.remote.common
 
-import android.util.Log
 import com.google.gson.Gson
 import com.project.data.remote.response.base.BaseErrRes
 import com.project.domain.model.DataState
@@ -11,7 +10,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 object NetworkUtils {
-    suspend fun <T : Any, R : Any> handleApi(
+    fun <T : Any, R : Any> handleApi(
         execute: suspend () -> Response<T>,
         mapper: (T?) -> R?,
     ): Flow<DataState<R>> {
@@ -31,10 +30,8 @@ object NetworkUtils {
                     }
                 emit(stateRes)
             } catch (e: HttpException) {
-                e.printStackTrace()
                 emit(DataState.Error(code = e.code(), message = e.message()))
             } catch (e: Exception) {
-                e.printStackTrace()
                 emit(DataState.Exception(e))
             } finally {
                 emit(DataState.Loading(isLoading = false))

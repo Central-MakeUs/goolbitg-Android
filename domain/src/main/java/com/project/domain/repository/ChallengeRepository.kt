@@ -1,6 +1,7 @@
 package com.project.domain.repository
 
 import com.project.domain.model.DataState
+import com.project.domain.model.challenge.ChallengeGroupItemModel
 import com.project.domain.model.challenge.ChallengeInfoModel
 import com.project.domain.model.challenge.ChallengeListModel
 import com.project.domain.model.challenge.ChallengeRecordListModel
@@ -39,4 +40,9 @@ interface ChallengeRepository {
     suspend fun fetchChallengeStat(challengeId: Int): Flow<DataState<ChallengeStatModel>>
 
     suspend fun fetchChallengeTriple(challengeId: Int): Flow<DataState<ChallengeTripleModel>>
+
+    suspend fun fetchChallengeGroups(
+        search: String? = null,
+        created: Boolean = false
+    ): Flow<DataState<List<ChallengeGroupItemModel>>>
 }
