@@ -82,6 +82,7 @@ import com.project.presentation.base.BaseDatePickerBottomSheetContent
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseSnackBar
 import com.project.presentation.base.BaseTab
+import com.project.presentation.base.BaseTintIcon
 import com.project.presentation.base.extension.ComposeExtension.fadingEdge
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.base.extension.LocalDateExtension.toKoYmdFormatter
@@ -113,7 +114,6 @@ import java.time.temporal.TemporalAdjusters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(widthDp = 400)
 fun ChallengeScreen(
     navHostController: NavHostController = rememberNavController(),
     viewModel: ChallengeViewModel = hiltViewModel()
@@ -151,7 +151,7 @@ fun ChallengeScreen(
     var backPressedTime = 0L
 
     BackHandler {
-        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+        if (System.currentTimeMillis() - backPressedTime <= 1000L) {
             // 앱 종료
             (context as Activity).finish()
         } else {
@@ -203,7 +203,6 @@ fun ChallengeScreen(
             .fillMaxSize()
             .background(bg1)
     ) {
-
         BottomSheetScaffold(
             modifier = Modifier
                 .drawBehind {
@@ -303,91 +302,100 @@ fun ChallengeScreen(
                         )
                     }
                 ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        ChallengeContent(
-                            modifier = Modifier.fillMaxWidth(),
-                            pagerState = pagerState,
-                            state = state.value,
-                            weeklyDataMap = weeklyDataMap,
-                            challengeList = state.value.challengeList,
-                            onAddClick = {
-                                val route = NavItem.ChallengeAddition.route.replace(
-                                    "{isOnboarding}",
-                                    "false"
-                                )
-                                navHostController.navigate(route)
-                            },
-                            onDateChange = { newDate ->
-                                viewModel.onEvent(
-                                    ChallengeEvent.ChangeSelectedDate(newDate)
-                                )
-                            },
-                            onPageChanged = { offset, date ->
-                                viewModel.onEvent(
-                                    ChallengeEvent.ChangePage(
-                                        offset = offset,
-                                        targetDate = date
-                                    )
-                                )
-                            },
-                            onItemClick = {
-                                val route = NavItem.ChallengeDetail.route.replace(
-                                    "{challengeId}",
-                                    "${it.challenge.id}"
-                                )
-                                navHostController.navigate(route)
-                            },
-                            onDateSelectorClick = {
-                                coroutineScope.launch {
-                                    scaffoldState.bottomSheetState.expand()
-                                }
-                            }
-                        )
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)) {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            var isGroup by remember { mutableStateOf(false) }
 
-                        if (isBottomSheetScrimVisible) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .drawBehind {
-                                        drawRect(black.copy(alpha = bottomSheetScrimAlpha))
-                                    }
-                                    .noRippleClickable { }
+                            ChallengeHeader(
+                                modifier = Modifier.fillMaxWidth(),
+                                isGroup = isGroup,
+                                onIndividual = { isGroup = false },
+                                onGroup = { isGroup = true },
+                                onAddClick = {
+                                    val route = NavItem.ChallengeAddition.route.replace(
+                                        "{isOnboarding}",
+                                        "false"
+                                    )
+                                    navHostController.navigate(route)
+                                }
                             )
+                            if (!isGroup) {
+                                ChallengeIndividualContent(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    pagerState = pagerState,
+                                    state = state.value,
+                                    weeklyDataMap = weeklyDataMap,
+                                    challengeList = state.value.challengeList,
+                                    onDateChange = { newDate ->
+                                        viewModel.onEvent(
+                                            ChallengeEvent.ChangeSelectedDate(newDate)
+                                        )
+                                    },
+                                    onPageChanged = { offset, date ->
+                                        viewModel.onEvent(
+                                            ChallengeEvent.ChangePage(
+                                                offset = offset,
+                                                targetDate = date
+                                            )
+                                        )
+                                    },
+                                    onItemClick = {
+                                        val route = NavItem.ChallengeDetail.route.replace(
+                                            "{challengeId}",
+                                            "${it.challenge.id}"
+                                        )
+                                        navHostController.navigate(route)
+                                    },
+                                    onDateSelectorClick = {
+                                        coroutineScope.launch {
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
+                                    }
+                                )
+                            } else {
+                                ChallengeGroupContent(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    onSearch = {}
+                                )
+                            }
                         }
                     }
                 }
+                if (isBottomSheetScrimVisible) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .drawBehind {
+                                drawRect(black.copy(alpha = bottomSheetScrimAlpha))
+                            }
+                            .noRippleClickable { }
+                    )
+                }
             }
         )
-
     }
 }
 
 @Composable
-fun ChallengeContent(
+fun ChallengeIndividualContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     state: ChallengeState,
     weeklyDataMap: Map<Long, List<WeeklyStatusModel>>,
     challengeList: List<ChallengeRecordModel>,
-    onAddClick: () -> Unit,
     onDateChange: (LocalDate) -> Unit,
     onPageChanged: (Long, LocalDate) -> Unit,
     onItemClick: (ChallengeRecordModel) -> Unit,
     onDateSelectorClick: () -> Unit
 ) {
+    Column(modifier = modifier) {
 
-    Column(modifier = modifier.fillMaxSize()) {
-        ChallengeHeader(
-            modifier = Modifier.fillMaxWidth(),
-            isGroup = false,
-            onIndividual = {},
-            onGroup = {},
-            onAddClick = onAddClick
-        )
         // 선택된 일자를 표시
         ChallengeDateSelector(
             text = state.selectedDate.toKoYmdFormatter(),
@@ -435,16 +443,13 @@ fun ChallengeHeader(
                 style = if (isGroup) goolbitgTypography.h2 else goolbitgTypography.h1,
                 color = if (isGroup) gray400 else white
             )
-//            Spacer(modifier = Modifier.width(8.dp))
-//            Text(
-//                modifier = Modifier.clickable(
-//                    interactionSource = remember { MutableInteractionSource() },
-//                    indication = null
-//                ) { onGroup() },
-//                text = stringResource(R.string.challenge_group),
-//                style = if (isGroup) goolbitgTypography.h1 else goolbitgTypography.h2,
-//                color = if (isGroup) white else gray400
-//            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                modifier = Modifier.noRippleClickable { onGroup() },
+                text = stringResource(R.string.challenge_group),
+                style = if (isGroup) goolbitgTypography.h1 else goolbitgTypography.h2,
+                color = if (isGroup) white else gray400
+            )
         }
         BaseIcon(
             modifier = Modifier
@@ -551,11 +556,13 @@ fun ChallengeWeeklyCalendar(
 
                 }
                 CalendarItem(
-                    modifier = Modifier.weight(1f).onGloballyPositioned {
-                        with(density){
-                            itemHeight = it.size.height.toDp()
-                        }
-                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .onGloballyPositioned {
+                            with(density) {
+                                itemHeight = it.size.height.toDp()
+                            }
+                        },
                     dayOfWeek = date.dayOfWeek.value,
                     day = date.dayOfMonth.toString(),
                     progress = progress,
@@ -621,7 +628,8 @@ fun CalendarItem(
                                 Modifier
                             }
                         }
-                    ).noRippleClickable { onClick() }
+                    )
+                    .noRippleClickable { onClick() }
             ) {
                 Text(
                     modifier = Modifier
@@ -831,6 +839,12 @@ fun ChallengeListItem(
                 .align(Alignment.BottomCenter)
         )
     }
+}
+
+@Composable
+@Preview(widthDp = 400)
+private fun ChallengeScreenPreview() {
+    ChallengeScreen()
 }
 
 fun getWeekDates(startDate: LocalDate): List<LocalDate> {
