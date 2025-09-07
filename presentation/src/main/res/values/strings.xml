@@ -113,6 +113,11 @@
     <string name="challenge_detail_stop_title">챌린지 멈추기</string>
     <string name="challenge_detail_stop_sub_title">지금 멈추면 앞으로 기록을 못해요\n정말 멈추겠습니까?</string>
 
+    <string name="challenge_group_header_title">참여중인 작심삼일 방</string>
+    <string name="challenge_group_header_check_title">내가 만든 방만 보기</string>
+    <string name="challenge_group_no_three_day_hump_desciption">아직 참여한 작심삼일 방이 없어요</string>
+    <string name="challenge_group_search_three_day_hump">작심삼일 방 찾아보기</string>
+
     <string name="buyornot_header_title_1">살까말까</string>
     <string name="buyornot_header_title_2">기록</string>
     <string name="buyornot_report">신고하기</string>
