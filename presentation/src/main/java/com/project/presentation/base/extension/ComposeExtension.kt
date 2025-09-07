@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -75,5 +76,16 @@ object ComposeExtension {
             interactionSource = remember { MutableInteractionSource() },
             indication = null
         ) { onClick() }
+    }
+
+    @Composable
+    fun Modifier.rippleClickable(
+        onClick: () -> Unit = {}
+    ): Modifier {
+        return this.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = ripple(bounded = true, color = Color(0x0D9E9E9E)),
+            onClick = onClick
+        )
     }
 }
