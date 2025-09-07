@@ -12,4 +12,7 @@ data class ChallengeGroupItemModel(
     val password: String?,
     val avgAchieveRatio: Int,
     val maxAchieveDays: Int
-)
+) {
+    fun getTagString(): String =
+        hashtags.joinToString(" ") { "#$it" }
+}
