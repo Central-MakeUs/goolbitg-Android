@@ -1,4 +1,4 @@
-package com.project.goolbi
+package com.project.goolbitg
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

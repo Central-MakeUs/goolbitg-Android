@@ -752,7 +752,7 @@ fun MyPageUsageGuide(
                 Spacer(modifier = Modifier.width(8.dp))
                 if (item == MyPageUsageGuideEnum.AppVersion) {
                     val packageInfo = LocalContext.current.packageManager.getPackageInfo(
-                        "com.project.goolbi",
+                        "com.project.goolbitg",
                         0
                     )
                     val versionCode =

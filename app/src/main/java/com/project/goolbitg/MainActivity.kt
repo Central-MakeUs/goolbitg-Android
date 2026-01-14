@@ -1,4 +1,4 @@
-package com.project.goolbi
+package com.project.goolbitg
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -32,7 +32,6 @@ import com.project.presentation.buyornot.add.BuyOrNotAddScreen
 import com.project.presentation.buyornot.add.BuyOrNotAddViewModel
 import com.project.presentation.buyornot.main.BuyOrNotMainScreen
 import com.project.presentation.buyornot.main.BuyOrNotMyScreen
-import com.project.presentation.buyornot.main.BuyOrNotViewModel
 import com.project.presentation.challenge.main.ChallengeScreen
 import com.project.presentation.challenge.addition.ChallengeAdditionScreen
 import com.project.presentation.challenge.detail.ChallengeDetailScreen
