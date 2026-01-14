@@ -48,7 +48,7 @@ object PhotoUtil {
             // 2. FileProvider를 통해 URI 얻기
             val contentUri: Uri? = FileProvider.getUriForFile(
                 context,
-                "com.project.goolbi.fileprovider",
+                "com.project.goolbitg.fileprovider",
                 file
             )
             contentUri
@@ -462,7 +462,7 @@ object PhotoUtil {
                     // FileProvider를 이용해 공유 가능한 URI 생성 (여기서 "com.your.package.fileprovider"는 실제 패키지명으로 변경)
                     val uri = FileProvider.getUriForFile(
                         context,
-                        "com.project.goolbi.fileprovider",
+                        "com.project.goolbitg.fileprovider",
                         file
                     )
                     // 공유 인텐트 생성
