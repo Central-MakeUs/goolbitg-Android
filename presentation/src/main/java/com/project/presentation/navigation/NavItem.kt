@@ -98,4 +98,39 @@ sealed class NavItem(
     data object Withdraw : NavItem(
         route = "withdraw"
     )
+
+    // 챌린지 그룹
+    data object ChallengeGroupMain : NavItem(
+        route = "challenge_group_main"
+    )
+
+    data object ChallengeGroupDetail : NavItem(
+        route = "challenge_group_detail/{groupId}"
+    )
+
+    data object ChallengeGroupCreate : NavItem(
+        route = "challenge_group_create"
+    )
+
+    data object ChallengeGroupSearch : NavItem(
+        route = "challenge_group_search"
+    )
+
+    data object ChallengeGroupSettings : NavItem(
+        route = "challenge_group_settings/{groupId}"
+    )
+
+    data object ChallengeGroupSettingsInfo : NavItem(
+        route = "challenge_group_settings_info/{groupId}"
+    )
+
+    // 소비습관 패턴분석
+    data object AnalysisReport : NavItem(
+        route = "analysis_report"
+    )
+
+    // 충동구매 방지방
+    data object BuyOrNotChatRoom : NavItem(
+        route = "buy_or_not_chat_room/{postId}"
+    )
 }

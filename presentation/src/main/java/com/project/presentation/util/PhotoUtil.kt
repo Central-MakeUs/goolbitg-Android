@@ -2,6 +2,7 @@ package com.project.presentation.util
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.util.Log
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
@@ -32,7 +33,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 
 object PhotoUtil {
@@ -263,7 +263,7 @@ object PhotoUtil {
             }
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-
+            Log.w("PhotoUtil", "No app found to handle gallery intent", e)
         }
     }
 
@@ -316,72 +316,15 @@ object PhotoUtil {
         return null
     }
 
-    fun uriToBitmap(context: Context, uri: String): Bitmap?{
-        var inputStream: InputStream? = null
-        var bitmap: Bitmap? = null
-        try {
-            // ContentResolver를 사용하여 URI로부터 InputStream을 가져옴
-            val contentResolver = context.contentResolver
-            inputStream = contentResolver.openInputStream(Uri.parse(uri))
-
-            // BitmapFactory를 사용하여 InputStream에서 Bitmap 로드
-            val options = BitmapFactory.Options()
-
-            // 압축된 Bitmap을 가져옴
-            bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+    fun uriToBitmap(context: Context, uri: String): Bitmap? {
+        return try {
+            context.contentResolver.openInputStream(Uri.parse(uri))?.use { input ->
+                BitmapFactory.decodeStream(input)
+            }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
+            null
         }
-        return bitmap
-    }
-
-    // Exif 정보에서 이미지 회전 각도 가져오기
-    private fun getExifOrientation(context: Context, uri: Uri): Int {
-        var orientation = 0
-        try {
-            val projection = arrayOf(MediaStore.Images.ImageColumns.ORIENTATION)
-            val cursor = context.contentResolver.query(uri, projection, null, null, null)
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    val columnIndex = it.getColumnIndex(projection[0])
-                    orientation = it.getInt(columnIndex)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return orientation
-    }
-
-    // 이미지의 압축 비율을 계산하는 함수
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Int {
-        // 원본 이미지의 높이와 너비
-        val height = options.outHeight
-        val width = options.outWidth
-        var inSampleSize = 2
-        if (height > reqHeight || width > reqWidth) {
-            // 요청된 높이와 너비보다 원본이 큰 경우 압축 비율 계산
-            val halfHeight = height / 2
-            val halfWidth = width / 2
-
-            // inSampleSize를 2의 제곱수로 설정하여 메모리 사용을 최적화
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-        return inSampleSize
     }
 
     private const val MAX_WIDTH = 512
@@ -436,29 +379,6 @@ object PhotoUtil {
         }
 
         return inSampleSize
-    }
-
-    private fun rotateImageIfRequired(context: Context, bitmap: Bitmap, uri: Uri): Bitmap? {
-        val input = context.contentResolver.openInputStream(uri) ?: return null
-
-        val exif = if (Build.VERSION.SDK_INT > 23) {
-            ExifInterface(input)
-        } else {
-            ExifInterface(uri.path!!)
-        }
-
-        return when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(bitmap, 90)
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(bitmap, 180)
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(bitmap, 270)
-            else -> bitmap
-        }
-    }
-
-    private fun rotateImage(bitmap: Bitmap, degree: Int): Bitmap? {
-        val matrix = Matrix()
-        matrix.postRotate(degree.toFloat())
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     // 비트맵 회전

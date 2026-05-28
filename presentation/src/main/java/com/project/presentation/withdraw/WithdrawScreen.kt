@@ -81,12 +81,17 @@ fun WithdrawScreen(
             .fillMaxSize()
             .background(bg1)
     ) {
-        Scaffold(containerColor = transparent) { innerPadding ->
+        Scaffold(
+            containerColor = transparent,
+            topBar = {
+                BaseHeader(
+                    title = stringResource(R.string.withdraw_header_title),
+                    onBackPressed = { navHostController.popBackStack() }
+                )
+            }
+        ) { innerPadding ->
             WithdrawContent(
                 modifier = Modifier.padding(innerPadding),
-                onBackPressed = {
-                    navHostController.popBackStack()
-                },
                 onWithdraw = { reason ->
                     viewModel.withdrawAccount(reason = reason)
                 }
@@ -102,7 +107,6 @@ fun WithdrawScreen(
 @Composable
 fun WithdrawContent(
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit,
     onWithdraw: (String) -> Unit
 ) {
     val reasonList = WithdrawEnum.entries
@@ -111,11 +115,6 @@ fun WithdrawContent(
     var etcStr by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize()) {
-        BaseHeader(
-            title = stringResource(R.string.withdraw_header_title),
-            onBackPressed = onBackPressed
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -4,9 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,9 +27,17 @@ fun BaseHeader(
     title: String = "",
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * 헤더가 회피해야 할 시스템바 inset.
+     * - 화면 root 또는 Scaffold topBar slot 처럼 부모가 inset 처리를 해 주지 않는 위치에 둘 때 default(`WindowInsets.statusBars`) 사용
+     * - 부모가 이미 `padding(innerPadding)` 등으로 status bar inset을 적용한 영역 안에 두는 경우 `WindowInsets(0)` 으로 override 해 이중 padding 회피
+     */
+    windowInsets: WindowInsets = WindowInsets.statusBars,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(windowInsets),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BaseIcon(

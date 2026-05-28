@@ -30,6 +30,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+private const val ANALYSIS_LOADING_MIN_MS = 3000L
+
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val authDataStore: AuthDataStore,
@@ -203,7 +205,7 @@ class OnboardingViewModel @Inject constructor(
                             }
                         }
                     }
-                    else -> {}
+                    else -> Unit
                 }
             }
         }
@@ -250,11 +252,11 @@ class OnboardingViewModel @Inject constructor(
                                         )
                                     }
                                 }
-                                else -> {}
+                                else -> Unit
                             }
                         }
                     }
-                    else -> {}
+                    else -> Unit
                 }
             }
         }
@@ -365,20 +367,11 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun checkBirthStatus() {
-        viewModelScope.launch {
-            val birthStatus =
-                if (state.value.year.isNotEmpty()
-                    && state.value.month.isNotEmpty()
-                    && state.value.day.isNotEmpty()
-                ) {
-                    BirthStatus.Completed
-                } else {
-                    BirthStatus.Empty
-                }
-            _state.value = _state.value.copy(
-                birthStatus = birthStatus
-            )
-        }
+        val birthStatus = if (state.value.year.isNotEmpty()
+            && state.value.month.isNotEmpty()
+            && state.value.day.isNotEmpty()
+        ) BirthStatus.Completed else BirthStatus.Empty
+        _state.value = _state.value.copy(birthStatus = birthStatus)
     }
 
      fun getUserInfo(){
@@ -388,8 +381,8 @@ class OnboardingViewModel @Inject constructor(
                 when(result){
                     is DataState.Success -> {
                         val elapsedTime = System.currentTimeMillis() - startTime
-                        if(elapsedTime < 3000L){
-                            delay(3000L - elapsedTime)
+                        if (elapsedTime < ANALYSIS_LOADING_MIN_MS) {
+                            delay(ANALYSIS_LOADING_MIN_MS - elapsedTime)
                         }
                         withContext(Dispatchers.Default){
                             result.data?.let{

@@ -27,9 +27,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.project.presentation.analysis.AnalysisScreen
 import com.project.presentation.buyornot.add.BuyOrNotAddEvent
 import com.project.presentation.buyornot.add.BuyOrNotAddScreen
 import com.project.presentation.buyornot.add.BuyOrNotAddViewModel
+import com.project.presentation.buyornot.chat.BuyOrNotChatRoomScreen
 import com.project.presentation.buyornot.main.BuyOrNotMainScreen
 import com.project.presentation.buyornot.main.BuyOrNotMyScreen
 import com.project.presentation.buyornot.main.BuyOrNotViewModel
@@ -40,6 +42,18 @@ import com.project.presentation.challenge.addition.ChallengeAdditionEvent
 import com.project.presentation.challenge.addition.ChallengeAdditionViewModel
 import com.project.presentation.challenge.detail.ChallengeDetailEvent
 import com.project.presentation.challenge.detail.ChallengeDetailViewModel
+import com.project.presentation.challengegroup.create.ChallengeGroupCreateScreen
+import com.project.presentation.challengegroup.detail.ChallengeGroupDetailScreen
+import com.project.presentation.challengegroup.detail.ChallengeGroupDetailEvent
+import com.project.presentation.challengegroup.detail.ChallengeGroupDetailViewModel
+import com.project.presentation.challengegroup.main.ChallengeGroupScreen
+import com.project.presentation.challengegroup.search.ChallengeGroupSearchScreen
+import com.project.presentation.challengegroup.settings.ChallengeGroupSettingsScreen
+import com.project.presentation.challengegroup.settings.ChallengeGroupSettingsEvent
+import com.project.presentation.challengegroup.settings.ChallengeGroupSettingsViewModel
+import com.project.presentation.challengegroup.settings.info.ChallengeGroupSettingsInfoScreen
+import com.project.presentation.challengegroup.settings.info.ChallengeGroupSettingsInfoEvent
+import com.project.presentation.challengegroup.settings.info.ChallengeGroupSettingsInfoViewModel
 import com.project.presentation.home.HomeScreen
 import com.project.presentation.login.LoginScreen
 import com.project.presentation.mypage.MyPageScreen
@@ -260,6 +274,69 @@ private fun NavigationGraph(
             route = NavItem.BuyOrNotAddPosting.route
         ) {
             BuyOrNotAddScreen(navHostController = navHostController)
+        }
+
+        // 챌린지 그룹 화면들
+        directComposable(route = NavItem.ChallengeGroupMain.route) {
+            ChallengeGroupScreen(navHostController = navHostController)
+        }
+
+        addComposable(
+            route = NavItem.ChallengeGroupDetail.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getInt("groupId") ?: return@addComposable
+            val viewModel: ChallengeGroupDetailViewModel = hiltViewModel()
+            LaunchedEffect(key1 = groupId) {
+                viewModel.onEvent(ChallengeGroupDetailEvent.InitGroupId(groupId))
+            }
+            ChallengeGroupDetailScreen(navHostController = navHostController, viewModel = viewModel)
+        }
+
+        addComposable(route = NavItem.ChallengeGroupCreate.route) {
+            ChallengeGroupCreateScreen(navHostController = navHostController)
+        }
+
+        addComposable(route = NavItem.ChallengeGroupSearch.route) {
+            ChallengeGroupSearchScreen(navHostController = navHostController)
+        }
+
+        addComposable(
+            route = NavItem.ChallengeGroupSettings.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getInt("groupId") ?: return@addComposable
+            val viewModel: ChallengeGroupSettingsViewModel = hiltViewModel()
+            LaunchedEffect(key1 = groupId) {
+                viewModel.onEvent(ChallengeGroupSettingsEvent.InitGroupId(groupId))
+            }
+            ChallengeGroupSettingsScreen(navHostController = navHostController, viewModel = viewModel)
+        }
+
+        addComposable(
+            route = NavItem.ChallengeGroupSettingsInfo.route,
+            arguments = listOf(navArgument("groupId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getInt("groupId") ?: return@addComposable
+            val viewModel: ChallengeGroupSettingsInfoViewModel = hiltViewModel()
+            LaunchedEffect(key1 = groupId) {
+                viewModel.onEvent(ChallengeGroupSettingsInfoEvent.InitGroupId(groupId))
+            }
+            ChallengeGroupSettingsInfoScreen(navHostController = navHostController, viewModel = viewModel)
+        }
+
+        // 소비습관 패턴분석
+        addComposable(route = NavItem.AnalysisReport.route) {
+            AnalysisScreen(navHostController = navHostController)
+        }
+
+        // 충동구매 방지방
+        addComposable(
+            route = NavItem.BuyOrNotChatRoom.route,
+            arguments = listOf(navArgument("postId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getInt("postId") ?: return@addComposable
+            BuyOrNotChatRoomScreen(postId = postId, navHostController = navHostController)
         }
 
     }

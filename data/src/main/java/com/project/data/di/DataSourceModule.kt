@@ -1,8 +1,10 @@
 package com.project.data.di
 
+import com.project.data.remote.datasource.AnalysisDataSource
 import com.project.data.remote.datasource.AuthDataSource
 import com.project.data.remote.datasource.BuyOrNotDataSource
 import com.project.data.remote.datasource.ChallengeDataSource
+import com.project.data.remote.datasource.ChallengeGroupDataSource
 import com.project.data.remote.datasource.NoticeDataSource
 import com.project.data.remote.datasource.UserDataSource
 import com.project.data.remote.datasource.UtilDataSource
@@ -39,4 +41,12 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideNoticeDataSource(retrofit: Retrofit): NoticeDataSource = retrofit.create(NoticeDataSource::class.java)
+
+    @Provides
+    @Singleton
+    fun provideChallengeGroupDataSource(retrofit: Retrofit): ChallengeGroupDataSource = retrofit.create(ChallengeGroupDataSource::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAnalysisDataSource(retrofit: Retrofit): AnalysisDataSource = retrofit.create(AnalysisDataSource::class.java)
 }

@@ -1,8 +1,11 @@
 package com.project.presentation.navigation
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -41,13 +44,20 @@ fun BaseBottomNavBar(
         NavItem.Challenge,
         NavItem.BuyOrNotMain,
         NavItem.MyPage,
-    )
+    ),
+    /**
+     * 네비게이션 바가 회피해야 할 시스템바 inset.
+     * - 일반적인 Scaffold bottomBar slot 사용처에서는 default(`WindowInsets.navigationBars`) 적용
+     * - 부모가 이미 `padding(innerPadding)`로 navigation bar inset을 처리한 영역에 두는 경우 `WindowInsets(0)` 으로 override
+     */
+    windowInsets: WindowInsets = WindowInsets.navigationBars,
 ) {
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = roundLg, topEnd = roundLg))
-            .border(width = 1.dp, color = gray400, shape = RoundedCornerShape(topStart = roundLg, topEnd = roundLg)),
+            .border(width = 1.dp, color = gray400, shape = RoundedCornerShape(topStart = roundLg, topEnd = roundLg))
+            .windowInsetsPadding(windowInsets),
         containerColor = gray600,
         contentColor = gray400
     ) {
@@ -57,6 +67,7 @@ fun BaseBottomNavBar(
             val isSelected = currentDestination?.route == item.route
                     || (currentDestination?.route == NavItem.BuyOrNotMain.route && item.route == NavItem.BuyOrNotMy.route)
                     || (currentDestination?.route == NavItem.BuyOrNotMy.route && item.route == NavItem.BuyOrNotMain.route)
+                    || (currentDestination?.route == NavItem.ChallengeGroupMain.route && item.route == NavItem.Challenge.route)
             NavigationBarItem(
                 selected = isSelected,
                 icon = {

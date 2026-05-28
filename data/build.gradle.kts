@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -56,7 +57,7 @@ dependencies {
 
     // Room
     implementation(libs.room)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // retrofit2
     implementation(libs.retrofit2)
@@ -65,4 +66,8 @@ dependencies {
 
     // Preferences DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Krossbow STOMP over WebSocket (실시간 채팅)
+    implementation(libs.krossbow.stomp.core)
+    implementation(libs.krossbow.websocket.okhttp)
 }

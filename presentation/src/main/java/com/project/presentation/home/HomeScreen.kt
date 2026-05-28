@@ -1,9 +1,7 @@
 package com.project.presentation.home
 
-import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -38,7 +36,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -90,7 +87,8 @@ import com.project.presentation.ui.theme.roundMd
 import com.project.presentation.ui.theme.roundXs
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
-import kotlinx.coroutines.delay
+import com.project.domain.model.ChallengeStatus
+import com.project.presentation.base.ExitOnDoubleBackPress
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
@@ -124,29 +122,7 @@ fun HomeScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    var backPressedState by remember { mutableStateOf(true) }
-    var backPressedTime = 0L
-
-    BackHandler {
-        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
-            // 앱 종료
-            (context as Activity).finish()
-        } else {
-            backPressedState = true
-            coroutineScope.launch {
-                val job =
-                    launch {
-                        snackBarHostState.showSnackbar(
-                            message = "종료하시려면 한 번 더 눌러주세요.",
-                            withDismissAction = true,
-                        )
-                    }
-                delay(3000L)
-                job.cancel()
-            }
-        }
-        backPressedTime = System.currentTimeMillis()
-    }
+    ExitOnDoubleBackPress(snackBarHostState)
 
     Box(
         modifier = Modifier
@@ -580,7 +556,7 @@ fun TodayTodoListContent(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.home_today_list_subtitle).replace(
                 "#VALUE#",
-                todayChallengeList.filter { it.status == "WAIT" }.sumOf { it.challenge.reward }
+                todayChallengeList.filter { it.status == ChallengeStatus.WAIT }.sumOf { it.challenge.reward }
                     .priceComma()
             ),
             color = gray300,
@@ -608,7 +584,7 @@ fun TodayTodoItem(
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit
 ) {
-    val isSuccess = todayChallenge.status == "SUCCESS"
+    val isSuccess = todayChallenge.status == ChallengeStatus.SUCCESS
     Row(
         modifier = modifier
             .fillMaxWidth()

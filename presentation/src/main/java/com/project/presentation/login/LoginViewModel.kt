@@ -1,6 +1,5 @@
 package com.project.presentation.login
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -35,6 +34,7 @@ class LoginViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState.create())
+    companion object { private const val TAG = "LoginViewModel" }
     val state get() = _state.asStateFlow()
 
     private val isPermission = authDataStore.getIsPermissionFlow()
@@ -87,7 +87,7 @@ class LoginViewModel @Inject constructor(
     private fun socialLogin(idToken: String) {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) return@addOnCompleteListener
-            val fcmToken = if (task.isSuccessful) task.result else null
+            val fcmToken = task.result
             viewModelScope.launch {
                 loginUseCase(
                     type = state.value.loginType,
@@ -115,9 +115,7 @@ class LoginViewModel @Inject constructor(
                             }
                         }
 
-                        is DataState.Exception -> {
-
-                        }
+                        else -> Unit
                     }
                 }
             }
@@ -143,13 +141,7 @@ class LoginViewModel @Inject constructor(
                         }
                     }
 
-                    is DataState.Error -> {
-
-                    }
-
-                    is DataState.Exception -> {
-
-                    }
+                    else -> Unit
                 }
             }
         }
@@ -194,9 +186,7 @@ class LoginViewModel @Inject constructor(
                         }
                     }
 
-                    else -> {
-
-                    }
+                    else -> Unit
                 }
             }
         }

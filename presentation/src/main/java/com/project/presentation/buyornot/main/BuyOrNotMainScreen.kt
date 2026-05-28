@@ -1,7 +1,5 @@
 package com.project.presentation.buyornot.main
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -56,6 +54,7 @@ import com.project.domain.model.buyornot.BuyOrNotPostingModel
 import com.project.presentation.R
 import com.project.presentation.base.BaseIcon
 import com.project.presentation.base.BaseSnackBar
+import com.project.presentation.base.ExitOnDoubleBackPress
 import com.project.presentation.base.BaseTwoButtonPopup
 import com.project.presentation.base.extension.ComposeExtension.noRippleClickable
 import com.project.presentation.challenge.addition.calculateScrimAlpha
@@ -157,29 +156,7 @@ fun BuyOrNotMainScreen(
 
         var reportPosting by remember { mutableStateOf<BuyOrNotPostingModel?>(null) }
         val context = LocalContext.current
-        var backPressedState by remember { mutableStateOf(true) }
-        var backPressedTime = 0L
-
-        BackHandler {
-            if (System.currentTimeMillis() - backPressedTime <= 1000L) {
-                // 앱 종료
-                (context as Activity).finish()
-            } else {
-                backPressedState = true
-                coroutineScope.launch {
-                    val job =
-                        launch {
-                            snackBarHostState.showSnackbar(
-                                message = "종료하시려면 한 번 더 눌러주세요.",
-                                withDismissAction = true,
-                            )
-                        }
-                    delay(3000L)
-                    job.cancel()
-                }
-            }
-            backPressedTime = System.currentTimeMillis()
-        }
+        ExitOnDoubleBackPress(snackBarHostState)
         BottomSheetScaffold(
             modifier = Modifier
                 .drawBehind {
@@ -304,6 +281,11 @@ fun BuyOrNotMainScreen(
                             },
                             onVote = { postId, isGood ->
                                 viewModel.onEvent(BuyOrNotEvent.VotePosting(postId, isGood))
+                            },
+                            onCardClick = { postId ->
+                                navHostController.navigate(
+                                    NavItem.BuyOrNotChatRoom.route.replace("{postId}", "$postId")
+                                )
                             }
                         )
                     }
@@ -370,9 +352,7 @@ fun BuyOrNotMainHeader(
 
         BaseIcon(
             modifier = Modifier
-                .noRippleClickable {
-                    onWritePosting()
-                }
+                .noRippleClickable { onWritePosting() }
                 .padding(8.dp),
             iconId = R.drawable.ic_pencil
         )

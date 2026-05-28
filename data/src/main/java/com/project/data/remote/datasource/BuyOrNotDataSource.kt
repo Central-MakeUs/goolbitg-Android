@@ -3,6 +3,7 @@ package com.project.data.remote.datasource
 import com.project.data.remote.request.buyornot.ReportPostingReq
 import com.project.data.remote.request.buyornot.UpsertBuyOrNotPostingReq
 import com.project.data.remote.request.buyornot.VotePostingReq
+import com.project.data.remote.response.buyornot.ChatMessageRes
 import com.project.data.remote.response.buyornot.FetchBuyOrNotPostsRes
 import com.project.data.remote.response.buyornot.BuyOrNotPostingRes
 import com.project.data.remote.response.buyornot.VotePostingRes
@@ -55,4 +56,16 @@ interface BuyOrNotDataSource {
         @Path("postId") postId: Int,
         @Body body: VotePostingReq
     ): Response<VotePostingRes>
+
+    @GET("/api/v1/buyOrNots/chat/list")
+    suspend fun fetchChatList(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Response<FetchBuyOrNotPostsRes>
+
+    @GET("/api/v1/buyOrNots/{postId}/chat/history")
+    suspend fun fetchChatHistory(
+        @Path("postId") postId: Int,
+        @Query("chatLastId") chatLastId: Int? = null
+    ): Response<List<ChatMessageRes>>
 }

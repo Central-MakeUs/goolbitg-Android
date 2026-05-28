@@ -1,7 +1,5 @@
 package com.project.presentation.buyornot.main
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +23,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +47,7 @@ import com.project.presentation.ui.theme.goolbitgTypography
 import com.project.presentation.ui.theme.gray400
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
-import kotlinx.coroutines.delay
+import com.project.presentation.base.ExitOnDoubleBackPress
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -89,34 +85,10 @@ fun BuyOrNotMyScreen(
             .background(bg1)
     ) {
         val state = viewModel.state.collectAsStateWithLifecycle()
-        val coroutineScope = rememberCoroutineScope()
         val snackBarHostState = remember { SnackbarHostState() }
         var deleteMyPostingTarget: BuyOrNotPostingModel? by remember { mutableStateOf(null) }
         val listState = rememberLazyListState()
-        val context = LocalContext.current
-        var backPressedState by remember { mutableStateOf(true) }
-        var backPressedTime = 0L
-
-        BackHandler {
-            if (System.currentTimeMillis() - backPressedTime <= 1000L) {
-                // 앱 종료
-                (context as Activity).finish()
-            } else {
-                backPressedState = true
-                coroutineScope.launch {
-                    val job =
-                        launch {
-                            snackBarHostState.showSnackbar(
-                                message = "종료하시려면 한 번 더 눌러주세요.",
-                                withDismissAction = true,
-                            )
-                        }
-                    delay(3000L)
-                    job.cancel()
-                }
-            }
-            backPressedTime = System.currentTimeMillis()
-        }
+        ExitOnDoubleBackPress(snackBarHostState)
         Scaffold(containerColor = transparent,
             bottomBar = {
                 BaseBottomNavBar(navController = navHostController)

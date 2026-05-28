@@ -70,7 +70,8 @@ fun BuyOrNotCardMainContent(
     postingList: List<BuyOrNotPostingModel>?,
     onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
     onFetchNextPage: () -> Unit,
-    onVote: (Int, Boolean) -> Unit
+    onVote: (Int, Boolean) -> Unit,
+    onCardClick: (postId: Int) -> Unit = {}
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         if (postingList.isNullOrEmpty()) {
@@ -99,7 +100,8 @@ fun BuyOrNotCardMainContent(
                     BuyOrNotCard(
                         modifier = Modifier.carouselTransition(page = page, pagerState = pagerState),
                         posting = postingList[page],
-                        onOpenReportSheet = onOpenReportSheet
+                        onOpenReportSheet = onOpenReportSheet,
+                        onCardClick = { onCardClick(postingList[page].id) }
                     )
                 }
             }
@@ -118,7 +120,8 @@ fun BuyOrNotCardMainContent(
 fun BuyOrNotCard(
     modifier: Modifier = Modifier,
     posting: BuyOrNotPostingModel,
-    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit
+    onOpenReportSheet: (BuyOrNotPostingModel) -> Unit,
+    onCardClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier,
@@ -135,6 +138,7 @@ fun BuyOrNotCard(
                     shape = RoundedCornerShape(spacingLg)
                 )
                 .background(Color(0x0DFFFFFF))
+                .noRippleClickable { onCardClick() }
                 .padding(horizontal = 24.dp, vertical = 15.dp)
         ) {
             Box(

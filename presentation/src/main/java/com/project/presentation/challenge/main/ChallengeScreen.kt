@@ -1,7 +1,5 @@
 package com.project.presentation.challenge.main
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
@@ -104,7 +102,8 @@ import com.project.presentation.ui.theme.main15
 import com.project.presentation.ui.theme.main60
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
-import kotlinx.coroutines.delay
+import com.project.domain.model.ChallengeStatus
+import com.project.presentation.base.ExitOnDoubleBackPress
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -147,29 +146,7 @@ fun ChallengeScreen(
 
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
-    var backPressedState by remember { mutableStateOf(true) }
-    var backPressedTime = 0L
-
-    BackHandler {
-        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
-            // 앱 종료
-            (context as Activity).finish()
-        } else {
-            backPressedState = true
-            coroutineScope.launch {
-                val job =
-                    launch {
-                        snackBarHostState.showSnackbar(
-                            message = "종료하시려면 한 번 더 눌러주세요.",
-                            withDismissAction = true,
-                        )
-                    }
-                delay(3000L)
-                job.cancel()
-            }
-        }
-        backPressedTime = System.currentTimeMillis()
-    }
+    ExitOnDoubleBackPress(snackBarHostState)
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -321,6 +298,13 @@ fun ChallengeScreen(
                                 )
                                 navHostController.navigate(route)
                             },
+                            onGroupClick = {
+                                // 개인 → 그룹 전환은 같은 탭 내 토글이므로 백스택을 교체
+                                navHostController.navigate(NavItem.ChallengeGroupMain.route) {
+                                    popUpTo(NavItem.Challenge.route) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            },
                             onDateChange = { newDate ->
                                 viewModel.onEvent(
                                     ChallengeEvent.ChangeSelectedDate(newDate)
@@ -374,6 +358,7 @@ fun ChallengeContent(
     weeklyDataMap: Map<Long, List<WeeklyStatusModel>>,
     challengeList: List<ChallengeRecordModel>,
     onAddClick: () -> Unit,
+    onGroupClick: () -> Unit = {},
     onDateChange: (LocalDate) -> Unit,
     onPageChanged: (Long, LocalDate) -> Unit,
     onItemClick: (ChallengeRecordModel) -> Unit,
@@ -385,7 +370,7 @@ fun ChallengeContent(
             modifier = Modifier.fillMaxWidth(),
             isGroup = false,
             onIndividual = {},
-            onGroup = {},
+            onGroup = onGroupClick,
             onAddClick = onAddClick
         )
         // 선택된 일자를 표시
@@ -435,16 +420,13 @@ fun ChallengeHeader(
                 style = if (isGroup) goolbitgTypography.h2 else goolbitgTypography.h1,
                 color = if (isGroup) gray400 else white
             )
-//            Spacer(modifier = Modifier.width(8.dp))
-//            Text(
-//                modifier = Modifier.clickable(
-//                    interactionSource = remember { MutableInteractionSource() },
-//                    indication = null
-//                ) { onGroup() },
-//                text = stringResource(R.string.challenge_group),
-//                style = if (isGroup) goolbitgTypography.h1 else goolbitgTypography.h2,
-//                color = if (isGroup) white else gray400
-//            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                modifier = Modifier.noRippleClickable { onGroup() },
+                text = stringResource(R.string.challenge_group),
+                style = if (isGroup) goolbitgTypography.h1 else goolbitgTypography.h2,
+                color = if (isGroup) white else gray400
+            )
         }
         BaseIcon(
             modifier = Modifier
@@ -807,7 +789,7 @@ fun ChallengeListItem(
             if (!isBefore) {
                 BaseIcon(iconId = R.drawable.ic_arrow_right_over)
             } else {
-                val isSuccess = item.status == "SUCCESS"
+                val isSuccess = item.status == ChallengeStatus.SUCCESS
                 val strId = if (isSuccess) R.string.common_success else R.string.common_fail
                 val bgColor = if (isSuccess) main15 else white.copy(alpha = 0.1f)
                 val textColor = if (isSuccess) main100 else gray300
@@ -844,9 +826,9 @@ fun List<ChallengeRecordModel>.challengeFilter(
 ): List<ChallengeRecordModel> {
     return if (isToday) {
         if (isComplete) {
-            this.filter { it.status == "SUCCESS" }
+            this.filter { it.status == ChallengeStatus.SUCCESS }
         } else {
-            this.filter { it.status != "SUCCESS" }
+            this.filter { it.status != ChallengeStatus.SUCCESS }
         }
     } else {
         this

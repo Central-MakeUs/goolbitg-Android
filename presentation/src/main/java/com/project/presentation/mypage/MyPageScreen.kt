@@ -1,6 +1,5 @@
 package com.project.presentation.mypage
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
@@ -8,7 +7,6 @@ import android.graphics.PorterDuffXfermode
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -102,7 +100,7 @@ import com.project.presentation.ui.theme.roundSm
 import com.project.presentation.ui.theme.transparent
 import com.project.presentation.ui.theme.white
 import com.project.presentation.util.PhotoUtil.shareImage
-import kotlinx.coroutines.delay
+import com.project.presentation.base.ExitOnDoubleBackPress
 import kotlinx.coroutines.launch
 
 @Composable
@@ -134,29 +132,7 @@ fun MyPageScreen(
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
-    var backPressedState by remember { mutableStateOf(true) }
-    var backPressedTime = 0L
-
-    BackHandler {
-        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
-            // 앱 종료
-            (context as Activity).finish()
-        } else {
-            backPressedState = true
-            coroutineScope.launch {
-                val job =
-                    launch {
-                        snackBarHostState.showSnackbar(
-                            message = "종료하시려면 한 번 더 눌러주세요.",
-                            withDismissAction = true,
-                        )
-                    }
-                delay(3000L)
-                job.cancel()
-            }
-        }
-        backPressedTime = System.currentTimeMillis()
-    }
+    ExitOnDoubleBackPress(snackBarHostState)
 
     LaunchedEffect(state.value.isLogoutSuccess) {
         if (state.value.isLogoutSuccess) {
@@ -210,6 +186,9 @@ fun MyPageScreen(
                 Spacer(modifier = Modifier.height(6.dp))
                 MyPageContent(
                     userInfoModel = state.value.userInfoModel,
+                    onConsumeHabitClick = {
+                        navHostController.navigate(NavItem.AnalysisReport.route)
+                    },
                     onUsageGuideClick = { item ->
                         when (item) {
                             MyPageUsageGuideEnum.TermsAndServices -> {
@@ -309,6 +288,7 @@ fun MyPageHeader(
 fun MyPageContent(
     modifier: Modifier = Modifier,
     userInfoModel: UserInfoModel?,
+    onConsumeHabitClick: () -> Unit = {},
     onUsageGuideClick: (MyPageUsageGuideEnum) -> Unit,
     onLogout: () -> Unit,
     onWithdraw: () -> Unit
@@ -363,9 +343,9 @@ fun MyPageContent(
                 userInfoModel = userInfoModel
             )
         }
-//        item {
-//            MyPageConsumeHabit()
-//        }
+        item {
+            MyPageConsumeHabit(onClick = onConsumeHabitClick)
+        }
         item {
             MyPageAccountManagement(accountId = userInfoModel?.id ?: "")
         }
@@ -633,7 +613,7 @@ fun Modifier.innerShadow(
 }
 
 @Composable
-fun MyPageConsumeHabit(modifier: Modifier = Modifier) {
+fun MyPageConsumeHabit(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -653,7 +633,9 @@ fun MyPageConsumeHabit(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+            modifier = Modifier
+                .noRippleClickable { onClick() }
+                .padding(horizontal = 8.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             BaseIcon(iconId = R.drawable.ic_chart_arrow)

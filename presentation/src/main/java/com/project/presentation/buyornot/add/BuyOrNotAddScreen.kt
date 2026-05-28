@@ -167,15 +167,19 @@ fun BuyOrNotAddScreen(
             .imePadding()
     ) {
         DismissKeyboardWrapper{
-            Scaffold(containerColor = transparent) { innerPadding ->
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)) {
+            Scaffold(
+                containerColor = transparent,
+                topBar = {
                     BaseHeader(
                         modifier = Modifier.fillMaxWidth(),
                         title = stringResource(R.string.buyornot_add_header_title),
                         onBackPressed = { navHostController.popBackStack() }
                     )
+                }
+            ) { innerPadding ->
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)) {
                     BuyOrNotAddContent(
                         modifier = Modifier
                             .fillMaxWidth()
